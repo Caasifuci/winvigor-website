@@ -1,0 +1,84 @@
+---
+/**
+ * Editorial: the workhorse section. Heading (and optional intro) on the left
+ * five columns, content on the right six. On small screens it stacks.
+ *
+ * layout="split"   → heading left, slot right (default)
+ * layout="stacked" → heading above, slot full width (for lists and grids)
+ * surface          → paper | fog | ink
+ */
+import Container from '@/components/ui/Container.astro';
+import Typography from '@/components/ui/Typography.astro';
+
+interface Props {
+  title?: string;
+  intro?: string;
+  id?: string;
+  surface?: 'paper' | 'fog' | 'ink';
+  layout?: 'split' | 'stacked';
+  /** Draw a hairline above the section (useful between two paper sections). */
+  rule?: boolean;
+  headingLevel?: 'h2' | 'h3';
+}
+
+const {
+  title, intro, id, surface = 'paper', layout = 'split', rule = false, headingLevel = 'h2',
+} = Astro.props;
+const inverse = surface === 'ink';
+const headingId = id ? `${id}-title` : undefined;
+---
+
+<section
+  id={id}
+  class:list={['editorial', `surface--${surface}`, `layout--${layout}`, { 'has-rule': rule }]}
+  aria-labelledby={title ? headingId : undefined}
+>
+  <Container grid class="editorial__grid">
+    {(title || intro || Astro.slots.has('aside')) && (
+      <header class="editorial__head">
+        {title && (
+          <Typography as={headingLevel} variant="h2" tone={inverse ? 'inverse' : 'default'} id={headingId}>
+            {title}
+          </Typography>
+        )}
+        {intro && (
+          <Typography variant="body" tone={inverse ? 'inverse' : 'muted'} class="editorial__intro">{intro}</Typography>
+        )}
+        <slot name="aside" />
+      </header>
+    )}
+    <div class="editorial__body">
+      <slot />
+    </div>
+  </Container>
+</section>
+
+<style>
+  .editorial { padding-block: var(--space-section); }
+  .has-rule :global(.editorial__grid) { position: relative; padding-top: var(--space-section); }
+  /* Hairline aligned to the content edge, not the gutter. */
+  .has-rule :global(.editorial__grid)::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    inset-inline: var(--gutter);
+    border-top: 1px solid var(--rule);
+  }
+  .has-rule { padding-top: 0; }
+
+  .surface--paper { background: var(--paper); }
+  .surface--fog { background: var(--fog); }
+  .surface--ink { background: var(--ink); color: var(--on-ink); }
+
+  :global(.editorial__grid) { row-gap: var(--space-7); }
+
+  .editorial__head, .editorial__body { grid-column: 1 / -1; }
+  .editorial__intro { margin-top: var(--space-5); max-width: 32rem; }
+  .editorial__head :global(> :not(h2):not(h3):not(.editorial__intro)) { margin-top: var(--space-6); }
+
+  @media (min-width: 64rem) {
+    .layout--split .editorial__head { grid-column: 1 / span 5; align-self: start; position: sticky; top: calc(var(--header-h) + var(--space-6)); }
+    .layout--split .editorial__body { grid-column: 7 / -1; }
+    .layout--stacked .editorial__head { grid-column: 1 / span 8; }
+  }
+</style>

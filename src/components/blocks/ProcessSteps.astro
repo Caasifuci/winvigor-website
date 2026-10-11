@@ -1,0 +1,129 @@
+---
+/**
+ * ProcessSteps: an ordered process drawn as a track. Each step states what
+ * happens and what the client receives, so the process is evidence, not a
+ * claim. Horizontal on wide screens, vertical on narrow ones.
+ */
+import Typography from '@/components/ui/Typography.astro';
+
+export interface Step {
+  title: string;
+  body: string;
+  /** The tangible output of the step. */
+  output?: string;
+}
+
+interface Props {
+  steps: Step[];
+  /** Accessible name for the list, e.g. "Consulting engagement process". */
+  label: string;
+  inverse?: boolean;
+}
+
+const { steps, label, inverse = false } = Astro.props;
+---
+
+<ol class:list={['steps', { 'steps--inverse': inverse }]} aria-label={label} style={`--count: ${steps.length}`}>
+  {steps.map((s, i) => (
+    <li class="step">
+      <span class="step__num" aria-hidden="true">{i + 1}</span>
+      <Typography as="h3" variant="h3" tone={inverse ? 'inverse' : 'default'} class="step__title">
+        <span class="visually-hidden">Step {i + 1}: </span>{s.title}
+      </Typography>
+      <Typography variant="body" tone={inverse ? 'inverse' : 'muted'} class="step__body">{s.body}</Typography>
+      {s.output && (
+        <p class="step__output">
+          <span class="step__output-label">You receive</span>
+          {s.output}
+        </p>
+      )}
+    </li>
+  ))}
+</ol>
+
+<style>
+  .steps {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    display: grid;
+    gap: 0;
+  }
+
+  .step {
+    position: relative;
+    display: grid;
+    align-content: start;
+    gap: var(--space-3);
+    padding: 0 0 var(--space-7) var(--space-7);
+    border-left: 1px solid var(--ink);
+  }
+  .step:last-child { border-left-color: transparent; padding-bottom: 0; }
+
+  /* Node on the track */
+  .step::before {
+    content: '';
+    position: absolute;
+    left: -6px;
+    top: 0.35rem;
+    width: 11px;
+    height: 11px;
+    background: var(--paper);
+    border: 1.5px solid var(--ink);
+    transform: skewX(-21deg);
+  }
+  .step:last-child::before { background: var(--ink); }
+
+  .step__num {
+    font-family: var(--serif);
+    font-optical-sizing: auto;
+    font-size: var(--step-4);
+    font-weight: 300;
+    line-height: 1;
+    color: var(--slate);
+    font-variant-numeric: lining-nums;
+  }
+  .step__title { margin-top: var(--space-2); }
+
+  .step__output {
+    margin-top: var(--space-3);
+    padding-top: var(--space-3);
+    border-top: 1px solid var(--rule);
+    font-size: var(--step--1);
+    line-height: 1.5;
+    color: var(--ink);
+  }
+  .step__output-label { display: block; margin-bottom: var(--space-1); font-weight: 600; }
+
+  .steps--inverse .step { border-left-color: var(--mist); }
+  .steps--inverse .step::before { background: var(--ink); border-color: var(--paper); }
+  .steps--inverse .step:last-child::before { background: var(--paper); }
+  .steps--inverse .step__num { color: var(--mist); }
+  .steps--inverse .step__output { color: var(--paper); border-top-color: #2b3a44; }
+
+  @media (min-width: 64rem) {
+    .steps {
+      grid-template-columns: repeat(var(--count), minmax(0, 1fr));
+      column-gap: clamp(1rem, 2vw, 1.75rem);
+    }
+    .step {
+      grid-template-rows: auto auto 1fr auto; /* align "You receive" rows across steps */
+      padding: var(--space-6) 0 0;
+      border-left: 0;
+      border-top: 1px solid var(--ink);
+    }
+    .step:last-child { border-top-color: var(--ink); }
+    .steps--inverse .step { border-top-color: var(--mist); }
+    .step::before { left: 0; top: -6px; }
+    /* Track continues through the column gap */
+    .step:not(:last-child)::after {
+      content: '';
+      position: absolute;
+      top: -1px;
+      left: 100%;
+      width: clamp(1rem, 2vw, 1.75rem);
+      border-top: 1px solid var(--ink);
+    }
+    .steps--inverse .step:not(:last-child)::after { border-top-color: var(--mist); }
+  }
+</style>

@@ -1,0 +1,14 @@
+---
+import BaseLayout from '@/layouts/BaseLayout.astro';
+import HeroSplit from '@/components/blocks/HeroSplit.astro';
+import { site } from '@/data/site';
+---
+
+<BaseLayout title="Message sent" noindex>
+  <HeroSplit
+    title="Thank you. Your message has been sent."
+    lede={`We reply from ${site.contact.email}. If your request is urgent, call ${site.contact.phone}.`}
+    primary={{ label: 'See available engineers', href: '/talent' }}
+    secondary={{ label: 'Back to the home page', href: '/' }}
+  />
+</BaseLayout>

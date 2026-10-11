@@ -1,0 +1,85 @@
+---
+/**
+ * MetricGrid: outcome figures as a definition list. The value is set large
+ * in the serif; the label says what it measures; the optional detail says
+ * where it came from. Pass `sample` to tag the figures as illustrative.
+ */
+import Typography from '@/components/ui/Typography.astro';
+
+export interface Metric {
+  value: string;
+  label: string;
+  detail?: string;
+}
+
+interface Props {
+  metrics: Metric[];
+  sample?: boolean;
+  inverse?: boolean;
+  columns?: 2 | 3 | 4;
+}
+
+const { metrics, sample = false, inverse = false, columns = 3 } = Astro.props;
+---
+
+<div class:list={['metrics', { 'metrics--inverse': inverse }]} style={`--cols: ${columns}`}>
+  {sample && <p class="sample-tag metrics__tag">Sample figures, replace before launch</p>}
+  <dl class="metrics__list">
+    {metrics.map((m) => (
+      <div class="metric">
+        <dt class="metric__label">{m.label}</dt>
+        <dd class="metric__value">{m.value}</dd>
+        {m.detail && (
+          <dd class="metric__detail">
+            <Typography as="span" variant="small" tone={inverse ? 'inverse' : 'muted'}>{m.detail}</Typography>
+          </dd>
+        )}
+      </div>
+    ))}
+  </dl>
+</div>
+
+<style>
+  .metrics__tag { margin-bottom: var(--space-6); }
+  .metrics--inverse .metrics__tag { color: var(--mist); }
+
+  .metrics__list {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: var(--space-6) clamp(1rem, 2.5vw, 2rem);
+  }
+
+  .metric {
+    display: flex;
+    flex-direction: column;
+    padding-top: var(--space-4);
+    border-top: 1px solid var(--ink);
+  }
+  .metrics--inverse .metric { border-top-color: var(--mist); }
+
+  /* Value sits visually above its label while the DOM keeps dt before dd. */
+  .metric__value {
+    order: -1;
+    margin-bottom: var(--space-3);
+    font-family: var(--serif);
+    font-optical-sizing: auto;
+    font-size: var(--step-5);
+    font-weight: 300;
+    line-height: 1;
+    letter-spacing: -0.03em;
+    font-variant-numeric: lining-nums tabular-nums;
+    color: var(--ink);
+  }
+  .metric__label { font-weight: 500; color: var(--ink); max-width: 18rem; }
+  .metric__detail { margin-top: var(--space-2); max-width: 18rem; }
+
+  .metrics--inverse .metric__value,
+  .metrics--inverse .metric__label { color: var(--paper); }
+
+  @media (min-width: 40rem) {
+    .metrics__list { grid-template-columns: repeat(2, 1fr); }
+  }
+  @media (min-width: 64rem) {
+    .metrics__list { grid-template-columns: repeat(var(--cols), 1fr); }
+  }
+</style>

@@ -1,0 +1,21 @@
+# Type-checks and builds every pull request against the local sample content.
+name: Check
+
+on:
+  pull_request:
+  push:
+    branches: [main]
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version-file: .nvmrc
+          cache: npm
+      - run: npm ci
+      - run: npm run build
+      - name: Lint WordPress plugin
+        run: find wordpress -name '*.php' -print0 | xargs -0 -n1 php -l

@@ -1,0 +1,81 @@
+---
+import BaseLayout from '@/layouts/BaseLayout.astro';
+import HeroSplit from '@/components/blocks/HeroSplit.astro';
+import Container from '@/components/ui/Container.astro';
+import Typography from '@/components/ui/Typography.astro';
+import Button from '@/components/ui/Button.astro';
+import { getCaseStudies } from '@/lib/content';
+
+const entries = await getCaseStudies();
+---
+
+<BaseLayout title="Case studies" description="Selected engagements in technology consulting, software development, resource augmentation and operational risk.">
+  <HeroSplit
+    title="Case studies"
+    lede="Selected engagements, described by the problem, the approach and the result. Client names are shared only with their permission."
+  />
+
+  <Container class="cases">
+    {entries.length === 0 ? (
+      <div class="empty">
+        <Typography variant="lead">Case studies are being prepared for publication.</Typography>
+        <Button href="/contact" variant="quiet">Ask us about relevant work</Button>
+      </div>
+    ) : (
+      <ul role="list" class="case-list">
+        {entries.map((c) => (
+          <li>
+            <a href={`/case-studies/${c.id}`} class="case">
+              <div class="case__meta">
+                <Typography variant="meta">{c.data.sector}</Typography>
+                <Typography variant="small" tone="muted">{c.data.services.join(', ')}</Typography>
+                {c.data.sample && <span class="sample-tag">Sample</span>}
+              </div>
+              <div class="case__main">
+                <Typography as="h2" variant="h2" class="case__title">{c.data.title}</Typography>
+                <Typography variant="body" tone="muted">{c.data.summary}</Typography>
+              </div>
+              {c.data.results[0] && (
+                <p class="case__result">
+                  <span class="case__value">{c.data.results[0].value}</span>
+                  <span class="case__label">{c.data.results[0].label}</span>
+                </p>
+              )}
+            </a>
+          </li>
+        ))}
+      </ul>
+    )}
+  </Container>
+</BaseLayout>
+
+<style>
+  :global(.cases) { padding-block: var(--space-7) var(--space-section); }
+  .case-list { margin: 0; }
+  .case {
+    display: grid;
+    gap: var(--space-5);
+    padding-block: var(--space-7);
+    border-bottom: 1px solid var(--rule);
+    text-decoration: none;
+  }
+  .case-list li:first-child .case { padding-top: var(--space-5); }
+  .case__meta { display: grid; gap: var(--space-2); justify-items: start; align-content: start; }
+  .case__main { display: grid; gap: var(--space-4); }
+  .case:hover .case__title { text-decoration: underline; text-decoration-thickness: 1px; text-underline-offset: 0.12em; }
+  .case__result { display: grid; gap: var(--space-2); align-content: start; }
+  .case__value {
+    font-family: var(--serif);
+    font-size: var(--step-4);
+    font-weight: 300;
+    line-height: 1;
+    letter-spacing: -0.03em;
+    color: var(--ink);
+  }
+  .case__label { font-size: var(--step--1); color: var(--slate); }
+  .empty { display: grid; gap: var(--space-5); justify-items: start; }
+
+  @media (min-width: 64rem) {
+    .case { grid-template-columns: 3fr 7fr 2fr; gap: clamp(1rem, 2.5vw, 2rem); }
+  }
+</style>

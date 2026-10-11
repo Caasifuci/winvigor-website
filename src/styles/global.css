@@ -1,0 +1,178 @@
+/* ==========================================================================
+   Winvigor design tokens
+   Monochrome first. One accent (#0A96D6, taken from the logo) used only for:
+   primary action, focus, link underline, and the hero stroke.
+   ========================================================================== */
+
+:root {
+  /* Colour */
+  --ink: #0e1a22;          /* headings, dark surfaces */
+  --graphite: #2c3a44;     /* body copy */
+  --slate: #5e6b74;        /* secondary copy, captions */
+  --mist: #9aa7af;         /* muted copy on ink */
+  --rule: #d6dbdf;         /* hairlines */
+  --fog: #f2f4f5;          /* quiet surface */
+  --paper: #ffffff;
+  --accent: #0a96d6;       /* the single accent */
+  --on-ink: #e7ecef;
+
+  /* Type families: populated by Astro's <Font /> */
+  --serif: var(--font-serif), Georgia, serif;
+  --sans: var(--font-sans), system-ui, sans-serif;
+
+  /* Type scale (base 17px; display steps fluid) */
+  --step--1: 0.875rem;
+  --step-0: 1.0625rem;
+  --step-1: 1.3125rem;
+  --step-2: clamp(1.5rem, 1.32rem + 0.75vw, 1.875rem);
+  --step-3: clamp(1.875rem, 1.5rem + 1.6vw, 2.625rem);
+  --step-4: clamp(2.25rem, 1.65rem + 2.6vw, 3.625rem);
+  --step-5: clamp(2.625rem, 1.7rem + 3.6vw, 4.625rem);
+
+  /* Space (4px base) */
+  --space-1: 0.25rem;
+  --space-2: 0.5rem;
+  --space-3: 0.75rem;
+  --space-4: 1rem;
+  --space-5: 1.5rem;
+  --space-6: 2rem;
+  --space-7: 3rem;
+  --space-8: 4rem;
+  --space-section: clamp(4.5rem, 2.5rem + 8vw, 9.5rem);
+
+  /* Layout */
+  --measure: 66ch;
+  --container: 76rem;
+  --container-text: 46rem;
+  --gutter: clamp(1.25rem, 4vw, 3rem);
+  --radius: 2px;
+  --header-h: 4.5rem;
+}
+
+/* --------------------------------------------------------------------------
+   Reset
+   -------------------------------------------------------------------------- */
+*,
+*::before,
+*::after { box-sizing: border-box; }
+
+html {
+  -webkit-text-size-adjust: 100%;
+  text-size-adjust: 100%;
+  scroll-padding-top: calc(var(--header-h) + 1rem);
+}
+
+body {
+  margin: 0;
+  background: var(--paper);
+  color: var(--graphite);
+  font-family: var(--sans);
+  font-size: var(--step-0);
+  line-height: 1.6;
+  font-feature-settings: 'cv11', 'ss01';
+  -webkit-font-smoothing: antialiased;
+  text-rendering: optimizeLegibility;
+}
+
+h1, h2, h3, h4, p, ul, ol, dl, dd, figure, blockquote { margin: 0; }
+ul[role='list'], ol[role='list'] { list-style: none; padding: 0; }
+img, svg, picture { display: block; max-width: 100%; height: auto; }
+input, textarea, select, button { font: inherit; color: inherit; }
+
+a { color: inherit; text-decoration-thickness: 1px; text-underline-offset: 0.2em; }
+
+:focus-visible {
+  outline: 2px solid var(--accent);
+  outline-offset: 3px;
+}
+
+::selection { background: var(--ink); color: var(--paper); }
+
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
+}
+
+/* --------------------------------------------------------------------------
+   Utilities
+   -------------------------------------------------------------------------- */
+.visually-hidden {
+  position: absolute !important;
+  width: 1px; height: 1px;
+  overflow: hidden;
+  clip: rect(0 0 0 0);
+  clip-path: inset(50%);
+  white-space: nowrap;
+}
+
+.skip-link {
+  position: absolute;
+  left: var(--gutter);
+  top: -100px;
+  z-index: 100;
+  padding: var(--space-3) var(--space-4);
+  background: var(--ink);
+  color: var(--paper);
+}
+.skip-link:focus { top: var(--space-3); }
+
+/* Marks content that must be replaced before launch. */
+.sample-tag {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.4em;
+  padding: 0.2em 0.6em;
+  border: 1px dashed currentColor;
+  border-radius: var(--radius);
+  font-family: var(--sans);
+  font-size: 0.75rem;
+  font-weight: 500;
+  line-height: 1.4;
+  color: var(--slate);
+  white-space: nowrap;
+}
+.sample-tag::before { content: ''; width: 0.45em; height: 0.45em; border-radius: 50%; background: currentColor; }
+
+/* --------------------------------------------------------------------------
+   Long-form prose (insights, case studies)
+   -------------------------------------------------------------------------- */
+.prose { max-width: var(--measure); font-size: 1.125rem; line-height: 1.7; }
+.prose > * + * { margin-top: 1.25em; }
+.prose h2 {
+  margin-top: 2.4em;
+  font-family: var(--serif);
+  font-weight: 400;
+  font-size: var(--step-3);
+  line-height: 1.15;
+  letter-spacing: -0.01em;
+  color: var(--ink);
+}
+.prose h3 {
+  margin-top: 2em;
+  font-family: var(--serif);
+  font-weight: 500;
+  font-size: var(--step-2);
+  line-height: 1.25;
+  color: var(--ink);
+}
+.prose h2 + *, .prose h3 + * { margin-top: 0.75em; }
+.prose ul, .prose ol { padding-left: 1.2em; }
+.prose li + li { margin-top: 0.5em; }
+.prose li::marker { color: var(--slate); }
+.prose a { text-decoration-color: var(--accent); text-decoration-thickness: 2px; }
+.prose a:hover { color: var(--ink); }
+.prose strong { color: var(--ink); font-weight: 600; }
+.prose blockquote {
+  margin-block: 2em;
+  padding-left: var(--space-5);
+  border-left: 2px solid var(--ink);
+  font-family: var(--serif);
+  font-size: var(--step-2);
+  line-height: 1.35;
+  color: var(--ink);
+}
+.prose hr { border: 0; border-top: 1px solid var(--rule); margin-block: 3em; }

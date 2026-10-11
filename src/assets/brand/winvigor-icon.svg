@@ -1,0 +1,8 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="-19 -32 280 280" role="img" aria-label="Winvigor"><title>Winvigor</title>
+<rect x="-19" y="-32" width="280" height="280" rx="62" fill="#FFFFFF"></rect>
+<defs><linearGradient id="wvA" x1="0" y1="20" x2="0" y2="54" gradientUnits="userSpaceOnUse"><stop offset="0" stop-color="#0082C4"></stop><stop offset="1" stop-color="#005A9C"></stop></linearGradient><linearGradient id="wvB" x1="85" y1="0" x2="163" y2="0" gradientUnits="userSpaceOnUse"><stop offset="0" stop-color="#14C8FF"></stop><stop offset="1" stop-color="#0A96D6"></stop></linearGradient></defs>
+<path fill="#000000" d="M18 20H69L99 97L89 114L54 42L50 42L86 140L78 161Z"></path>
+<path fill="#000000" d="M136 30L128 53L131 61L170 158L224 20H207L169 107Z"></path>
+<path fill="url(#wvA)" d="M85 20H125L116 54H94Z"></path>
+<path fill="url(#wvB)" d="M122 70L81 172L91 195L120 121H125L154 195L163 168Z"></path>
+</svg>

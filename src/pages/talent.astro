@@ -1,0 +1,50 @@
+---
+import BaseLayout from '@/layouts/BaseLayout.astro';
+import HeroSplit from '@/components/blocks/HeroSplit.astro';
+import Editorial from '@/components/blocks/Editorial.astro';
+import TalentBoard from '@/components/blocks/TalentBoard.astro';
+import ProcessSteps from '@/components/blocks/ProcessSteps.astro';
+import RosterArt from '@/components/visuals/RosterArt.astro';
+import Container from '@/components/ui/Container.astro';
+import Button from '@/components/ui/Button.astro';
+import Typography from '@/components/ui/Typography.astro';
+import { getTalent, availability } from '@/lib/content';
+import { resourcingProcess } from '@/data/process';
+
+const talent = await getTalent();
+const availableNow = talent.filter((t) => availability(t.data.availableFrom).now).length;
+---
+
+<BaseLayout
+  title="Available engineers"
+  description="Anonymised profiles of engineers, analysts and delivery leads available for contract or permanent placement through Winvigor Solutions."
+>
+  <HeroSplit
+    title="Available engineers"
+    lede={`${talent.length} profiles listed, ${availableNow} available now. Filter by discipline, then request a profile to receive the full CV and arrange interviews.`}
+    primary={{ label: 'Send a hiring brief', href: '/contact?profile=brief#enquiry' }}
+    secondary={{ label: 'How placement works', href: '#process' }}
+  >
+    <RosterArt slot="visual" />
+  </HeroSplit>
+
+  <Container class="board-wrap">
+    {talent.length > 0 ? (
+      <TalentBoard profiles={talent} filters />
+    ) : (
+      <div class="empty">
+        <Typography variant="lead">The board is being refreshed. Send us your brief and we will search our network directly.</Typography>
+        <Button href="/contact?profile=brief#enquiry" variant="primary">Send a hiring brief</Button>
+      </div>
+    )}
+  </Container>
+
+  <Editorial id="process" title="From brief to placement" layout="stacked" surface="fog" intro="The same five steps for every request, whether you need one specialist or a full team.">
+    <ProcessSteps steps={resourcingProcess} label="Resourcing process" />
+  </Editorial>
+</BaseLayout>
+
+<style>
+  :global(.board-wrap) { padding-block: var(--space-7) var(--space-section); }
+  .empty { display: grid; gap: var(--space-5); justify-items: start; }
+</style>

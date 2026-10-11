@@ -1,0 +1,101 @@
+---
+/**
+ * Typography: every heading and text style on the site goes through here,
+ * so the scale stays rigid. Semantics (`as`) and appearance (`variant`)
+ * are separate: an h2 can look like a display line and vice versa.
+ *
+ * Serif (Newsreader) carries headings at a light weight; authority comes
+ * from size and space, not boldness. Sans (Inter) carries everything you read.
+ */
+import type { HTMLTag, Polymorphic } from 'astro/types';
+
+type Variant =
+  | 'display'   // hero headline
+  | 'h1'        // page title
+  | 'h2'        // section title
+  | 'h3'        // item title
+  | 'lead'      // introductory paragraph
+  | 'body'
+  | 'small'
+  | 'meta';     // dates, sectors, captions
+
+type Props<Tag extends HTMLTag = 'p'> = Polymorphic<{ as: Tag }> & {
+  variant?: Variant;
+  tone?: 'default' | 'muted' | 'inverse';
+  balance?: boolean;
+};
+
+const defaultTag: Record<Variant, HTMLTag> = {
+  display: 'h1', h1: 'h1', h2: 'h2', h3: 'h3',
+  lead: 'p', body: 'p', small: 'p', meta: 'p',
+};
+
+const { variant = 'body', as, tone = 'default', balance, class: className, ...rest } = Astro.props;
+// Balance headings by default; long-form text uses `pretty` to avoid short ragged lines.
+const isHeading = ['display', 'h1', 'h2', 'h3'].includes(variant);
+const shouldBalance = balance ?? isHeading;
+const Tag = as ?? defaultTag[variant];
+---
+
+<Tag class:list={['t', `t--${variant}`, `tone--${tone}`, { 't--balance': shouldBalance, 't--pretty': !shouldBalance }, className]} {...rest}>
+  <slot />
+</Tag>
+
+<style>
+  .t--balance { text-wrap: balance; }
+  .t--pretty { text-wrap: pretty; }
+
+  .t--display, .t--h1, .t--h2, .t--h3 {
+    font-family: var(--serif);
+    font-optical-sizing: auto;
+    color: var(--ink);
+  }
+
+  .t--display {
+    font-size: var(--step-5);
+    font-weight: 350;
+    line-height: 1.02;
+    letter-spacing: -0.022em;
+  }
+  .t--h1 {
+    font-size: var(--step-4);
+    font-weight: 380;
+    line-height: 1.06;
+    letter-spacing: -0.018em;
+  }
+  .t--h2 {
+    font-size: var(--step-3);
+    font-weight: 400;
+    line-height: 1.12;
+    letter-spacing: -0.012em;
+  }
+  .t--h3 {
+    font-size: var(--step-2);
+    font-weight: 450;
+    line-height: 1.22;
+    letter-spacing: -0.006em;
+  }
+
+  .t--lead {
+    font-size: var(--step-1);
+    line-height: 1.55;
+    max-width: 38em;
+    color: var(--graphite);
+  }
+  .t--body { font-size: var(--step-0); line-height: 1.65; max-width: var(--measure); }
+  .t--small { font-size: var(--step--1); line-height: 1.55; }
+  .t--meta {
+    font-size: var(--step--1);
+    line-height: 1.4;
+    font-weight: 500;
+    color: var(--slate);
+    font-variant-numeric: tabular-nums;
+  }
+
+  .tone--muted { color: var(--slate); }
+  .tone--inverse { color: var(--paper); }
+  .tone--inverse.t--lead,
+  .tone--inverse.t--body,
+  .tone--inverse.t--small { color: var(--on-ink); }
+  .tone--inverse.t--meta { color: var(--mist); }
+</style>

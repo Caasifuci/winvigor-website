@@ -1,0 +1,207 @@
+---
+/**
+ * TalentBoard: anonymised engineer profiles for hiring managers.
+ * Every profile links to a pre-filled request (/contact?profile=WV-1234).
+ *
+ * `filters` adds discipline and availability filters. They are progressive
+ * enhancement: without JavaScript every profile stays visible.
+ */
+import type { CollectionEntry } from 'astro:content';
+import Typography from '@/components/ui/Typography.astro';
+import Button from '@/components/ui/Button.astro';
+import { disciplines } from '@/data/taxonomy';
+import { availability } from '@/lib/content';
+
+interface Props {
+  profiles: CollectionEntry<'talent'>[];
+  filters?: boolean;
+  /** Show the sample notice above the board. */
+  sampleNotice?: boolean;
+}
+
+const { profiles, filters = false, sampleNotice = profiles.some((p) => p.data.sample) } = Astro.props;
+const present = disciplines.filter((d) => profiles.some((p) => p.data.discipline === d));
+---
+
+<div class="board" data-talent-board>
+  {sampleNotice && <p class="sample-tag board__tag">Sample profiles, replace before launch</p>}
+
+  {filters && (
+    <form class="filters" data-filters hidden aria-label="Filter engineers">
+      <fieldset class="filters__group">
+        <legend class="filters__legend">Discipline</legend>
+        <div class="chips">
+          <label class="chip"><input type="radio" name="discipline" value="" checked /><span>All</span></label>
+          {present.map((d) => (
+            <label class="chip"><input type="radio" name="discipline" value={d} /><span>{d}</span></label>
+          ))}
+        </div>
+      </fieldset>
+      <label class="toggle">
+        <input type="checkbox" name="now" value="1" />
+        <span>Available now only</span>
+      </label>
+      <p class="filters__count" aria-live="polite" data-count>{profiles.length} engineers</p>
+    </form>
+  )}
+
+  <ul role="list" class="profiles">
+    {profiles.map((p) => {
+      const d = p.data;
+      const avail = availability(d.availableFrom);
+      return (
+        <li class="profile" data-discipline={d.discipline} data-now={avail.now ? '1' : '0'}>
+          <article aria-labelledby={`${d.id}-role`}>
+            <header class="profile__head">
+              <Typography variant="meta" class="profile__ref">{d.id}</Typography>
+              <p class:list={['profile__avail', { 'is-now': avail.now }]}>{avail.label}</p>
+            </header>
+            <Typography as="h3" variant="h3" id={`${d.id}-role`} class="profile__role">{d.role}</Typography>
+            <p class="profile__level">{d.seniority}, {d.years} years</p>
+            <ul role="list" class="skills" aria-label="Key skills">
+              {d.skills.map((s) => <li>{s}</li>)}
+            </ul>
+            <Typography variant="small" tone="muted" class="profile__summary">{d.summary}</Typography>
+            <dl class="profile__facts">
+              <div><dt>Location</dt><dd>{d.location}</dd></div>
+              <div><dt>Languages</dt><dd>{d.languages.join(', ')}</dd></div>
+              <div><dt>Engagement</dt><dd>{d.engagement}</dd></div>
+            </dl>
+            <Button href={`/contact?profile=${d.id}#enquiry`} variant="secondary" class="profile__cta">
+              Request profile<span class="visually-hidden"> {d.id}</span>
+            </Button>
+          </article>
+        </li>
+      );
+    })}
+  </ul>
+
+  {filters && (
+    <p class="board__empty" data-empty hidden>
+      No engineers match these filters right now. <a href="/contact?profile=brief#enquiry">Send us a brief</a> and we will search our wider network.
+    </p>
+  )}
+</div>
+
+<script>
+  for (const board of document.querySelectorAll<HTMLElement>('[data-talent-board]')) {
+    const form = board.querySelector<HTMLFormElement>('[data-filters]');
+    if (!form) continue;
+    form.hidden = false;
+    const items = [...board.querySelectorAll<HTMLElement>('.profile')];
+    const count = form.querySelector('[data-count]')!;
+    const empty = board.querySelector<HTMLElement>('[data-empty]');
+    const apply = () => {
+      const data = new FormData(form);
+      const discipline = String(data.get('discipline') ?? '');
+      const nowOnly = data.get('now') === '1';
+      let shown = 0;
+      for (const el of items) {
+        const match = (!discipline || el.dataset.discipline === discipline) && (!nowOnly || el.dataset.now === '1');
+        el.hidden = !match;
+        if (match) shown++;
+      }
+      count.textContent = `${shown} ${shown === 1 ? 'engineer' : 'engineers'}`;
+      if (empty) empty.hidden = shown > 0;
+    };
+    form.addEventListener('change', apply);
+    form.addEventListener('submit', (e) => e.preventDefault());
+  }
+</script>
+
+<style>
+  .board__tag { margin-bottom: var(--space-6); }
+
+  /* Filters */
+  .filters {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: end;
+    gap: var(--space-5) var(--space-7);
+    margin-bottom: var(--space-7);
+    padding-bottom: var(--space-5);
+    border-bottom: 1px solid var(--rule);
+  }
+  .filters[hidden] { display: none; }
+  .filters__group { border: 0; margin: 0; padding: 0; min-width: 0; }
+  .filters__legend { padding: 0; margin-bottom: var(--space-3); font-size: var(--step--1); font-weight: 500; color: var(--slate); }
+  .chips { display: flex; flex-wrap: wrap; gap: var(--space-2); }
+  .chip input, .toggle input { position: absolute; opacity: 0; width: 1px; height: 1px; }
+  .chip span {
+    display: inline-block;
+    padding: 0.45rem 0.85rem;
+    border: 1px solid var(--rule);
+    border-radius: var(--radius);
+    font-size: 0.875rem;
+    font-weight: 500;
+    color: var(--graphite);
+    cursor: pointer;
+  }
+  .chip span:hover { border-color: var(--ink); }
+  .chip input:checked + span { background: var(--ink); border-color: var(--ink); color: var(--paper); }
+  .chip input:focus-visible + span, .toggle input:focus-visible + span { outline: 2px solid var(--accent); outline-offset: 2px; }
+
+  .toggle { position: relative; display: inline-flex; cursor: pointer; }
+  .toggle span { display: inline-flex; align-items: center; gap: 0.6rem; font-size: 0.875rem; font-weight: 500; color: var(--ink); }
+  .toggle span::before {
+    content: '';
+    width: 1.1rem; height: 1.1rem;
+    border: 1.5px solid var(--ink);
+    border-radius: var(--radius);
+    background: var(--paper);
+  }
+  .toggle input:checked + span::before {
+    background: var(--ink) url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16'%3E%3Cpath d='M3 8.5l3 3 7-7' fill='none' stroke='white' stroke-width='2'/%3E%3C/svg%3E") center / 80% no-repeat;
+  }
+  .filters__count { margin-left: auto; font-size: var(--step--1); color: var(--slate); font-variant-numeric: tabular-nums; }
+
+  /* Profiles */
+  .profiles {
+    display: grid;
+    gap: var(--space-7) clamp(1rem, 2.5vw, 2rem);
+    margin: 0;
+  }
+  .profile[hidden] { display: none; }
+  .profile article {
+    display: grid;
+    gap: var(--space-3);
+    align-content: start;
+    height: 100%;
+    padding-top: var(--space-4);
+    border-top: 1px solid var(--ink);
+  }
+
+  .profile__head { display: flex; justify-content: space-between; align-items: baseline; gap: var(--space-4); }
+  .profile__avail { font-size: var(--step--1); font-weight: 500; color: var(--slate); white-space: nowrap; }
+  .profile__avail.is-now { display: inline-flex; align-items: center; gap: 0.5em; color: var(--ink); }
+  /* The slanted mark doubles as the "available" signal. */
+  .profile__avail.is-now::before {
+    content: '';
+    width: 0.4rem; height: 0.9rem;
+    background: var(--accent);
+    transform: skewX(-21deg);
+  }
+  .profile__role { margin-top: var(--space-1); }
+  .profile__level { font-weight: 500; color: var(--ink); }
+
+  .skills { display: flex; flex-wrap: wrap; gap: var(--space-2); margin: var(--space-2) 0 0; }
+  .skills li {
+    padding: 0.2rem 0.55rem;
+    border: 1px solid var(--rule);
+    border-radius: var(--radius);
+    font-size: 0.8125rem;
+    color: var(--graphite);
+  }
+
+  .profile__facts { display: grid; gap: var(--space-2); margin-top: var(--space-2); font-size: var(--step--1); }
+  .profile__facts div { display: grid; grid-template-columns: 6.5rem 1fr; gap: var(--space-3); }
+  .profile__facts dt { color: var(--slate); }
+  .profile__facts dd { margin: 0; color: var(--ink); }
+  :global(.profile__cta) { justify-self: start; margin-top: var(--space-3); align-self: end; }
+
+  .board__empty { margin-top: var(--space-6); color: var(--graphite); }
+  .board__empty a { color: var(--ink); text-decoration-color: var(--accent); text-decoration-thickness: 2px; }
+
+  @media (min-width: 44rem) { .profiles { grid-template-columns: repeat(2, minmax(0, 1fr)); } }
+  @media (min-width: 72rem) { .profiles { grid-template-columns: repeat(3, minmax(0, 1fr)); } }
+</style>

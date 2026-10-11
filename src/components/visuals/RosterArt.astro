@@ -1,0 +1,30 @@
+---
+/**
+ * RosterArt (talent board): a roster of engineers as slanted marks.
+ * Filled = on assignment, outlined = available, one accent = the match.
+ */
+import { bar } from './geometry';
+
+const COLS = 9, ROWS = 5, W = 560, H = 440;
+const available = new Set([3, 7, 11, 16, 20, 24, 29, 33, 38, 41]);
+const match = 20;
+const marks = Array.from({ length: COLS * ROWS }, (_, n) => {
+  const c = n % COLS, r = Math.floor(n / COLS);
+  const x = 40 + c * 56, base = 100 + r * 76;
+  return { d: bar(x, base, 14, 48), state: n === match ? 'match' : available.has(n) ? 'open' : 'busy' };
+});
+---
+
+<svg class="art" viewBox={`0 0 ${W} ${H}`} xmlns="http://www.w3.org/2000/svg" focusable="false">
+  {Array.from({ length: ROWS }, (_, r) => (
+    <line class="art__row" x1="24" y1={100 + r * 76} x2={W - 24} y2={100 + r * 76} />
+  ))}
+  {marks.map((m) => <path class:list={['mark', `mark--${m.state}`]} d={m.d} />)}
+</svg>
+
+<style>
+  .art__row { stroke: var(--rule); stroke-width: 1; }
+  .mark--busy { fill: var(--rule); }
+  .mark--open { fill: var(--paper); stroke: var(--ink); stroke-width: 1.75; }
+  .mark--match { fill: var(--accent); }
+</style>

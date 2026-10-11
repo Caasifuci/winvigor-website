@@ -1,0 +1,171 @@
+---
+import BaseLayout from '@/layouts/BaseLayout.astro';
+import HeroSplit from '@/components/blocks/HeroSplit.astro';
+import Editorial from '@/components/blocks/Editorial.astro';
+import MetricGrid from '@/components/blocks/MetricGrid.astro';
+import ClientLogos from '@/components/blocks/ClientLogos.astro';
+import TalentBoard from '@/components/blocks/TalentBoard.astro';
+import DeliveryLog from '@/components/blocks/DeliveryLog.astro';
+import SystemsArt from '@/components/visuals/SystemsArt.astro';
+import Typography from '@/components/ui/Typography.astro';
+import Button from '@/components/ui/Button.astro';
+import { services, site } from '@/data/site';
+import { getCaseStudies, getLog, getTalent, availability } from '@/lib/content';
+
+const caseStudies = (await getCaseStudies()).filter((c) => c.data.featured).slice(0, 2);
+const talent = await getTalent();
+const availableNow = talent.filter((t) => availability(t.data.availableFrom).now).length;
+const logEntries = (await getLog()).map((e) => e.data);
+
+const outcomes = [
+  { value: '38%', label: 'Lower annual run cost', detail: 'Application consolidation, public sector.' },
+  { value: '12 wk', label: 'To a fully staffed data team', detail: 'Resource augmentation, consumer goods.' },
+  { value: '61%', label: 'Fewer priority-one incidents', detail: 'Operational risk, industrial manufacturing.' },
+];
+---
+
+<BaseLayout>
+  <HeroSplit
+    scale="home"
+    title="Technology strategy and engineering talent for complex enterprise programmes."
+    lede="Winvigor Solutions is a technology consulting and talent resourcing firm in Zaventem, Belgium. We assess, staff and deliver IT change for EU institutions and enterprises."
+    primary={{ label: 'Find available engineers', href: '/talent' }}
+    secondary={{ label: 'What we do', href: '/what-we-do' }}
+  >
+    <SystemsArt slot="visual" />
+    <ClientLogos slot="footer" />
+  </HeroSplit>
+
+  <Editorial
+    id="what-we-do"
+    title="What we do"
+    intro="Strategy, engineering and specialist talent under a single engagement, so advice and delivery stay accountable to the same outcome."
+    surface="fog"
+  >
+    <Button slot="aside" href="/what-we-do" variant="quiet">How each service works</Button>
+    <ul role="list" class="service-list">
+      {services.map((s) => (
+        <li>
+          <Typography as="h3" variant="h3"><a href={`/what-we-do#${s.id}`}>{s.title}</a></Typography>
+          <Typography variant="body" tone="muted">{s.summary}</Typography>
+        </li>
+      ))}
+    </ul>
+  </Editorial>
+
+  {talent.length > 0 && (
+    <Editorial
+      id="talent"
+      title="Available engineers"
+      intro={`${availableNow} of ${talent.length} listed engineers can start now. Profiles are anonymised; request one to receive the full CV.`}
+      layout="stacked"
+    >
+      <Button slot="aside" href="/talent" variant="primary">See the full talent board</Button>
+      <TalentBoard profiles={talent.slice(0, 3)} />
+    </Editorial>
+  )}
+
+  {(site.showSampleContent || logEntries.length > 0) && (
+    <Editorial title="Evidence, not adjectives" layout="stacked" surface="fog" intro="Results from completed engagements, and a running log of work in progress.">
+      {site.showSampleContent && <MetricGrid metrics={outcomes} sample />}
+      {logEntries.length > 0 && (
+        <div class="log-wrap">
+          <Typography as="h3" variant="h3" class="log-title">Delivery log</Typography>
+          <DeliveryLog entries={logEntries} />
+        </div>
+      )}
+    </Editorial>
+  )}
+
+  {caseStudies.length > 0 && (
+    <Editorial title="Selected work" layout="stacked">
+      <Button slot="aside" href="/case-studies" variant="quiet">All case studies</Button>
+      <ul role="list" class="work-list">
+        {caseStudies.map((c) => (
+          <li>
+            <a href={`/case-studies/${c.id}`} class="work">
+              <Typography variant="meta">{c.data.sector}</Typography>
+              <Typography as="h3" variant="h3" class="work__title">{c.data.title}</Typography>
+              {c.data.results[0] && (
+                <p class="work__result"><strong>{c.data.results[0].value}</strong> {c.data.results[0].label.toLowerCase()}</p>
+              )}
+              {c.data.sample && <span class="sample-tag">Sample</span>}
+            </a>
+          </li>
+        ))}
+      </ul>
+    </Editorial>
+  )}
+
+  <section class="pair" aria-label="Careers and insights">
+    <div class="pair__inner">
+      <div class="pair__item">
+        <Typography as="h2" variant="h2">Work on programmes that matter</Typography>
+        <Typography variant="body" tone="muted">Engineers and analysts join Winvigor for assignments with EU institutions and enterprise clients, permanent or on contract.</Typography>
+        <Button href="/careers" variant="secondary">Careers</Button>
+      </div>
+      <div class="pair__item">
+        <Typography as="h2" variant="h2">See how we work</Typography>
+        <Typography variant="body" tone="muted">Our consulting and resourcing processes, step by step, with what you receive at each stage.</Typography>
+        <Button href="/insights" variant="secondary">Insights</Button>
+      </div>
+    </div>
+  </section>
+
+  <Editorial surface="ink" title="Start with a conversation" intro="Tell us where the programme stands and what it needs to achieve.">
+    <div class="cta">
+      <Button href="/contact" variant="primary" size="lg" inverse>Contact us</Button>
+      <Typography variant="small" tone="inverse">
+        Or write to <a href={`mailto:${site.contact.email}`}>{site.contact.email}</a>
+      </Typography>
+    </div>
+  </Editorial>
+</BaseLayout>
+
+<style>
+  .service-list { margin: 0; border-top: 1px solid var(--ink); }
+  .service-list li {
+    display: grid;
+    gap: var(--space-3);
+    padding-block: var(--space-6);
+    border-bottom: 1px solid var(--rule);
+  }
+  .service-list a { text-decoration: none; }
+  .service-list a:hover { text-decoration: underline; text-decoration-thickness: 1px; }
+
+  .log-wrap { margin-top: var(--space-8); }
+  :global(.log-title) { margin-bottom: var(--space-5); }
+
+  .work-list { display: grid; gap: var(--space-7) clamp(1rem, 2.5vw, 2rem); margin: 0; }
+  .work {
+    display: grid;
+    gap: var(--space-3);
+    justify-items: start;
+    padding-top: var(--space-5);
+    border-top: 1px solid var(--ink);
+    text-decoration: none;
+  }
+  :global(.work__title) { max-width: 32rem; }
+  .work:hover :global(.work__title) { text-decoration: underline; text-decoration-thickness: 1px; text-underline-offset: 0.15em; }
+  .work__result { color: var(--graphite); }
+  .work__result strong { font-family: var(--serif); font-size: var(--step-2); font-weight: 400; color: var(--ink); margin-right: 0.15em; }
+
+  .pair { border-top: 1px solid var(--rule); }
+  .pair__inner {
+    max-width: calc(var(--container) + 2 * var(--gutter));
+    margin-inline: auto;
+    padding: var(--space-section) var(--gutter);
+    display: grid;
+    gap: var(--space-8) clamp(1rem, 2.5vw, 2rem);
+  }
+  .pair__item { display: grid; gap: var(--space-4); justify-items: start; align-content: start; max-width: 32rem; }
+  .pair__item :global(.btn) { margin-top: var(--space-3); }
+
+  .cta { display: grid; gap: var(--space-5); justify-items: start; }
+  .cta a:not([class]) { color: var(--paper); }
+
+  @media (min-width: 48rem) {
+    .work-list { grid-template-columns: repeat(2, 1fr); }
+    .pair__inner { grid-template-columns: repeat(2, 1fr); }
+  }
+</style>

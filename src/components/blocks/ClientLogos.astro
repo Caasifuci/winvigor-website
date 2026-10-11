@@ -1,0 +1,64 @@
+---
+/**
+ * ClientLogos: a quiet roll of client names.
+ * Names render as type until approved logo artwork is supplied in
+ * src/data/site.ts (`logo`), at which point the SVG is shown in monochrome.
+ * Use third-party logos only with the client's permission.
+ */
+import { Image } from 'astro:assets';
+import Typography from '@/components/ui/Typography.astro';
+import { clients as defaultClients } from '@/data/site';
+
+interface Props {
+  title?: string;
+  clients?: { name: string; logo?: ImageMetadata }[];
+  align?: 'inline' | 'stacked';
+}
+
+const { title = 'Clients we have delivered for', clients = defaultClients, align = 'inline' } = Astro.props;
+---
+
+<div class:list={['clients', `clients--${align}`]}>
+  <Typography as="h2" variant="meta" class="clients__title">{title}</Typography>
+  <ul role="list" class="clients__list">
+    {clients.map((c) => (
+      <li class="clients__item">
+        {c.logo ? (
+          <Image src={c.logo} alt={c.name} height={28} class="clients__logo" />
+        ) : (
+          <span class="clients__name">{c.name}</span>
+        )}
+      </li>
+    ))}
+  </ul>
+</div>
+
+<style>
+  .clients {
+    display: grid;
+    gap: var(--space-5);
+    padding-top: var(--space-5);
+    border-top: 1px solid var(--rule);
+  }
+
+  .clients__list {
+    display: flex;
+    flex-wrap: wrap;
+    gap: var(--space-4) clamp(1.5rem, 3.5vw, 3rem);
+    margin: 0;
+  }
+
+  .clients__name {
+    font-family: var(--sans);
+    font-size: clamp(1.0625rem, 1rem + 0.35vw, 1.3125rem);
+    font-weight: 600;
+    letter-spacing: -0.015em;
+    color: var(--slate);
+    white-space: nowrap;
+  }
+  .clients__logo { height: 1.75rem; width: auto; filter: grayscale(1); opacity: 0.7; }
+
+  @media (min-width: 64rem) {
+    .clients--inline { grid-template-columns: 14rem 1fr; align-items: baseline; }
+  }
+</style>

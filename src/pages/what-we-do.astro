@@ -1,0 +1,103 @@
+---
+import BaseLayout from '@/layouts/BaseLayout.astro';
+import HeroSplit from '@/components/blocks/HeroSplit.astro';
+import Editorial from '@/components/blocks/Editorial.astro';
+import Typography from '@/components/ui/Typography.astro';
+import Button from '@/components/ui/Button.astro';
+import { services } from '@/data/site';
+import { getCaseStudies, getTalent, availability } from '@/lib/content';
+
+const caseStudies = await getCaseStudies();
+const talent = await getTalent();
+const availableNow = talent.filter((t) => availability(t.data.availableFrom).now).length;
+const relatedFor = (title: string) =>
+  caseStudies.filter((c) => c.data.services.some((s) => s.toLowerCase() === title.toLowerCase()));
+---
+
+<BaseLayout title="What we do" description="Strategic IT consulting, custom software development, resource augmentation and operational risk management for EU institutions and enterprises.">
+  <HeroSplit
+    title="Strategy, engineering and talent under one engagement."
+    lede="Four services, combined to fit the programme. Clients engage us for one or for all four; in either case one team is accountable for the outcome."
+  />
+
+  <nav class="toc" aria-label="Services on this page">
+    <ul role="list">
+      {services.map((s) => <li><a href={`#${s.id}`}>{s.title}</a></li>)}
+    </ul>
+  </nav>
+
+  {services.map((s, i) => {
+    const related = relatedFor(s.title);
+    const isResourcing = s.id === 'resource-augmentation';
+    return (
+      <Editorial id={s.id} title={s.title} rule={i > 0}>
+        <Typography variant="lead">{s.summary}</Typography>
+        <Typography variant="body" class="detail">{s.detail}</Typography>
+
+        {isResourcing && talent.length > 0 && (
+          <div class="talent-callout">
+            <p class="talent-callout__figure">
+              <span class="talent-callout__value">{availableNow}</span>
+              <span>engineers available now on the talent board</span>
+            </p>
+            <Button href="/talent" variant="primary">See available engineers</Button>
+          </div>
+        )}
+
+        {related.length > 0 && (
+          <div class="related">
+            <Typography as="h3" variant="meta">Related work</Typography>
+            <ul role="list">
+              {related.map((c) => (
+                <li>
+                  <a href={`/case-studies/${c.id}`}>{c.data.title}</a>
+                  {c.data.sample && <span class="sample-tag">Sample</span>}
+                </li>
+              ))}
+            </ul>
+          </div>
+        )}
+      </Editorial>
+    );
+  })}
+
+  <Editorial surface="ink" title="Not sure which service fits?" intro="Describe the problem. We will recommend the combination that suits it, including when the answer is a smaller engagement than you expected.">
+    <div class="cta">
+      <Button href="/contact" variant="primary" size="lg" inverse>Contact us</Button>
+      <Button href="/insights" variant="quiet" inverse>See how an engagement runs</Button>
+    </div>
+  </Editorial>
+</BaseLayout>
+
+<style>
+  .toc {
+    max-width: calc(var(--container) + 2 * var(--gutter));
+    margin-inline: auto;
+    padding: var(--space-5) var(--gutter);
+  }
+  .toc ul { display: flex; flex-wrap: wrap; gap: var(--space-3) var(--space-6); margin: 0; }
+  .toc a { font-weight: 500; color: var(--graphite); text-decoration-color: var(--rule); }
+  .toc a:hover { color: var(--ink); text-decoration-color: var(--accent); }
+
+  :global(.detail) { margin-top: var(--space-5); }
+
+  .talent-callout {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    justify-content: space-between;
+    gap: var(--space-5);
+    margin-top: var(--space-7);
+    padding: var(--space-5) var(--space-6);
+    background: var(--fog);
+  }
+  .talent-callout__figure { display: flex; align-items: baseline; gap: var(--space-3); color: var(--ink); font-weight: 500; }
+  .talent-callout__value { font-family: var(--serif); font-size: var(--step-4); font-weight: 300; line-height: 1; }
+
+  .related { margin-top: var(--space-7); padding-top: var(--space-5); border-top: 1px solid var(--rule); }
+  .related ul { margin: var(--space-3) 0 0; display: grid; gap: var(--space-3); }
+  .related li { display: flex; flex-wrap: wrap; align-items: center; gap: var(--space-3); }
+  .related a { color: var(--ink); text-decoration-color: var(--accent); text-decoration-thickness: 2px; }
+
+  .cta { display: flex; flex-wrap: wrap; align-items: center; gap: var(--space-5) var(--space-6); }
+</style>

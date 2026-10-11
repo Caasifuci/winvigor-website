@@ -1,0 +1,37 @@
+---
+/**
+ * Container: the only component that owns horizontal gutters and max-widths.
+ * width="wide"  → page grid (76rem)
+ * width="text"  → reading column (46rem)
+ * width="full"  → edge to edge, gutters only
+ */
+import type { HTMLTag, Polymorphic } from 'astro/types';
+
+type Props<Tag extends HTMLTag = 'div'> = Polymorphic<{ as: Tag }> & {
+  width?: 'wide' | 'text' | 'full';
+  grid?: boolean;
+};
+
+const { as: Tag = 'div', width = 'wide', grid = false, class: className, ...rest } = Astro.props;
+---
+
+<Tag class:list={['container', `container--${width}`, { 'container--grid': grid }, className]} {...rest}>
+  <slot />
+</Tag>
+
+<style>
+  .container {
+    width: 100%;
+    margin-inline: auto;
+    padding-inline: var(--gutter);
+  }
+  .container--wide { max-width: calc(var(--container) + 2 * var(--gutter)); }
+  .container--text { max-width: calc(var(--container-text) + 2 * var(--gutter)); }
+
+  /* 12-column editorial grid; children place themselves with grid-column. */
+  .container--grid {
+    display: grid;
+    grid-template-columns: repeat(12, minmax(0, 1fr));
+    column-gap: clamp(1rem, 2.5vw, 2rem);
+  }
+</style>

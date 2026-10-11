@@ -1,0 +1,115 @@
+---
+import BaseLayout from '@/layouts/BaseLayout.astro';
+import HeroSplit from '@/components/blocks/HeroSplit.astro';
+import Editorial from '@/components/blocks/Editorial.astro';
+import ClientLogos from '@/components/blocks/ClientLogos.astro';
+import LayersArt from '@/components/visuals/LayersArt.astro';
+import Typography from '@/components/ui/Typography.astro';
+import Button from '@/components/ui/Button.astro';
+import { site } from '@/data/site';
+
+const principles = [
+  {
+    title: 'Advice and delivery under one roof',
+    body: 'The consultants who set the roadmap stay accountable for delivering it, alongside the engineers who build it.',
+  },
+  {
+    title: 'Plans that fit the organisation',
+    body: 'Recommendations are shaped by your contracts, governance and people. A plan your board cannot approve is not a plan.',
+  },
+  {
+    title: 'Outcomes agreed up front',
+    body: 'Every engagement starts with measurable targets and ends with a review against them.',
+  },
+];
+
+const { street, postalCode, locality, country } = site.contact.address;
+---
+
+<BaseLayout title="Who we are" description="Winvigor Solutions is a technology consulting and talent resourcing firm based in Zaventem, Belgium, working with EU institutions and enterprises.">
+  <HeroSplit
+    title="Consultants and engineers, accountable for the same outcome."
+    lede="Winvigor Solutions is a technology consulting and talent resourcing firm based in Zaventem, on the edge of Brussels. We work with leadership teams to streamline operations, reduce delivery risk and staff critical programmes."
+  >
+    <LayersArt slot="visual" />
+  </HeroSplit>
+
+  <Editorial title="Our story">
+    <div class="prose">
+      <p>
+        Winvigor was founded on a simple observation: technology programmes go wrong when the people advising on them are not accountable for delivering them.
+      </p>
+      <p>
+        We combine three things most organisations buy separately: strategic IT consulting, software delivery and specialist talent. Our clients include EU institutions, systems integrators such as Capgemini and Atos, and industrial and consumer-goods enterprises including Dresser-Rand and Reckitt.
+      </p>
+    </div>
+  </Editorial>
+
+  <Editorial title="Mission" surface="ink">
+    <p class="mission">
+      To help enterprises build operational excellence and sustainable growth through technology consulting and talent resourcing.
+    </p>
+    <Typography variant="body" tone="inverse" class="mission__sub">
+      We strengthen our clients' own capabilities, so what we build keeps working after we leave.
+    </Typography>
+  </Editorial>
+
+  <Editorial title="How we work">
+    <dl class="principles">
+      {principles.map((p) => (
+        <div>
+          <dt><Typography as="span" variant="h3">{p.title}</Typography></dt>
+          <dd><Typography as="span" variant="body" tone="muted">{p.body}</Typography></dd>
+        </div>
+      ))}
+    </dl>
+    <Button href="/insights" variant="quiet" class="principles__link">See our process step by step</Button>
+  </Editorial>
+
+  <Editorial surface="fog" layout="stacked">
+    <ClientLogos />
+  </Editorial>
+
+  <Editorial title="Office" rule>
+    <div class="office">
+      <address>
+        {site.name}<br />
+        {street}<br />
+        {postalCode} {locality}<br />
+        {country}
+      </address>
+      <div class="office__actions">
+        <Button href="/contact" variant="primary" size="lg">Contact us</Button>
+        <Button href="/careers" variant="quiet">Careers</Button>
+      </div>
+    </div>
+  </Editorial>
+</BaseLayout>
+
+<style>
+  .mission {
+    font-family: var(--serif);
+    font-optical-sizing: auto;
+    font-size: var(--step-3);
+    font-weight: 350;
+    line-height: 1.22;
+    letter-spacing: -0.01em;
+    color: var(--paper);
+    text-wrap: pretty;
+  }
+  :global(.mission__sub) { margin-top: var(--space-6); }
+
+  .principles { margin: 0; border-top: 1px solid var(--ink); }
+  .principles > div {
+    display: grid;
+    gap: var(--space-3);
+    padding-block: var(--space-6);
+    border-bottom: 1px solid var(--rule);
+  }
+  .principles dd { margin: 0; }
+  :global(.principles__link) { margin-top: var(--space-6); }
+
+  .office { display: grid; gap: var(--space-6); }
+  .office address { font-style: normal; font-size: var(--step-1); line-height: 1.5; color: var(--ink); }
+  .office__actions { display: flex; flex-wrap: wrap; align-items: center; gap: var(--space-4) var(--space-6); }
+</style>

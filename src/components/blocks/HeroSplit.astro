@@ -1,0 +1,87 @@
+---
+/**
+ * HeroSplit: headline left, vector artwork right (passed in the "visual" slot).
+ * Artwork comes from src/components/visuals/, built from the slanted strokes
+ * of the Winvigor mark. No people photography.
+ *
+ * Without a visual it becomes a text-only page header.
+ * A named "footer" slot sits under the split (used for the client list).
+ */
+import Container from '@/components/ui/Container.astro';
+import Typography from '@/components/ui/Typography.astro';
+import Button from '@/components/ui/Button.astro';
+
+type Cta = { label: string; href: string };
+
+interface Props {
+  title: string;
+  lede?: string;
+  /** Short context line above the title. Omit unless it carries information. */
+  context?: string;
+  primary?: Cta;
+  secondary?: Cta;
+  /** "home" uses the display size; inner pages use the h1 size. */
+  scale?: 'home' | 'page';
+}
+
+const { title, lede, context, primary, secondary, scale = 'page' } = Astro.props;
+const hasVisual = Astro.slots.has('visual');
+---
+
+<section class:list={['hero', `hero--${scale}`, { 'hero--text': !hasVisual }]}>
+  <Container grid class="hero__grid">
+    <div class="hero__copy">
+      {context && <Typography variant="meta" class="hero__context">{context}</Typography>}
+      <Typography as="h1" variant={scale === 'home' ? 'display' : 'h1'}>{title}</Typography>
+      {lede && <Typography variant="lead" class="hero__lede">{lede}</Typography>}
+      {(primary || secondary) && (
+        <div class="hero__actions">
+          {primary && <Button href={primary.href} variant="primary" size="lg">{primary.label}</Button>}
+          {secondary && <Button href={secondary.href} variant="quiet" size="lg">{secondary.label}</Button>}
+        </div>
+      )}
+    </div>
+
+    {hasVisual && (
+      <div class="hero__visual" aria-hidden="true">
+        <slot name="visual" />
+      </div>
+    )}
+  </Container>
+
+  {Astro.slots.has('footer') && (
+    <Container class="hero__footer">
+      <slot name="footer" />
+    </Container>
+  )}
+</section>
+
+<style>
+  .hero { padding-block: clamp(3rem, 2rem + 5vw, 7rem) clamp(3.5rem, 2rem + 6vw, 7.5rem); }
+  .hero--text { padding-bottom: clamp(2.5rem, 1.5rem + 4vw, 5rem); border-bottom: 1px solid var(--rule); }
+
+  :global(.hero__grid) { row-gap: var(--space-7); align-items: center; }
+
+  .hero__copy { grid-column: 1 / -1; }
+  .hero__context { margin-bottom: var(--space-5); }
+  .hero__lede { margin-top: var(--space-5); }
+  .hero--home .hero__lede { margin-top: var(--space-6); }
+  .hero__actions {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: var(--space-4) var(--space-6);
+    margin-top: var(--space-7);
+  }
+
+  .hero__visual { grid-column: 1 / -1; max-width: 32rem; width: 100%; justify-self: center; }
+  .hero__visual :global(svg) { width: 100%; height: auto; }
+
+  .hero__footer { margin-top: clamp(4rem, 3rem + 4vw, 7rem); }
+
+  @media (min-width: 64rem) {
+    .hero__copy { grid-column: 1 / span 7; }
+    .hero--text .hero__copy { grid-column: 1 / span 9; }
+    .hero__visual { grid-column: 8 / -1; max-width: none; }
+  }
+</style>

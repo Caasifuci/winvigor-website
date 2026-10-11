@@ -1,0 +1,146 @@
+---
+import BaseLayout from '@/layouts/BaseLayout.astro';
+import HeroSplit from '@/components/blocks/HeroSplit.astro';
+import Container from '@/components/ui/Container.astro';
+import Typography from '@/components/ui/Typography.astro';
+import Button from '@/components/ui/Button.astro';
+import { site } from '@/data/site';
+
+const { email, phone, phoneHref, address, formEndpoint } = site.contact;
+const usesMailClient = !formEndpoint;
+const turnstileKey = import.meta.env.PUBLIC_TURNSTILE_SITE_KEY as string | undefined;
+---
+
+<BaseLayout title="Contact" description={`Contact ${site.name} about technology consulting and talent resourcing. ${address.street}, ${address.postalCode} ${address.locality}.`}>
+  <HeroSplit
+    title="Tell us about your programme or hiring need."
+    lede="Strategic advice, a delivery team or a specialist engineer: tell us what you need and how to reach you."
+  />
+
+  <Container grid class="contact">
+    <form
+      id="enquiry"
+      class="form"
+      action={formEndpoint ?? `mailto:${email}`}
+      method="post"
+      enctype={usesMailClient ? 'text/plain' : undefined}
+    >
+      <div class="field">
+        <label for="name">Name</label>
+        <input id="name" name="name" type="text" autocomplete="name" required />
+      </div>
+      <div class="field">
+        <label for="email">Work email</label>
+        <input id="email" name="email" type="email" autocomplete="email" required />
+      </div>
+      <div class="field">
+        <label for="organisation">Organisation <span class="optional">(optional)</span></label>
+        <input id="organisation" name="organisation" type="text" autocomplete="organization" />
+      </div>
+      <input type="hidden" name="profile" id="profile" />
+      {/* Honeypot: hidden from people, filled in by bots. */}
+      <div class="hp" aria-hidden="true">
+        <label for="website">Leave this field empty</label>
+        <input id="website" name="website" type="text" tabindex="-1" autocomplete="off" />
+      </div>
+      <div class="field">
+        <label for="message">How can we help?</label>
+        <textarea id="message" name="message" rows="6" required></textarea>
+      </div>
+      {turnstileKey && !usesMailClient && <div class="cf-turnstile" data-sitekey={turnstileKey} data-theme="light"></div>}
+      <p class="form__status" role="alert" data-status hidden></p>
+      <div class="form__actions">
+        <Button type="submit" variant="primary" size="lg">Send enquiry</Button>
+        {usesMailClient && (
+          <Typography variant="small" tone="muted">This opens your email app with the message ready to send.</Typography>
+        )}
+      </div>
+    </form>
+
+    <aside class="details" aria-label="Contact details">
+      <div>
+        <Typography as="h2" variant="meta">Email</Typography>
+        <p><a href={`mailto:${email}`}>{email}</a></p>
+      </div>
+      <div>
+        <Typography as="h2" variant="meta">Phone</Typography>
+        <p><a href={phoneHref}>{phone}</a></p>
+      </div>
+      <div>
+        <Typography as="h2" variant="meta">Office</Typography>
+        <address>
+          {address.street}<br />
+          {address.postalCode} {address.locality}<br />
+          {address.country}
+        </address>
+      </div>
+    </aside>
+  </Container>
+</BaseLayout>
+
+{turnstileKey && !usesMailClient && <script is:inline src="https://challenges.cloudflare.com/turnstile/v0/api.js" async defer></script>}
+
+<script>
+  // Error states returned by the enquiry endpoint (?status=…)
+  const statusMessages: Record<string, string> = {
+    invalid: 'Please add your name, a valid email address and a message, then send again.',
+    limit: 'Too many messages from this connection in the last hour. Please email us directly instead.',
+    verify: 'The security check did not complete. Please try again.',
+  };
+  const status = new URLSearchParams(location.search).get('status');
+  const statusEl = document.querySelector<HTMLElement>('[data-status]');
+  if (status && statusEl && statusMessages[status]) {
+    statusEl.textContent = statusMessages[status];
+    statusEl.hidden = false;
+  }
+
+  // Prefill from the talent board: /contact?profile=WV-1234 or ?profile=brief
+  const ref = new URLSearchParams(location.search).get('profile');
+  const message = document.querySelector<HTMLTextAreaElement>('#message');
+  const hidden = document.querySelector<HTMLInputElement>('#profile');
+  if (ref && message && !message.value) {
+    if (/^WV-\d{4}$/.test(ref)) {
+      hidden!.value = ref;
+      message.value = `I would like to receive the full profile for ${ref}.\n\nRole and team: \nStart date: \nDuration: `;
+    } else if (ref === 'brief') {
+      message.value = 'Hiring brief\n\nRole: \nKey skills: \nStart date: \nDuration: \nLocation or remote: ';
+    }
+  }
+</script>
+
+<style>
+  :global(.contact) { padding-block: var(--space-section); row-gap: var(--space-8); }
+
+  .form { grid-column: 1 / -1; display: grid; gap: var(--space-6); }
+  .field { display: grid; gap: var(--space-2); }
+  label { font-weight: 500; color: var(--ink); }
+  .optional { font-weight: 400; color: var(--slate); }
+
+  input, textarea {
+    width: 100%;
+    padding: 0.8rem 0;
+    border: 0;
+    border-bottom: 1px solid var(--slate);
+    border-radius: 0;
+    background: transparent;
+    font-size: var(--step-1);
+    line-height: 1.4;
+    color: var(--ink);
+  }
+  textarea { resize: vertical; min-height: 8rem; }
+  input:focus, textarea:focus { outline: none; border-bottom: 2px solid var(--accent); padding-bottom: calc(0.8rem - 1px); }
+  input:focus-visible, textarea:focus-visible { outline: none; }
+
+  .hp { position: absolute; left: -10000px; width: 1px; height: 1px; overflow: hidden; }
+  .form__status { padding: var(--space-3) var(--space-4); border-left: 2px solid var(--ink); background: var(--fog); color: var(--ink); }
+  .form__actions { display: flex; flex-wrap: wrap; align-items: center; gap: var(--space-4) var(--space-5); margin-top: var(--space-3); }
+
+  .details { grid-column: 1 / -1; display: grid; gap: var(--space-6); align-content: start; }
+  .details p, .details address { margin-top: var(--space-2); font-size: var(--step-1); font-style: normal; color: var(--ink); line-height: 1.45; }
+  .details a { text-decoration-color: var(--accent); text-decoration-thickness: 2px; }
+
+  @media (min-width: 64rem) {
+    .form { grid-column: 1 / span 7; }
+    .details { grid-column: 9 / -1; padding-top: var(--space-2); }
+  }
+</style>

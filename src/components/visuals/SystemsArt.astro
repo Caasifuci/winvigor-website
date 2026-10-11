@@ -1,0 +1,49 @@
+---
+/**
+ * SystemsArt (home hero): slanted bars rising on a blueprint grid, joined by
+ * a trend line. Echoes "Build. Scale. Succeed." One bar carries the accent.
+ */
+import { bar, barTop, gridLines } from './geometry';
+
+const W = 640, H = 600, BASE = 520, STEP = 40;
+const heights = [110, 170, 140, 250, 215, 330, 420];
+const bars = heights.map((h, i) => {
+  const x = 36 + i * 62;
+  return { d: bar(x, BASE, 26, h), top: barTop(x, BASE, 26, h), tone: i === heights.length - 1 ? 'accent' : i % 2 ? 'ink' : 'slate', i };
+});
+const grid = gridLines(W, H, STEP);
+const trend = bars.map((b) => b.top.join(',')).join(' ');
+---
+
+<svg class="art" viewBox={`0 0 ${W} ${H}`} xmlns="http://www.w3.org/2000/svg" focusable="false">
+  <g class="art__grid">
+    {grid.v.map((x) => <line x1={x} y1="0" x2={x} y2={H} />)}
+    {grid.h.map((y) => <line x1="0" y1={y} x2={W} y2={y} />)}
+  </g>
+  <line class="art__base" x1="24" y1={BASE} x2={W - 24} y2={BASE} />
+  {bars.map((b) => <path class:list={['art__bar', `tone--${b.tone}`]} d={b.d} style={`--i:${b.i}`} />)}
+  <polyline class="art__trend" points={trend} />
+  {bars.map((b) => <circle class="art__node" cx={b.top[0]} cy={b.top[1]} r="4.5" style={`--i:${b.i}`} />)}
+</svg>
+
+<style>
+  .art__grid line { stroke: var(--rule); stroke-width: 1; opacity: 0.7; }
+  .art__base { stroke: var(--ink); stroke-width: 1.5; }
+  .tone--ink { fill: var(--ink); }
+  .tone--slate { fill: var(--slate); }
+  .tone--accent { fill: var(--accent); }
+  .art__trend { fill: none; stroke: var(--ink); stroke-width: 1.25; stroke-dasharray: 4 5; }
+  .art__node { fill: var(--paper); stroke: var(--ink); stroke-width: 1.5; }
+
+  @media (prefers-reduced-motion: no-preference) {
+    .art__bar {
+      transform-box: fill-box;
+      transform-origin: 50% 100%;
+      animation: rise 900ms cubic-bezier(0.2, 0.7, 0.1, 1) both;
+      animation-delay: calc(120ms + var(--i) * 70ms);
+    }
+    .art__node, .art__trend { animation: appear 500ms ease both; animation-delay: 750ms; }
+    @keyframes rise { from { transform: scaleY(0); } to { transform: scaleY(1); } }
+    @keyframes appear { from { opacity: 0; } to { opacity: 1; } }
+  }
+</style>

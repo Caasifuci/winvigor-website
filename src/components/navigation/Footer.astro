@@ -1,0 +1,98 @@
+---
+import Logo from '@/assets/brand/winvigor-secondary-reversed.svg';
+import Container from '@/components/ui/Container.astro';
+import { headerCta, nav, services, site } from '@/data/site';
+
+const year = new Date().getFullYear();
+const { street, postalCode, locality, country } = site.contact.address;
+---
+
+<footer class="site-footer">
+  <Container grid class="footer-grid">
+    <div class="footer-brand">
+      <Logo class="footer-logo" aria-hidden="true" />
+      <p class="footer-line">Technology consulting and talent resourcing for enterprise programmes.</p>
+    </div>
+
+    <nav class="footer-col footer-col--services" aria-labelledby="f-services">
+      <h2 id="f-services" class="footer-heading">What we do</h2>
+      <ul role="list">
+        {services.map((s) => <li><a href={`/what-we-do#${s.id}`}>{s.title}</a></li>)}
+        <li><a href={headerCta.href}>{headerCta.label}</a></li>
+        <li><a href="/case-studies">Case studies</a></li>
+      </ul>
+    </nav>
+
+    <nav class="footer-col footer-col--company" aria-labelledby="f-company">
+      <h2 id="f-company" class="footer-heading">Company</h2>
+      <ul role="list">
+        {nav.filter((n) => n.href !== '/what-we-do').map((n) => <li><a href={n.href}>{n.label}</a></li>)}
+      </ul>
+    </nav>
+
+    <div class="footer-col footer-col--contact">
+      <h2 class="footer-heading">Office</h2>
+      <address>
+        {street}<br />{postalCode} {locality}<br />{country}
+      </address>
+      <p>
+        <a href={`mailto:${site.contact.email}`}>{site.contact.email}</a><br />
+        <a href={site.contact.phoneHref}>{site.contact.phone}</a>
+      </p>
+      {site.social.linkedin && <p><a href={site.social.linkedin} rel="me noopener">LinkedIn</a></p>}
+    </div>
+
+    <div class="footer-legal">
+      <p>© {year} {site.name}{site.vat && <>, VAT {site.vat}</>}</p>
+    </div>
+  </Container>
+</footer>
+
+<style>
+  .site-footer {
+    background: var(--ink);
+    color: var(--mist);
+    padding-block: var(--space-8) var(--space-6);
+    font-size: 0.9375rem;
+  }
+
+  :global(.footer-grid) { row-gap: var(--space-7); }
+
+  .footer-brand { grid-column: 1 / -1; }
+  .footer-col { grid-column: span 12; }
+  .footer-legal { grid-column: 1 / -1; }
+
+  .footer-logo { height: 2.75rem; width: auto; }
+  .footer-line { margin-top: var(--space-5); max-width: 22rem; color: var(--on-ink); line-height: 1.55; }
+
+  .footer-heading {
+    margin-bottom: var(--space-4);
+    font-family: var(--sans);
+    font-size: 0.8125rem;
+    font-weight: 600;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    color: var(--paper);
+  }
+
+  ul { margin: 0; display: grid; gap: var(--space-2); }
+  a { color: var(--on-ink); text-decoration: none; }
+  a:hover { color: var(--paper); text-decoration: underline; text-decoration-color: var(--accent); }
+  address { font-style: normal; line-height: 1.6; margin-bottom: var(--space-4); }
+
+  .footer-legal {
+    padding-top: var(--space-5);
+    border-top: 1px solid #24323b;
+    font-size: 0.8125rem;
+  }
+
+  @media (min-width: 40rem) {
+    .footer-col { grid-column: span 6; }
+  }
+  @media (min-width: 64rem) {
+    .footer-brand { grid-column: 1 / span 4; }
+    .footer-col--services { grid-column: 6 / span 3; }
+    .footer-col--company { grid-column: 9 / span 2; }
+    .footer-col--contact { grid-column: 11 / span 2; }
+  }
+</style>

@@ -1,0 +1,116 @@
+---
+/**
+ * CaseStudyLayout: engagement facts → results → narrative → next step.
+ * Receives a case-studies collection entry; the Markdown body is the slot.
+ */
+import type { CollectionEntry } from 'astro:content';
+import { Picture } from 'astro:assets';
+import BaseLayout from './BaseLayout.astro';
+import Container from '@/components/ui/Container.astro';
+import Typography from '@/components/ui/Typography.astro';
+import Button from '@/components/ui/Button.astro';
+import MetricGrid from '@/components/blocks/MetricGrid.astro';
+import Editorial from '@/components/blocks/Editorial.astro';
+import { site } from '@/data/site';
+
+interface Props {
+  entry: CollectionEntry<'case-studies'>;
+  next?: CollectionEntry<'case-studies'>;
+}
+
+const { entry, next } = Astro.props;
+const d = entry.data;
+
+const facts = [
+  { term: 'Client', value: d.client },
+  { term: 'Sector', value: d.sector },
+  { term: 'Services', value: d.services.join(', ') },
+  ...(d.duration ? [{ term: 'Duration', value: d.duration }] : []),
+];
+---
+
+<BaseLayout title={d.title} description={d.summary} ogType="article" noindex={d.sample}>
+  <article>
+    <header class="cs-head">
+      <Container grid>
+        <div class="cs-head__copy">
+          <p class="cs-head__back"><a href="/case-studies">Case studies</a></p>
+          {d.sample && <p class="sample-tag cs-head__tag">Sample case study, replace before launch</p>}
+          <Typography as="h1" variant="h1">{d.title}</Typography>
+          <Typography variant="lead" class="cs-head__summary">{d.summary}</Typography>
+        </div>
+        <dl class="cs-facts">
+          {facts.map((f) => (
+            <div>
+              <dt>{f.term}</dt>
+              <dd>{f.value}</dd>
+            </div>
+          ))}
+        </dl>
+      </Container>
+    </header>
+
+    {d.cover && (
+      <Container class="cs-cover">
+        <Picture src={d.cover} alt={d.coverAlt ?? ''} formats={['avif', 'webp']} widths={[720, 1200, 1600]} sizes="(min-width: 76rem) 76rem, 100vw" />
+      </Container>
+    )}
+
+    {d.results.length > 0 && (
+      <Editorial title="Results" surface="fog" layout="stacked">
+        <MetricGrid metrics={d.results} sample={d.sample} columns={d.results.length >= 3 ? 3 : 2} />
+      </Editorial>
+    )}
+
+    <Container grid class="cs-body">
+      <div class="prose cs-prose">
+        <slot />
+      </div>
+    </Container>
+  </article>
+
+  <Editorial surface="ink" layout="split" title="Facing a similar challenge?" intro="Tell us about the programme and the outcome you need.">
+    <div class="cs-cta">
+      <Button href="/contact" variant="primary" size="lg" inverse>Contact us</Button>
+      {next && <Button href={`/case-studies/${next.id}`} variant="quiet" inverse>Next: {next.data.title}</Button>}
+      <Typography variant="small" tone="inverse">Or write to <a href={`mailto:${site.contact.email}`}>{site.contact.email}</a></Typography>
+    </div>
+  </Editorial>
+</BaseLayout>
+
+<style>
+  .cs-head { padding-block: clamp(3rem, 2rem + 4vw, 6rem) var(--space-7); }
+  .cs-head__copy { grid-column: 1 / -1; }
+  .cs-head__back { margin-bottom: var(--space-6); font-size: var(--step--1); font-weight: 500; }
+  .cs-head__back a { color: var(--slate); text-decoration-color: var(--rule); }
+  .cs-head__back a:hover { color: var(--ink); }
+  .cs-head__tag { margin-bottom: var(--space-5); }
+  .cs-head__summary { margin-top: var(--space-5); }
+
+  .cs-facts {
+    grid-column: 1 / -1;
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(12rem, 1fr));
+    gap: var(--space-5);
+    margin-top: var(--space-7);
+    padding-top: var(--space-5);
+    border-top: 1px solid var(--rule);
+  }
+  .cs-facts dt { font-size: var(--step--1); color: var(--slate); }
+  .cs-facts dd { margin-top: var(--space-1); font-weight: 500; color: var(--ink); }
+
+  :global(.cs-cover) { margin-bottom: var(--space-section); }
+  :global(.cs-cover img) { width: 100%; aspect-ratio: 21 / 9; object-fit: cover; filter: grayscale(1); }
+
+  :global(.cs-body) { padding-block: var(--space-section); }
+  .cs-prose { grid-column: 1 / -1; }
+  .cs-prose :global(> h2:first-child) { margin-top: 0; }
+
+  .cs-cta { display: grid; justify-items: start; gap: var(--space-5); }
+  .cs-cta a:not([class]) { color: var(--paper); }
+
+  @media (min-width: 64rem) {
+    .cs-head__copy { grid-column: 1 / span 9; }
+    .cs-prose { grid-column: 3 / span 8; }
+  }
+</style>

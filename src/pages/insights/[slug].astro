@@ -1,0 +1,64 @@
+---
+import type { GetStaticPaths } from 'astro';
+import { render } from 'astro:content';
+import BaseLayout from '@/layouts/BaseLayout.astro';
+import Container from '@/components/ui/Container.astro';
+import Typography from '@/components/ui/Typography.astro';
+import Editorial from '@/components/blocks/Editorial.astro';
+import Button from '@/components/ui/Button.astro';
+import { getInsights, formatDate } from '@/lib/content';
+import { site } from '@/data/site';
+
+export const getStaticPaths = (async () => {
+  const posts = await getInsights();
+  return posts.map((post) => ({ params: { slug: post.id }, props: { post } }));
+}) satisfies GetStaticPaths;
+
+const { post } = Astro.props;
+const { Content } = await render(post);
+const d = post.data;
+
+const article = {
+  '@context': 'https://schema.org',
+  '@type': 'Article',
+  headline: d.title,
+  description: d.description,
+  datePublished: d.publishDate.toISOString(),
+  ...(d.updatedDate && { dateModified: d.updatedDate.toISOString() }),
+  author: { '@type': 'Organization', name: d.author },
+  publisher: { '@type': 'Organization', name: site.name },
+};
+---
+
+<BaseLayout title={d.title} description={d.description} ogType="article" noindex={d.sample} schema={article}>
+  <article>
+    <Container width="text" as="header" class="post-head">
+      <p class="post-head__back"><a href="/insights">Insights</a></p>
+      {d.sample && <p class="sample-tag post-head__tag">Sample article, replace before launch</p>}
+      <Typography as="h1" variant="h1">{d.title}</Typography>
+      <Typography variant="lead" class="post-head__lede">{d.description}</Typography>
+      <Typography variant="meta" class="post-head__meta">
+        <time datetime={d.publishDate.toISOString()}>{formatDate(d.publishDate)}</time>, {d.author}
+      </Typography>
+    </Container>
+
+    <Container width="text" class="post-body">
+      <div class="prose"><Content /></div>
+    </Container>
+  </article>
+
+  <Editorial surface="ink" title="Discuss this with us" intro="If this article reflects a challenge in your organisation, we would welcome the conversation.">
+    <Button href="/contact" variant="primary" size="lg" inverse>Contact us</Button>
+  </Editorial>
+</BaseLayout>
+
+<style>
+  :global(.post-head) { padding-block: clamp(3rem, 2rem + 4vw, 6rem) var(--space-7); border-bottom: 1px solid var(--rule); }
+  .post-head__back { margin-bottom: var(--space-6); font-size: var(--step--1); font-weight: 500; }
+  .post-head__back a { color: var(--slate); text-decoration-color: var(--rule); }
+  .post-head__back a:hover { color: var(--ink); }
+  .post-head__tag { margin-bottom: var(--space-5); }
+  :global(.post-head__lede) { margin-top: var(--space-5); }
+  :global(.post-head__meta) { margin-top: var(--space-6); }
+  :global(.post-body) { padding-block: var(--space-7) var(--space-section); }
+</style>

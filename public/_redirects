@@ -1,0 +1,6 @@
+# Permanent redirects from the old WordPress URLs (served at the edge)
+/home-2      /             301
+/blog        /insights     301
+/about       /who-we-are   301
+/services    /what-we-do   301
+/contact-us  /contact      301

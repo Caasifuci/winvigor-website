@@ -1,0 +1,53 @@
+---
+/**
+ * DeliveryLog: dated entries from live engagements, newest first.
+ * Evidence of work in progress rather than a description of it.
+ */
+export interface LogEntry {
+  date: string; // ISO date
+  sector: string;
+  entry: string;
+  sample?: boolean;
+}
+
+interface Props {
+  entries: LogEntry[];
+  limit?: number;
+}
+
+const { entries, limit = 5 } = Astro.props;
+const rows = [...entries].sort((a, b) => b.date.localeCompare(a.date)).slice(0, limit);
+const isSample = rows.some((r) => r.sample);
+const fmt = new Intl.DateTimeFormat('en-GB', { day: '2-digit', month: 'short', year: 'numeric' });
+---
+
+<div class="log">
+  {isSample && <p class="sample-tag log__tag">Sample entries, replace before launch</p>}
+  <ol class="log__list" aria-label="Delivery log, most recent first">
+    {rows.map((r) => (
+      <li class="log__row">
+        <time class="log__date" datetime={r.date}>{fmt.format(new Date(r.date))}</time>
+        <span class="log__sector">{r.sector}</span>
+        <span class="log__entry">{r.entry}</span>
+      </li>
+    ))}
+  </ol>
+</div>
+
+<style>
+  .log__tag { margin-bottom: var(--space-5); }
+  .log__list { list-style: none; margin: 0; padding: 0; border-top: 1px solid var(--ink); }
+  .log__row {
+    display: grid;
+    gap: var(--space-1) var(--space-5);
+    padding-block: var(--space-4);
+    border-bottom: 1px solid var(--rule);
+  }
+  .log__date { font-size: var(--step--1); font-weight: 500; color: var(--ink); font-variant-numeric: tabular-nums; }
+  .log__sector { font-size: var(--step--1); color: var(--slate); }
+  .log__entry { color: var(--graphite); }
+
+  @media (min-width: 48rem) {
+    .log__row { grid-template-columns: 7.5rem 11rem 1fr; align-items: baseline; }
+  }
+</style>

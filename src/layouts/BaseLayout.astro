@@ -1,0 +1,93 @@
+---
+/**
+ * BaseLayout: document shell, metadata, fonts, header and footer.
+ * Ships no client JavaScript.
+ */
+import { Font } from 'astro:assets';
+import Header from '@/components/navigation/Header.astro';
+import Footer from '@/components/navigation/Footer.astro';
+import { site } from '@/data/site';
+import '@/styles/global.css';
+
+interface Props {
+  title?: string;
+  description?: string;
+  /** Absolute or root-relative URL to a 1200×630 image. */
+  ogImage?: string;
+  ogType?: 'website' | 'article';
+  noindex?: boolean;
+  /** Structured data object(s) to embed as JSON-LD. */
+  schema?: Record<string, unknown> | Record<string, unknown>[];
+}
+
+const {
+  title,
+  description = site.description,
+  ogImage = '/android-chrome-512.png',
+  ogType = 'website',
+  noindex = false,
+  schema,
+} = Astro.props;
+
+const pageTitle = title ? `${title} | ${site.name}` : `${site.name}: technology consulting and talent resourcing`;
+const canonical = new URL(Astro.url.pathname, Astro.site ?? site.url).href.replace(/\/$/, '') || site.url;
+const ogImageUrl = new URL(ogImage, Astro.site ?? site.url).href;
+
+const organisation = {
+  '@context': 'https://schema.org',
+  '@type': 'ProfessionalService',
+  name: site.name,
+  url: site.url,
+  email: site.contact.email,
+  telephone: site.contact.phoneHref.replace('tel:', ''),
+  address: {
+    '@type': 'PostalAddress',
+    streetAddress: site.contact.address.street,
+    postalCode: site.contact.address.postalCode,
+    addressLocality: site.contact.address.locality,
+    addressCountry: 'BE',
+  },
+};
+const jsonLd = [organisation, ...(schema ? (Array.isArray(schema) ? schema : [schema]) : [])];
+---
+
+<!doctype html>
+<html lang="en-GB">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>{pageTitle}</title>
+    <meta name="description" content={description} />
+    <link rel="canonical" href={canonical} />
+    {noindex && <meta name="robots" content="noindex" />}
+
+    <Font cssVariable="--font-serif" preload={[{ style: 'normal' }]} />
+    <Font cssVariable="--font-sans" preload />
+
+    <link rel="icon" href="/favicon.ico" sizes="any" />
+    <link rel="icon" href="/favicon.svg" type="image/svg+xml" />
+    <link rel="apple-touch-icon" href="/apple-touch-icon.png" />
+    <link rel="manifest" href="/site.webmanifest" />
+    <link rel="sitemap" href="/sitemap-index.xml" />
+    <meta name="theme-color" content="#ffffff" />
+
+    <meta property="og:type" content={ogType} />
+    <meta property="og:site_name" content={site.name} />
+    <meta property="og:title" content={title ?? site.name} />
+    <meta property="og:description" content={description} />
+    <meta property="og:url" content={canonical} />
+    <meta property="og:image" content={ogImageUrl} />
+    <meta property="og:locale" content="en_GB" />
+    <meta name="twitter:card" content="summary_large_image" />
+
+    <script type="application/ld+json" set:html={JSON.stringify(jsonLd)} />
+  </head>
+  <body>
+    <a class="skip-link" href="#main">Skip to content</a>
+    <Header />
+    <main id="main">
+      <slot />
+    </main>
+    <Footer />
+  </body>
+</html>

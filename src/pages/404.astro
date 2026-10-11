@@ -1,0 +1,13 @@
+---
+import BaseLayout from '@/layouts/BaseLayout.astro';
+import HeroSplit from '@/components/blocks/HeroSplit.astro';
+---
+
+<BaseLayout title="Page not found" noindex>
+  <HeroSplit
+    title="This page does not exist."
+    lede="The address may have changed when the site was rebuilt. Use the menu above, or go back to the home page."
+    primary={{ label: 'Go to the home page', href: '/' }}
+    secondary={{ label: 'Contact us', href: '/contact' }}
+  />
+</BaseLayout>

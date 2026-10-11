@@ -1,0 +1,18 @@
+# Rebuilds the site every Monday so talent-board availability dates
+# ("Available now" / "From 3 Nov") stay accurate even when no content changes.
+# Requires the repository secret CF_DEPLOY_HOOK (Cloudflare Pages deploy hook URL).
+name: Weekly rebuild
+
+on:
+  schedule:
+    - cron: '0 5 * * 1' # Mondays 05:00 UTC
+  workflow_dispatch:
+
+jobs:
+  rebuild:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Trigger Cloudflare Pages deploy hook
+        run: curl -fsS -X POST "$HOOK"
+        env:
+          HOOK: ${{ secrets.CF_DEPLOY_HOOK }}

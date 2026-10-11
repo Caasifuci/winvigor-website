@@ -1,0 +1,107 @@
+---
+import BaseLayout from '@/layouts/BaseLayout.astro';
+import HeroSplit from '@/components/blocks/HeroSplit.astro';
+import Editorial from '@/components/blocks/Editorial.astro';
+import ProcessSteps from '@/components/blocks/ProcessSteps.astro';
+import StepsArt from '@/components/visuals/StepsArt.astro';
+import Typography from '@/components/ui/Typography.astro';
+import Button from '@/components/ui/Button.astro';
+import { site } from '@/data/site';
+import { hiringProcess } from '@/data/process';
+import { getRoles } from '@/lib/content';
+
+const roles = await getRoles();
+const apply = (subject: string) => `mailto:${site.contact.email}?subject=${encodeURIComponent(subject)}`;
+
+const facts = [
+  { title: 'Clients', body: 'EU institutions, systems integrators and industrial and consumer-goods enterprises.' },
+  { title: 'Work', body: 'Software engineering, cloud and platform, data, quality and test, analysis and delivery.' },
+  { title: 'Arrangements', body: 'Permanent roles and contract assignments. You know the client, team and scope before you commit.' },
+  { title: 'Location', body: 'Our office is in Zaventem, near Brussels. Many assignments are hybrid or remote within the EU.' },
+];
+---
+
+<BaseLayout title="Careers" description="Engineering, data, cloud and delivery roles with Winvigor Solutions, permanent or on contract, with EU institutions and enterprise clients.">
+  <HeroSplit
+    title="Work on programmes that matter, with the scope stated up front."
+    lede="We place engineers, analysts and delivery leads on enterprise and public-sector programmes. Apply for an open role or join the talent network."
+    primary={{ label: 'See open roles', href: '#roles' }}
+    secondary={{ label: 'Join the talent network', href: apply('Talent network') }}
+  >
+    <StepsArt slot="visual" />
+  </HeroSplit>
+
+  <Editorial title="What to expect">
+    <dl class="facts">
+      {facts.map((f) => (
+        <div>
+          <dt>{f.title}</dt>
+          <dd>{f.body}</dd>
+        </div>
+      ))}
+    </dl>
+  </Editorial>
+
+  <Editorial id="roles" title="Open roles" layout="stacked" surface="fog">
+    {roles.length > 0 ? (
+      <>
+        {roles.some((r) => r.data.sample) && <p class="sample-tag roles__tag">Sample roles, replace before launch</p>}
+        <ul role="list" class="roles">
+          {roles.map((r) => (
+            <li class="role">
+              <div class="role__main">
+                <Typography as="h3" variant="h3">{r.data.title}</Typography>
+                <Typography variant="body" tone="muted">{r.data.summary}</Typography>
+              </div>
+              <dl class="role__facts">
+                <div><dt>Discipline</dt><dd>{r.data.discipline}</dd></div>
+                <div><dt>Location</dt><dd>{r.data.location}</dd></div>
+                <div><dt>Type</dt><dd>{r.data.type}</dd></div>
+              </dl>
+              <Button href={apply(`Application: ${r.data.title}`)} variant="secondary" class="role__cta">
+                Apply<span class="visually-hidden"> for {r.data.title}</span>
+              </Button>
+            </li>
+          ))}
+        </ul>
+      </>
+    ) : (
+      <Typography variant="lead">No open roles right now. Join the talent network and we will contact you when a matching assignment opens.</Typography>
+    )}
+  </Editorial>
+
+  <Editorial title="How we hire" layout="stacked">
+    <ProcessSteps steps={hiringProcess} label="Hiring process" />
+  </Editorial>
+
+  <Editorial surface="ink" title="Nothing that fits yet?" intro="Send your CV and the kind of work you want next. We will contact you when a matching assignment opens.">
+    <Button href={apply('Talent network')} variant="primary" size="lg" inverse>Join the talent network</Button>
+  </Editorial>
+</BaseLayout>
+
+<style>
+  .facts { margin: 0; border-top: 1px solid var(--ink); }
+  .facts > div { display: grid; gap: var(--space-2); padding-block: var(--space-5); border-bottom: 1px solid var(--rule); }
+  .facts dt { font-weight: 600; color: var(--ink); }
+  .facts dd { margin: 0; color: var(--graphite); }
+
+  .roles__tag { margin-bottom: var(--space-6); }
+  .roles { margin: 0; border-top: 1px solid var(--ink); }
+  .role {
+    display: grid;
+    gap: var(--space-5);
+    padding-block: var(--space-6);
+    border-bottom: 1px solid var(--rule);
+  }
+  .role__main { display: grid; gap: var(--space-3); max-width: 40rem; }
+  .role__facts { display: grid; gap: var(--space-2); margin: 0; font-size: var(--step--1); }
+  .role__facts div { display: grid; grid-template-columns: 6rem 1fr; gap: var(--space-3); }
+  .role__facts dt { color: var(--slate); }
+  .role__facts dd { margin: 0; color: var(--ink); }
+  :global(.role__cta) { justify-self: start; }
+
+  @media (min-width: 64rem) {
+    .role { grid-template-columns: 6fr 4fr auto; align-items: start; column-gap: clamp(1rem, 2.5vw, 2rem); }
+    .facts > div { grid-template-columns: 9rem 1fr; gap: var(--space-5); }
+  }
+</style>

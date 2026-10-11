@@ -1,0 +1,150 @@
+---
+/**
+ * Header: logo pinned to the far left (it is the home link, so there is
+ * no Home item), five-item uppercase nav, and the talent board as the one
+ * header action. Zero JavaScript; the mobile menu is a native <details>.
+ */
+import Logo from '@/assets/brand/winvigor-secondary.svg';
+import Container from '@/components/ui/Container.astro';
+import Button from '@/components/ui/Button.astro';
+import { headerCta, nav, site } from '@/data/site';
+
+const path = Astro.url.pathname.replace(/\/$/, '') || '/';
+const isCurrent = (href: string) => path === href || path.startsWith(`${href}/`);
+---
+
+<header class="site-header">
+  <Container width="full" class="bar">
+    <a href="/" class="brand" aria-label={`${site.name}, home`}>
+      <Logo class="brand__logo" aria-hidden="true" />
+    </a>
+
+    <nav class="nav nav--desktop" aria-label="Primary">
+      <ul role="list">
+        {nav.map((item) => (
+          <li>
+            <a href={item.href} aria-current={isCurrent(item.href) ? 'page' : undefined}>{item.label}</a>
+          </li>
+        ))}
+      </ul>
+      <Button href={headerCta.href} variant="primary" aria-current={isCurrent(headerCta.href) ? 'page' : undefined}>
+        {headerCta.label}
+      </Button>
+    </nav>
+
+    <details class="nav nav--mobile">
+      <summary>
+        <span class="summary__open">Menu</span>
+        <span class="summary__close">Close</span>
+      </summary>
+      <div class="sheet">
+        <ul role="list">
+          {nav.map((item) => (
+            <li>
+              <a href={item.href} aria-current={isCurrent(item.href) ? 'page' : undefined}>{item.label}</a>
+            </li>
+          ))}
+        </ul>
+        <Button href={headerCta.href} variant="primary" size="lg" class="sheet__cta">{headerCta.label}</Button>
+        <p class="sheet__contact">
+          <a href={`mailto:${site.contact.email}`}>{site.contact.email}</a><br />
+          <a href={site.contact.phoneHref}>{site.contact.phone}</a>
+        </p>
+      </div>
+    </details>
+  </Container>
+</header>
+
+<style>
+  .site-header {
+    position: sticky;
+    top: 0;
+    z-index: 50;
+    background: var(--paper);
+    border-bottom: 1px solid var(--rule);
+  }
+
+  :global(.bar) {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: var(--space-6);
+    height: var(--header-h);
+  }
+
+  .brand { display: block; flex-shrink: 0; margin-right: auto; }
+  .brand__logo { height: 2.75rem; width: auto; }
+
+  .nav ul { display: flex; margin: 0; }
+  .nav a { text-decoration: none; }
+
+  /* Desktop: uppercase labels, tracked for legibility at small size. */
+  .nav--desktop { display: none; align-items: center; gap: clamp(1.5rem, 3vw, 3rem); }
+  .nav--desktop ul { gap: clamp(1.25rem, 2.4vw, 2.5rem); }
+  .nav--desktop li a {
+    position: relative;
+    display: block;
+    padding-block: 0.5rem;
+    font-size: 0.8125rem;
+    font-weight: 600;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    color: var(--graphite);
+  }
+  .nav--desktop li a:hover { color: var(--ink); }
+  .nav--desktop li a[aria-current='page'] { color: var(--ink); }
+  .nav--desktop li a[aria-current='page']::after,
+  .nav--desktop li a:hover::after {
+    content: '';
+    position: absolute;
+    left: 0; right: 0; bottom: 0;
+    height: 2px;
+    background: var(--ink);
+  }
+
+  /* Mobile */
+  .nav--mobile summary {
+    list-style: none;
+    cursor: pointer;
+    padding: 0.5rem 0;
+    font-size: 0.8125rem;
+    font-weight: 600;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    color: var(--ink);
+  }
+  .nav--mobile summary::-webkit-details-marker { display: none; }
+  .summary__close { display: none; }
+  .nav--mobile[open] .summary__open { display: none; }
+  .nav--mobile[open] .summary__close { display: inline; }
+
+  .sheet {
+    position: fixed;
+    inset: var(--header-h) 0 0 0;
+    background: var(--paper);
+    padding: var(--space-7) var(--gutter);
+    overflow-y: auto;
+  }
+  .sheet ul { flex-direction: column; gap: var(--space-4); }
+  .sheet li a {
+    font-family: var(--serif);
+    font-size: var(--step-3);
+    font-weight: 400;
+    line-height: 1.15;
+    color: var(--ink);
+  }
+  .sheet li a[aria-current='page'] { text-decoration: underline; text-decoration-thickness: 1px; }
+  :global(.sheet__cta) { margin-top: var(--space-7); }
+  .sheet__contact {
+    margin-top: var(--space-7);
+    padding-top: var(--space-5);
+    border-top: 1px solid var(--rule);
+    color: var(--slate);
+    line-height: 2;
+  }
+
+  @media (min-width: 68rem) {
+    .nav--desktop { display: flex; }
+    .nav--mobile { display: none; }
+  }
+</style>

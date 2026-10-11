@@ -1,0 +1,30 @@
+---
+/**
+ * LayersArt (who we are): three stacked planes (strategy, engineering,
+ * talent) bound by vertical ties, with the slanted stroke standing on top.
+ */
+import { bar } from './geometry';
+
+const W = 560, H = 600, CX = 280, RX = 200, RY = 100;
+const plane = (cy: number) => `M${CX} ${cy - RY}L${CX + RX} ${cy}L${CX} ${cy + RY}L${CX - RX} ${cy}Z`;
+const levels = [180, 320, 460];
+---
+
+<svg class="art" viewBox={`0 0 ${W} ${H}`} xmlns="http://www.w3.org/2000/svg" focusable="false">
+  {[CX - RX, CX, CX + RX].map((x) => (
+    <line class="tie" x1={x} y1={levels[0] + (x === CX ? RY : 0)} x2={x} y2={levels[2] + (x === CX ? RY : 0)} />
+  ))}
+  <path class="plane plane--low" d={plane(levels[2])} />
+  <path class="plane plane--mid" d={plane(levels[1])} />
+  <path class="plane plane--top" d={plane(levels[0])} />
+  <path class="stroke" d={bar(CX - 10, levels[0] + 6, 18, 150)} />
+</svg>
+
+<style>
+  .tie { stroke: var(--slate); stroke-width: 1; stroke-dasharray: 3 5; }
+  .plane { stroke: var(--ink); stroke-width: 1.5; }
+  .plane--low { fill: var(--fog); }
+  .plane--mid { fill: var(--paper); }
+  .plane--top { fill: var(--ink); }
+  .stroke { fill: var(--accent); }
+</style>

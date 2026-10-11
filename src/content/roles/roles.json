@@ -1,0 +1,29 @@
+[
+  {
+    "id": "senior-backend-engineer",
+    "title": "Senior backend engineer (Java)",
+    "discipline": "Software engineering",
+    "location": "Zaventem, hybrid",
+    "type": "Permanent or contract",
+    "summary": "Join delivery teams on enterprise and public-sector platforms. Java, Spring and event-driven systems.",
+    "sample": true
+  },
+  {
+    "id": "cloud-platform-engineer",
+    "title": "Cloud platform engineer",
+    "discipline": "Cloud & platform",
+    "location": "Remote within the EU",
+    "type": "Contract",
+    "summary": "Build and operate Azure and AWS platforms for regulated workloads using infrastructure as code.",
+    "sample": true
+  },
+  {
+    "id": "business-analyst-public-sector",
+    "title": "Business analyst, public sector",
+    "discipline": "Analysis & delivery",
+    "location": "Brussels area",
+    "type": "Contract",
+    "summary": "Translate policy and operational needs into requirements for information-system programmes. French and English required.",
+    "sample": true
+  }
+]
