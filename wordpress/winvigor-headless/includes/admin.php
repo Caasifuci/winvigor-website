@@ -40,6 +40,9 @@ function wv_render_meta_box( WP_Post $post ): void {
 	if ( 'wv_talent' === $post->post_type ) {
 		echo '<p><strong>Public profile.</strong> Never enter names, photos, employers, security clearance or defence-sector details. Keep those in internal systems.</p>';
 	}
+	if ( 'wv_role' === $post->post_type ) {
+		echo '<p><strong>Clearance:</strong> state any required level in the Security clearance field below, not in free text. Name the client agency only if the contract allows publicity. Defence/military wording is still blocked.</p>';
+	}
 	foreach ( $fields as $name => $def ) {
 		$id    = 'wv_' . $name;
 		$value = $values[ $name ];
@@ -112,7 +115,7 @@ add_action(
 		}
 		// Published content must be complete and pass the public-content guard.
 		$problems = wv_validate_fields( $post->post_type, $values );
-		$term     = wv_guard_find( $post->post_title, $post->post_content, $values );
+		$term     = wv_guard_find( $post->post_type, $post->post_title, $post->post_content, $values );
 		if ( $term ) {
 			$problems[] = sprintf( 'Contains "%s", which must not appear on the public site.', $term );
 		}

@@ -166,6 +166,8 @@ export const wpRoles = () =>
       location: str(m(p, 'location')),
       type: str(m(p, 'role_type')),
       summary: str(m(p, 'summary')),
+      clearance: str(m(p, 'clearance')) || undefined,
+      clearanceStatus: str(m(p, 'clearance_status')) || undefined,
       open: m(p, 'open') !== false,
       sample: m(p, 'sample') === true,
     },

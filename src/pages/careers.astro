@@ -57,6 +57,9 @@ const facts = [
                 <div><dt>Discipline</dt><dd>{r.data.discipline}</dd></div>
                 <div><dt>Location</dt><dd>{r.data.location}</dd></div>
                 <div><dt>Type</dt><dd>{r.data.type}</dd></div>
+                {r.data.clearance && (
+                  <div><dt>Clearance</dt><dd>{r.data.clearance}{r.data.clearanceStatus && <span class="role__status"> ({r.data.clearanceStatus.toLowerCase()})</span>}</dd></div>
+                )}
               </dl>
               <Button href={apply(`Application: ${r.data.title}`)} variant="secondary" class="role__cta">
                 Apply<span class="visually-hidden"> for {r.data.title}</span>
@@ -98,6 +101,7 @@ const facts = [
   .role__facts div { display: grid; grid-template-columns: 6rem 1fr; gap: var(--space-3); }
   .role__facts dt { color: var(--slate); }
   .role__facts dd { margin: 0; color: var(--ink); }
+  .role__status { color: var(--slate); }
   :global(.role__cta) { justify-self: start; }
 
   @media (min-width: 64rem) {

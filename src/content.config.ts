@@ -5,13 +5,14 @@
  * `sample: true` marks illustrative content. It renders with a visible
  * "Sample" tag and is removed site-wide by PUBLIC_SHOW_SAMPLES=false.
  *
- * Public-content rule: never publish security clearance or defence-sector
- * details. The talent schema deliberately has no field for them.
+ * Public-content rule: brand content never mentions security clearance or
+ * defence-sector work. The only exception is an open role's required
+ * clearance (structured field below). Talent profiles never carry it.
  */
 import { defineCollection } from 'astro:content';
 import { file, glob } from 'astro/loaders';
 import { z } from 'astro/zod';
-import { disciplines } from './data/taxonomy';
+import { clearanceLevels, clearanceStatuses, disciplines } from './data/taxonomy';
 import { wpCaseStudies, wpInsights, wpLog, wpRoles, wpTalent } from './lib/wordpress';
 
 /**
@@ -95,6 +96,9 @@ const roles = defineCollection({
     location: z.string(),
     type: z.enum(['Permanent', 'Contract', 'Permanent or contract']),
     summary: z.string().max(220),
+    /** Required security clearance, when the client mandates one. */
+    clearance: z.enum(clearanceLevels).optional(),
+    clearanceStatus: z.enum(clearanceStatuses).optional(),
     sample: z.boolean().default(false),
     open: z.boolean().default(true),
   }),

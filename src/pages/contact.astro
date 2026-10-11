@@ -103,7 +103,7 @@ const turnstileKey = import.meta.env.PUBLIC_TURNSTILE_SITE_KEY as string | undef
       hidden!.value = ref;
       message.value = `I would like to receive the full profile for ${ref}.\n\nRole and team: \nStart date: \nDuration: `;
     } else if (ref === 'brief') {
-      message.value = 'Hiring brief\n\nRole: \nKey skills: \nStart date: \nDuration: \nLocation or remote: ';
+      message.value = 'Hiring brief\n\nRole: \nKey skills: \nStart date: \nDuration: \nLocation or remote: \nSecurity clearance required (if any): ';
     }
   }
 </script>

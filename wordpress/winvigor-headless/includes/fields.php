@@ -12,6 +12,11 @@ function wv_disciplines(): array {
 	return array( 'Software engineering', 'Cloud & platform', 'Data & analytics', 'Quality & test', 'Analysis & delivery' );
 }
 
+/** Clearance levels an open role may require. */
+function wv_clearance_levels(): array {
+	return array( 'NATO CONFIDENTIAL', 'NATO SECRET', 'COSMIC TOP SECRET', 'EU SECRET' );
+}
+
 function wv_service_titles(): array {
 	return array( 'Strategic IT consulting', 'Custom software development', 'Resource augmentation', 'Operational risk management' );
 }
@@ -63,6 +68,8 @@ function wv_fields(): array {
 			'location'   => array( 'type' => 'text', 'label' => 'Location', 'required' => true ),
 			'role_type'  => array( 'type' => 'select', 'label' => 'Type', 'options' => array( 'Permanent', 'Contract', 'Permanent or contract' ), 'required' => true ),
 			'summary'    => array( 'type' => 'textarea', 'label' => 'Summary', 'max' => 220, 'required' => true ),
+			'clearance'  => array( 'type' => 'select', 'label' => 'Security clearance', 'options' => wv_clearance_levels(), 'help' => 'Only if the client requires it. Leave empty otherwise.' ),
+			'clearance_status' => array( 'type' => 'select', 'label' => 'Clearance status', 'options' => array( 'Must hold', 'Must be eligible' ), 'help' => 'Required when a clearance level is set.' ),
 			'open'       => array( 'type' => 'bool', 'label' => 'Accepting applications', 'default' => true ),
 			'sample'     => $sample,
 		),
@@ -184,6 +191,12 @@ function wv_validate_fields( string $post_type, array $values ): array {
 				}
 			}
 		}
+	}
+	if ( 'wv_role' === $post_type && ! empty( $values['clearance'] ) && empty( $values['clearance_status'] ) ) {
+		$problems[] = 'Choose whether candidates must hold the clearance or only be eligible for it.';
+	}
+	if ( 'wv_role' === $post_type && empty( $values['clearance'] ) && ! empty( $values['clearance_status'] ) ) {
+		$problems[] = 'Clearance status is set but no clearance level is chosen.';
 	}
 	if ( 'wv_talent' === $post_type && isset( $values['skills'] ) && is_array( $values['skills'] ) && ( count( $values['skills'] ) < 2 || count( $values['skills'] ) > 6 ) ) {
 		$problems[] = 'List between 2 and 6 key skills.';

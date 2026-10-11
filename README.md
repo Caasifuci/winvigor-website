@@ -74,7 +74,9 @@ Profiles are edited in WordPress → Talent board (or `src/content/talent/profil
 
 ## Public-content rules
 
-- Never publish security clearance levels or defence-sector work. The talent schema has no field for it; keep that information in internal systems.
+- Brand content (pages, case studies, insights, delivery log, talent profiles) never mentions security clearance or defence-sector work. The WordPress plugin blocks publishing it.
+- **Exception: open roles.** A role may state the clearance the client requires (NATO CONFIDENTIAL, NATO SECRET, COSMIC TOP SECRET, EU SECRET) in its **Security clearance** field, with "Must hold" or "Must be eligible". It appears on the Careers page as a fact line. Defence/military wording remains blocked in roles.
+- **Talent profiles never state an individual's clearance**: that would advertise a cleared person. Hiring managers state the level in their brief and are matched privately.
 - Show, don't tell: prefer figures, dated log entries and case studies to adjectives.
 - Name clients in case studies only with their approval.
 

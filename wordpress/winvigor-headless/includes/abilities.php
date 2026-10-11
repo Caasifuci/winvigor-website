@@ -112,7 +112,7 @@ function wv_register_abilities(): void {
 		'insight'    => 'Create or update an Insights article. "title" is the headline, "content" is the article body as HTML (<p>, <h2>, <h3>, <ul>, <blockquote>). "fields.description" is a one or two sentence summary.',
 		'case-study' => 'Create or update a case study. "title" is the headline, "content" is the narrative as HTML (sections Context, Approach, Outcome as <h2>). Name a client in fields.client only if they have approved it; otherwise describe them anonymously.',
 		'talent'     => 'Create or update a talent board profile. "title" is the role (e.g. "Senior Java engineer"). Profiles are public and anonymous: never include names, employers, photos, security clearance or defence work. If fields.ref matches an existing profile, that profile is updated.',
-		'role'       => 'Create or update an open role on the Careers page. "title" is the job title.',
+		'role'       => 'Create or update an open role on the Careers page. "title" is the job title. If the client requires a security clearance, set fields.clearance (NATO CONFIDENTIAL, NATO SECRET, COSMIC TOP SECRET or EU SECRET) and fields.clearance_status (Must hold / Must be eligible) instead of writing it in the summary. Name the client agency only if the contract allows publicity.',
 		'log'        => 'Add or update a delivery log entry for the home page. "title" is one factual sentence about what happened; fields.log_date and fields.sector are required.',
 	);
 	foreach ( wv_ability_types() as $type => $post_type ) {
@@ -222,8 +222,9 @@ function wv_ability_site_status(): array {
 		'rebuild_queued'     => (bool) wp_next_scheduled( 'wv_run_rebuild' ),
 		'last_rebuild'       => get_option( 'wv_last_rebuild' ) ?: null,
 		'rules'              => array(
-			'No security clearance or defence-sector references in public content.',
-			'Talent profiles are anonymous: role, skills and availability only.',
+			'No security clearance or defence-sector references in brand content (pages, case studies, insights, log, talent).',
+			'Talent profiles are anonymous: role, skills and availability only. Never state an individual\'s clearance.',
+			'Open roles may state a required clearance, using the Security clearance field.',
 			'Name clients in case studies only with their approval.',
 			'Show, do not tell: figures, dates and outcomes over adjectives.',
 		),
@@ -306,7 +307,7 @@ function wv_ability_save( string $post_type, array $input ) {
 	if ( $want_publish ) {
 		$problems = array_merge( $problems, wv_validate_fields( $post_type, $values ) );
 	}
-	$term = wv_guard_find( $title, $content, $values );
+	$term = wv_guard_find( $post_type, $title, $content, $values );
 	if ( $term ) {
 		$problems[] = sprintf( 'Contains "%s", which must not appear on the public site. Remove it.', $term );
 	}

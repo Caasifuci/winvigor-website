@@ -153,7 +153,7 @@ add_filter(
 		if ( ! in_array( $data['post_type'], wv_content_post_types(), true ) || 'publish' !== $data['post_status'] ) {
 			return $data;
 		}
-		$term = wv_guard_find( $data['post_title'], $data['post_content'], $data['post_excerpt'] );
+		$term = wv_guard_find( $data['post_type'], $data['post_title'], $data['post_content'], $data['post_excerpt'] );
 		if ( $term ) {
 			$data['post_status'] = 'draft';
 			set_transient( 'wv_guard_notice_' . get_current_user_id(), $term, 60 );

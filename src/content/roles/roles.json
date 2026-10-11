@@ -25,5 +25,16 @@
     "type": "Contract",
     "summary": "Translate policy and operational needs into requirements for information-system programmes. French and English required.",
     "sample": true
+  },
+  {
+    "id": "network-security-engineer-international",
+    "title": "Network security engineer, international organisation",
+    "discipline": "Cloud & platform",
+    "location": "Mons, Belgium (on site)",
+    "type": "Contract",
+    "summary": "Design and operate secure network infrastructure for an international organisation's communications programme. English required; French an advantage.",
+    "clearance": "NATO SECRET",
+    "clearanceStatus": "Must hold",
+    "sample": true
   }
 ]

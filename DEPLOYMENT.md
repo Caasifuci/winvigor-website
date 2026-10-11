@@ -43,7 +43,7 @@ The current site stays live until the launch step. Nothing below touches email (
 5. **Permalinks:** WordPress → Settings → Permalinks → **Post name** → Save.
 6. **Plugins:** Plugins → Add New → Upload Plugin, then activate each:
    - `mcp-adapter-0.7.0.zip` (official WordPress MCP Adapter, dependencies included)
-   - `winvigor-headless-1.0.0.zip`
+   - `winvigor-headless-1.1.0.zip`
    Remove the default plugins you don't use (Hello Dolly, Akismet).
 7. **Configuration:** cPanel → File Manager → `cms.winvigor.com/wp-config.php` → Edit. Paste above `/* That's all, stop editing! */`:
    ```php
@@ -121,7 +121,7 @@ What Claude can do through this connection (and nothing else):
 | `winvigor/unpublish-content` | Move to draft (never deletes) |
 | `winvigor/rebuild-site` | Rebuild now |
 
-All writes pass the same validation and public-content guard as the admin screens: anything mentioning security clearance or defence work is saved as a draft and flagged.
+All writes pass the same validation and public-content guard as the admin screens: anything mentioning security clearance or defence work is saved as a draft and flagged. The one exception is open roles, which may state a required clearance level in their **Security clearance** field (never on talent profiles).
 
 ## Phase 5: Content and launch
 
