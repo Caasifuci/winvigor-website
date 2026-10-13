@@ -1,0 +1,14 @@
+// Cloudflare Workers (static assets) deployment for www.winvigor.com.
+// Workers Builds runs `npm run build`, then `npx wrangler deploy`,
+// which publishes the static Astro output in ./dist. There is no Worker
+// script: every request is served from the built files.
+{
+  "$schema": "./node_modules/wrangler/config-schema.json",
+  "name": "winvigor-website",
+  "compatibility_date": "2026-10-01",
+  "assets": {
+    "directory": "./dist",
+    "not_found_handling": "404-page",
+    "html_handling": "drop-trailing-slash"
+  }
+}

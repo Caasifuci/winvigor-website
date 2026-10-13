@@ -6,7 +6,7 @@ How www.winvigor.com is built, hosted and edited.
  Editors / Claude (MCP)                         Visitors
          │                                          │
          ▼                                          ▼
- cms.winvigor.com  ── publish ──► deploy hook ──► Cloudflare Pages ──► www.winvigor.com
+ cms.winvigor.com  ── publish ──► deploy hook ──► Cloudflare Workers ─► www.winvigor.com
  WordPress on ChemiCloud          (rebuild)       builds Astro from        static, global CDN
  (headless, noindex)  ◄── REST API at build time ─┘ GitHub + WP content
          ▲
@@ -17,8 +17,8 @@ How www.winvigor.com is built, hosted and edited.
 |---|---|---|
 | Code | GitHub `winvigor-website` (private) | Design, layout, components. Pushing to `main` deploys. |
 | Content | WordPress at `cms.winvigor.com` (ChemiCloud) | Insights, case studies, talent board, open roles, delivery log, enquiries |
-| Public site | Cloudflare Pages | Builds the Astro site and serves it at `www.winvigor.com` |
-| DNS | Cloudflare | `cms` → ChemiCloud; `www` and apex → Pages (at launch) |
+| Public site | Cloudflare Workers (static assets) | Builds the Astro site and serves it at `www.winvigor.com` |
+| DNS | Cloudflare | `cms` → ChemiCloud; `www` and apex → the Worker (at launch) |
 | Claude access | MCP Adapter plugin + application password | Claude reads and writes content through the Winvigor abilities |
 
 The current site stays live until the launch step. Nothing below touches email (MX/TXT records).
@@ -52,7 +52,7 @@ The current site stays live until the launch step. Nothing below touches email (
    define( 'WV_ENQUIRY_TO', 'services@winvigor.com' );
    define( 'DISABLE_WP_CRON', true );         // a real cron job runs it instead (next step)
    ```
-   Until launch, `WV_SITE_URL` can be your `*.pages.dev` address instead.
+   Until launch, `WV_SITE_URL` can be your `*.workers.dev` address instead.
 8. **Cron job:** cPanel → Cron Jobs → Common settings "Once Per Five Minutes" → Command:
    ```
    /usr/local/bin/php /home/CPANEL_USER/cms.winvigor.com/wp-cron.php >/dev/null 2>&1
@@ -62,11 +62,13 @@ The current site stays live until the launch step. Nothing below touches email (
    An Editor can manage content but cannot install plugins or change settings. Revoke the password at any time to cut Claude's access.
 10. **Check:** open `https://cms.winvigor.com/wp-json/wp/v2/talent`. You should see `[]`. Opening `https://cms.winvigor.com/` should redirect to the public site.
 
-## Phase 3: Cloudflare Pages (you, about 15 minutes)
+## Phase 3: Cloudflare Workers (you, about 15 minutes)
 
-1. Cloudflare dashboard → Workers & Pages → Create → **Pages** → Connect to Git → authorise GitHub → choose `winvigor-website`.
-2. Build settings: Framework preset **Astro**, Build command `npm run build`, Output directory `dist`.
-3. Environment variables (Production). **For the first deploy, add only:**
+The site is deployed as a Cloudflare **Worker with static assets** (`wrangler.jsonc` in the repository). Cloudflare builds it from GitHub on every push to `main`.
+
+1. Cloudflare dashboard → **Compute (Workers)** → **Workers & Pages** → **Create application** → **Import a repository** (Git) → choose `Caasifuci/winvigor-website`.
+2. Project/Worker name `winvigor-website`. Build command `npm run build`. Deploy command: leave the default `npx wrangler deploy`. Root directory: leave empty.
+3. Open the Worker → **Settings** → **Build** → **Build variables and secrets** → add (these are needed at build time, not runtime):
    | Name | Value |
    |---|---|
    | `NODE_VERSION` | `22` |
@@ -74,16 +76,16 @@ The current site stays live until the launch step. Nothing below touches email (
    | `PUBLIC_FORM_ENDPOINT` | `https://cms.winvigor.com/wp-json/winvigor/v1/enquiry` |
 
    This first build uses the sample content in the repository, so you can review the design straight away.
-4. Save and Deploy. Review the site at `https://winvigor-website.pages.dev`.
-5. Once Claude has loaded content into WordPress (Phase 5), add these two variables and redeploy:
+4. **Deployments** tab → latest build → **Retry build** (or push any commit). The site appears at `https://winvigor-website.<your-subdomain>.workers.dev`.
+5. Once Claude has loaded content into WordPress (Phase 5), add two more build variables and rebuild:
    | Name | Value |
    |---|---|
    | `CONTENT_SOURCE` | `wordpress` |
    | `WP_API_URL` | `https://cms.winvigor.com/wp-json` |
-6. **Deploy hook:** Pages project → Settings → Builds → Deploy hooks → Add → name `WordPress`, branch `main` → copy the URL.
+6. **Deploy hook:** Worker → **Settings** → **Builds** → **Deploy Hooks** → name `WordPress`, branch `main` → **Create** → copy the URL (`https://api.cloudflare.com/client/v4/workers/builds/deploy_hooks/…`).
    - Paste it into `wp-config.php` as `WV_DEPLOY_HOOK`.
    - GitHub repo → Settings → Secrets and variables → Actions → New secret `CF_DEPLOY_HOOK` = the same URL (weekly rebuild).
-7. Optional spam protection: Cloudflare → Turnstile → Add site (`www.winvigor.com`) → put the **site key** in Pages as `PUBLIC_TURNSTILE_SITE_KEY` and the **secret key** in `wp-config.php` as `define( 'WV_TURNSTILE_SECRET', '…' );`.
+7. Optional spam protection: Cloudflare → Turnstile → Add site (`www.winvigor.com`) → put the **site key** in the build variables as `PUBLIC_TURNSTILE_SITE_KEY` and the **secret key** in `wp-config.php` as `define( 'WV_TURNSTILE_SECRET', '…' );`.
 
 ## Phase 4: Connect Claude to WordPress (you, about 10 minutes)
 
@@ -128,7 +130,7 @@ All writes pass the same validation and public-content guard as the admin screen
 1. Claude loads the content into WordPress through MCP. You review it in the WordPress admin.
 2. Replace sample content with real material and untick **Sample content** on each item. Then set `PUBLIC_SHOW_SAMPLES=false` in Pages.
 3. Add privacy and cookie pages (EU/GDPR), the LinkedIn URL and the VAT number.
-4. **Go live:** Pages project → Custom domains → add `www.winvigor.com`, then `winvigor.com`. Cloudflare updates those two DNS records automatically and leaves MX/TXT alone.
+4. **Go live:** Worker → Settings → **Domains & Routes** → Add → **Custom domain** → `www.winvigor.com`, then `winvigor.com`. Cloudflare creates those two DNS records automatically (remove any old A/CNAME records for those two names first) and leaves MX/TXT alone.
    - Redirect apex to www: Cloudflare → Rules → Redirect Rules → "Redirect from root to WWW" template.
    - Set `WV_SITE_URL` in `wp-config.php` to `https://www.winvigor.com`.
 5. Check that email to services@winvigor.com still arrives, and send a test enquiry through the contact form.
@@ -140,7 +142,7 @@ All writes pass the same validation and public-content guard as the admin screen
 
 - **Publish in WordPress** → site rebuilds automatically (about 2 minutes). The admin bar shows "Site rebuilt N min ago" and has **Rebuild site now**.
 - **Ask Claude** to add a talent profile, publish a case study or post a log entry. It works through the abilities above.
-- **Design or code changes** → Claude edits the GitHub repo; Cloudflare builds a preview for every branch and deploys `main`.
+- **Design or code changes** → Claude edits the GitHub repo; Cloudflare builds and deploys every push to `main` (other branches get preview URLs if enabled under Settings → Build).
 - **Enquiries** arrive by email and are also kept under WordPress → Enquiries.
 
 ## Troubleshooting

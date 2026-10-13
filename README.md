@@ -1,6 +1,6 @@
 # Winvigor Solutions: website
 
-Static Astro 7 site for www.winvigor.com, hosted on Cloudflare Pages. Content comes from a headless WordPress at cms.winvigor.com (ChemiCloud), which Claude edits through MCP. Under 5 KB of client JS (hover prefetch, talent-board filters, contact form helpers).
+Static Astro 7 site for www.winvigor.com, deployed as a Cloudflare Worker with static assets (`wrangler.jsonc`). Content comes from a headless WordPress at cms.winvigor.com (ChemiCloud), which Claude edits through MCP. Under 5 KB of client JS (hover prefetch, talent-board filters, contact form helpers).
 
 **Setting up hosting, WordPress and the Claude connection: see [DEPLOYMENT.md](DEPLOYMENT.md).**
 
@@ -42,7 +42,8 @@ src/
 wordpress/
   winvigor-headless/    WordPress plugin: content types, fields, rebuild hook,
                         enquiry endpoint, headless lockdown, MCP abilities
-public/_headers, _redirects   Cloudflare Pages security headers and 301s
+public/_headers, _redirects   Cloudflare security headers and 301s (honoured by Workers static assets)
+wrangler.jsonc          Cloudflare Workers deployment config (serves ./dist)
 .github/workflows/      Build check on every push; weekly rebuild
   pages/                index, who-we-are, what-we-do, talent, insights,
                         careers, contact, 404, insights/[slug], case-studies/[slug]
