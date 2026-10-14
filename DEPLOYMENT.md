@@ -43,24 +43,13 @@ The current site stays live until the launch step. Nothing below touches email (
 5. **Permalinks:** WordPress → Settings → Permalinks → **Post name** → Save.
 6. **Plugins:** Plugins → Add New → Upload Plugin, then activate each:
    - `mcp-adapter-0.7.0.zip` (official WordPress MCP Adapter, dependencies included)
-   - `winvigor-headless-1.1.0.zip`
+   - `winvigor-headless-1.2.0.zip`
    Remove the default plugins you don't use (Hello Dolly, Akismet).
-7. **Configuration:** cPanel → File Manager → `cms.winvigor.com/wp-config.php` → Edit. Paste above `/* That's all, stop editing! */`:
-   ```php
-   define( 'WV_SITE_URL', 'https://www.winvigor.com' );
-   define( 'WV_DEPLOY_HOOK', '' );            // filled in at Phase 3, step 6
-   define( 'WV_ENQUIRY_TO', 'services@winvigor.com' );
-   define( 'DISABLE_WP_CRON', true );         // a real cron job runs it instead (next step)
-   ```
-   Until launch, `WV_SITE_URL` can be your `*.workers.dev` address instead.
-8. **Cron job:** cPanel → Cron Jobs → Common settings "Once Per Five Minutes" → Command:
-   ```
-   /usr/local/bin/php /home/CPANEL_USER/cms.winvigor.com/wp-cron.php >/dev/null 2>&1
-   ```
-   Replace `CPANEL_USER` and the folder with your actual path (shown in File Manager). This makes publishing trigger rebuilds reliably, even when nobody is browsing the CMS.
-9. **A user for Claude:** Users → Add New → username `claude`, role **Editor**. Then edit that user → Application Passwords → name `Claude MCP` → Add. **Copy the password now**; WordPress shows it once.
+7. **Plugin settings:** WordPress → **Settings** → **Winvigor website**. Fill in **Send enquiries to** (`services@winvigor.com`) and **Public site address** (your `*.workers.dev` address until launch, then `https://www.winvigor.com`). The deploy hook is added in Phase 3. The page also shows a setup checklist.
+   No `wp-config.php` editing and no cron job are needed. (Optional, for very low-traffic CMSs: a cPanel cron job running `wp-cron.php` every 5 minutes makes queued follow-up rebuilds fire promptly.)
+8. **A user for Claude:** Users → Add New → username `claude`, role **Editor**. Then edit that user → Application Passwords → name `Claude MCP` → Add. **Copy the password now**; WordPress shows it once.
    An Editor can manage content but cannot install plugins or change settings. Revoke the password at any time to cut Claude's access.
-10. **Check:** open `https://cms.winvigor.com/wp-json/wp/v2/talent`. You should see `[]`. Opening `https://cms.winvigor.com/` should redirect to the public site.
+9. **Check:** open `https://cms.winvigor.com/wp-json/wp/v2/talent`. You should see `[]`. Opening `https://cms.winvigor.com/` should redirect to the public site.
 
 ## Phase 3: Cloudflare Workers (you, about 15 minutes)
 
@@ -83,9 +72,9 @@ The site is deployed as a Cloudflare **Worker with static assets** (`wrangler.js
    | `CONTENT_SOURCE` | `wordpress` |
    | `WP_API_URL` | `https://cms.winvigor.com/wp-json` |
 6. **Deploy hook:** Worker → **Settings** → **Builds** → **Deploy Hooks** → name `WordPress`, branch `main` → **Create** → copy the URL (`https://api.cloudflare.com/client/v4/workers/builds/deploy_hooks/…`).
-   - Paste it into `wp-config.php` as `WV_DEPLOY_HOOK`.
-   - GitHub repo → Settings → Secrets and variables → Actions → New secret `CF_DEPLOY_HOOK` = the same URL (weekly rebuild).
-7. Optional spam protection: Cloudflare → Turnstile → Add site (`www.winvigor.com`) → put the **site key** in the build variables as `PUBLIC_TURNSTILE_SITE_KEY` and the **secret key** in `wp-config.php` as `define( 'WV_TURNSTILE_SECRET', '…' );`.
+   - WordPress → **Settings** → **Winvigor website** → paste it into **Cloudflare deploy hook** → **Save settings** → **Rebuild site now**. The checklist should show "Last rebuild call succeeded".
+   - Optional, weekly rebuild: GitHub repo → **Settings** → **Secrets and variables** → **Actions** → **New repository secret**, name `CF_DEPLOY_HOOK`, value the same URL.
+7. Optional spam protection: Cloudflare → Turnstile → Add site (`www.winvigor.com`) → put the **site key** in the build variables as `PUBLIC_TURNSTILE_SITE_KEY` and the **secret key** in the **Turnstile secret key** field on WordPress → Settings → Winvigor website.
 
 ## Phase 4: Connect Claude to WordPress (you, about 10 minutes)
 
@@ -132,7 +121,7 @@ All writes pass the same validation and public-content guard as the admin screen
 3. Add privacy and cookie pages (EU/GDPR), the LinkedIn URL and the VAT number.
 4. **Go live:** Worker → Settings → **Domains & Routes** → Add → **Custom domain** → `www.winvigor.com`, then `winvigor.com`. Cloudflare creates those two DNS records automatically (remove any old A/CNAME records for those two names first) and leaves MX/TXT alone.
    - Redirect apex to www: Cloudflare → Rules → Redirect Rules → "Redirect from root to WWW" template.
-   - Set `WV_SITE_URL` in `wp-config.php` to `https://www.winvigor.com`.
+   - WordPress → Settings → Winvigor website → set **Public site address** to `https://www.winvigor.com`.
 5. Check that email to services@winvigor.com still arrives, and send a test enquiry through the contact form.
 6. Retire the old site's WordPress install once everything is confirmed.
 
@@ -150,7 +139,7 @@ All writes pass the same validation and public-content guard as the admin screen
 | Symptom | Check |
 |---|---|
 | Build fails "WordPress … HTTP 403" | Cloudflare Security → WAF: Bot Fight Mode or a rule is challenging API requests. Add a custom rule to **Skip** security for `cms.winvigor.com/wp-json/*`. |
-| Publishing doesn't rebuild | `WV_DEPLOY_HOOK` set? Cron job running? The admin bar shows the last result and error. |
+| Publishing doesn't rebuild | WordPress → Settings → Winvigor website: is the deploy hook filled in, and what does "Last rebuild call" say? |
 | Claude can't connect | Node.js 22+ installed? Application password correct (spaces are fine)? Permalinks set to Post name? |
 | Enquiry emails not arriving | ChemiCloud mail sending: add an SMTP plugin (e.g. FluentSMTP) using the services@ mailbox. Enquiries are still stored under WordPress → Enquiries. |
 | Old URL 404s | Add it to `public/_redirects`. |

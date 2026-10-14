@@ -1,8 +1,10 @@
 <?php
 /**
  * Rebuild trigger. Any publish, update, unpublish or delete of site content
- * schedules one call to the Cloudflare Pages deploy hook. Edits made within
- * WV_REBUILD_DELAY seconds of each other are batched into a single build.
+ * calls the Cloudflare deploy hook once, at the end of that request.
+ * Calls are throttled to one per WV_REBUILD_THROTTLE seconds; a change made
+ * inside that window queues one follow-up call, so the last edit is always
+ * built. No server cron job is required.
  */
 defined( 'ABSPATH' ) || exit;
 
@@ -47,9 +49,24 @@ function wv_schedule_rebuild( string $reason = '' ): void {
 		return;
 	}
 	update_option( 'wv_rebuild_reason', $reason, false );
-	if ( ! wp_next_scheduled( 'wv_run_rebuild' ) ) {
-		wp_schedule_single_event( time() + (int) wv_config( 'WV_REBUILD_DELAY' ), 'wv_run_rebuild' );
+	if ( empty( $GLOBALS['wv_rebuild_pending'] ) ) {
+		$GLOBALS['wv_rebuild_pending'] = true;
+		add_action( 'shutdown', 'wv_rebuild_on_shutdown' );
 	}
+}
+
+/** Runs once at the end of a request that changed published content. */
+function wv_rebuild_on_shutdown(): void {
+	$throttle = (int) wv_config( 'WV_REBUILD_THROTTLE' );
+	$last     = (int) get_transient( 'wv_rebuild_lock' );
+	if ( $last && ( time() - $last ) < $throttle ) {
+		// Too soon after the previous build: queue one follow-up.
+		if ( ! wp_next_scheduled( 'wv_run_rebuild' ) ) {
+			wp_schedule_single_event( $last + $throttle + 1, 'wv_run_rebuild' );
+		}
+		return;
+	}
+	wv_trigger_rebuild();
 }
 
 add_action( 'wv_run_rebuild', 'wv_trigger_rebuild' );
@@ -60,7 +77,9 @@ function wv_trigger_rebuild(): bool {
 	if ( ! $hook ) {
 		return false;
 	}
-	$res = wp_remote_post( $hook, array( 'timeout' => 15 ) );
+	set_transient( 'wv_rebuild_lock', time(), HOUR_IN_SECONDS );
+	wp_clear_scheduled_hook( 'wv_run_rebuild' );
+	$res = wp_remote_post( $hook, array( 'timeout' => 8 ) );
 	$ok  = ! is_wp_error( $res ) && wp_remote_retrieve_response_code( $res ) < 300;
 	update_option(
 		'wv_last_rebuild',
@@ -110,7 +129,6 @@ add_action(
 			wp_die( 'Not allowed.' );
 		}
 		update_option( 'wv_rebuild_reason', 'manual', false );
-		wp_clear_scheduled_hook( 'wv_run_rebuild' );
 		wv_trigger_rebuild();
 		wp_safe_redirect( wp_get_referer() ?: admin_url() );
 		exit;
