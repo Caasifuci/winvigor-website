@@ -1,7 +1,7 @@
 ---
 /**
  * Button: renders <a> when given href, otherwise <button>.
- * primary   → the accent; at most one per view.
+ * primary   → electric-blue fill, white label: the conversion action.
  * secondary → ink outline.
  * quiet     → underlined text action.
  * `inverse` adapts secondary/quiet for ink surfaces.
@@ -49,8 +49,8 @@ const classes = ['btn', `btn--${variant}`, `btn--${size}`, { 'btn--inverse': inv
   }
   .btn--lg { min-height: 3.25rem; padding: 0.9rem 1.75rem; font-size: 1rem; }
 
-  .btn--primary { background: var(--accent); color: var(--ink); }
-  .btn--primary:hover { background: var(--ink); color: var(--paper); }
+  .btn--primary { background: var(--accent); color: var(--paper); }
+  .btn--primary:hover { background: var(--accent-strong); color: var(--paper); }
   .btn--inverse.btn--primary:hover { background: var(--paper); color: var(--ink); }
 
   .btn--secondary { border-color: var(--ink); color: var(--ink); background: transparent; }
@@ -68,5 +68,5 @@ const classes = ['btn', `btn--${variant}`, `btn--${size}`, { 'btn--inverse': inv
     text-underline-offset: 0.35em;
   }
   .btn--quiet:hover { text-decoration-color: currentColor; }
-  .btn--inverse.btn--quiet { color: var(--paper); }
+  .btn--inverse.btn--quiet { color: var(--paper); text-decoration-color: var(--accent-on-ink); }
 </style>

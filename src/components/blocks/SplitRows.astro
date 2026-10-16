@@ -1,0 +1,84 @@
+---
+/**
+ * SplitRows: alternating text + drawn-art rows, the employer page's service
+ * pattern ("IT Project Sourcing", "Temp-to-Perm" …). Art alternates sides.
+ */
+import CardArt from '@/components/visuals/CardArt.astro';
+import SystemsArt from '@/components/visuals/SystemsArt.astro';
+import LayersArt from '@/components/visuals/LayersArt.astro';
+import StepsArt from '@/components/visuals/StepsArt.astro';
+import RosterArt from '@/components/visuals/RosterArt.astro';
+import Icon from '@/components/ui/Icon.astro';
+
+export type Row = {
+  id?: string;
+  title: string;
+  body: string;
+  link?: { label: string; href: string };
+  points?: string[];
+  seed?: number;
+  /** A named drawing on a light panel; omit for the navy bar artwork. */
+  art?: 'systems' | 'layers' | 'steps' | 'roster';
+};
+
+const drawings = { systems: SystemsArt, layers: LayersArt, steps: StepsArt, roster: RosterArt };
+
+interface Props {
+  rows: Row[];
+}
+
+const { rows } = Astro.props;
+---
+
+<ul role="list" class="rows">
+  {rows.map((r, i) => (
+    <li id={r.id} class:list={['row', { 'row--flip': i % 2 === 1 }]}>
+      {r.art ? (
+        <div class="row__art row__art--light" aria-hidden="true">
+          {(() => { const Art = drawings[r.art!]; return <Art />; })()}
+        </div>
+      ) : (
+        <div class="row__art"><CardArt seed={r.seed ?? i + 11} /></div>
+      )}
+      <div class="row__copy">
+        <h3 class="row__title">{r.title}</h3>
+        <p class="row__body">{r.body}</p>
+        {r.points && r.points.length > 0 && (
+          <ul role="list" class="row__points">
+            {r.points.map((p) => <li><Icon name="check" size={18} /><span>{p}</span></li>)}
+          </ul>
+        )}
+        {r.link && (
+          <a class="row__link" href={r.link.href}>{r.link.label}<Icon name="arrow" size={18} /></a>
+        )}
+      </div>
+    </li>
+  ))}
+</ul>
+
+<style>
+  .rows { display: grid; gap: clamp(2.5rem, 1.5rem + 3vw, 4.5rem); margin: 0; }
+  .row { display: grid; gap: var(--space-6); align-items: center; scroll-margin-top: calc(var(--header-h) + var(--space-6)); }
+  .row__art { overflow: hidden; aspect-ratio: 16 / 10; border-radius: var(--radius-card); background: var(--ink); }
+  .row__art--light {
+    display: grid;
+    place-items: center;
+    padding: clamp(1rem, 3vw, 2.5rem);
+    background: var(--paper);
+    border: 1px solid var(--rule);
+  }
+  .row__art--light :global(svg) { width: 100%; height: 100%; max-height: 100%; }
+  .row__copy { display: grid; gap: var(--space-4); justify-items: start; }
+  .row__title { font-family: var(--serif); font-size: var(--step-2); font-weight: 400; line-height: 1.2; color: var(--ink); text-wrap: balance; }
+  .row__body { color: var(--graphite); line-height: 1.65; max-width: 34rem; }
+  .row__points { display: grid; gap: var(--space-2); margin: 0; }
+  .row__points li { display: flex; gap: var(--space-3); align-items: flex-start; color: var(--graphite); }
+  .row__points :global(.icon) { flex: none; margin-top: 0.2rem; color: var(--accent-strong); }
+  .row__link { display: inline-flex; align-items: center; gap: var(--space-2); font-weight: 600; color: var(--accent-strong); text-decoration: none; }
+  .row__link:hover { text-decoration: underline; text-underline-offset: 0.25em; }
+
+  @media (min-width: 56rem) {
+    .row { grid-template-columns: 1fr 1fr; gap: clamp(2rem, 4vw, 4.5rem); }
+    .row--flip .row__art { order: 2; }
+  }
+</style>

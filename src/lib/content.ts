@@ -44,3 +44,39 @@ export async function getLog() {
   const all = await getCollection('log', ({ data }) => site.showSampleContent || !data.sample);
   return all.sort((a, b) => b.data.date.localeCompare(a.data.date));
 }
+
+/** "N min read" from a Markdown body, at 220 words a minute (minimum 1). */
+export function readTime(body?: string) {
+  if (!body) return undefined;
+  const words = body.replace(/[#>*_`\-[\]()]/g, ' ').split(/\s+/).filter(Boolean).length;
+  return `${Math.max(1, Math.round(words / 220))} min read`;
+}
+
+export const INSIGHT_TAG = 'Industry insight';
+export const CASE_TAG = 'Case study';
+
+/** Knowledge-hub cards for articles, newest first. */
+export async function insightCards() {
+  return (await getInsights()).map((p, i) => ({
+    href: `/insights/${p.id}`,
+    title: p.data.title,
+    tag: INSIGHT_TAG,
+    summary: p.data.description,
+    meta: [formatDate(p.data.publishDate), readTime(p.body)].filter(Boolean).join(' · '),
+    seed: 20 + i,
+  }));
+}
+
+/** Knowledge-hub cards for case studies, each with its headline figure. */
+export async function caseStudyCards() {
+  return (await getCaseStudies()).map((c, i) => ({
+    href: `/case-studies/${c.id}`,
+    title: c.data.title,
+    tag: CASE_TAG,
+    summary: c.data.summary,
+    meta: [c.data.sector, readTime(c.body)].filter(Boolean).join(' · '),
+    figure: c.data.results[0]?.value,
+    figureLabel: c.data.results[0]?.label,
+    seed: 40 + i,
+  }));
+}

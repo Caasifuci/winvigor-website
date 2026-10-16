@@ -1,0 +1,82 @@
+---
+/**
+ * FeatureBanner: the promoted block under a knowledge-hub hero
+ * ("How does your nation stack up in STEM?" on Huxley). A navy panel with a
+ * heading, one line of copy, an action and a small drawn figure.
+ */
+import Container from '@/components/ui/Container.astro';
+import Button from '@/components/ui/Button.astro';
+import CardArt from '@/components/visuals/CardArt.astro';
+
+interface Props {
+  title: string;
+  body?: string;
+  action: { label: string; href: string };
+  /** Large figure shown beside the copy, e.g. "8". */
+  figure?: string;
+  figureLabel?: string;
+  seed?: number;
+}
+
+const { title, body, action, figure, figureLabel, seed = 7 } = Astro.props;
+---
+
+<div class="banner-wrap">
+  <Container>
+    <aside class="banner">
+      <div class="banner__copy">
+        <h2 class="banner__title">{title}</h2>
+        {body && <p class="banner__body">{body}</p>}
+        <Button href={action.href} variant="primary" inverse>{action.label}</Button>
+      </div>
+      <div class="banner__art" aria-hidden={figure ? undefined : 'true'}>
+        <CardArt seed={seed} low={Boolean(figure)} />
+        {figure && (
+          <p class="banner__figure">
+            <span class="banner__figure-value">{figure}</span>
+            {figureLabel && <span class="banner__figure-label">{figureLabel}</span>}
+          </p>
+        )}
+      </div>
+    </aside>
+  </Container>
+</div>
+
+<style>
+  .banner-wrap { padding-top: clamp(2.5rem, 1.5rem + 3vw, 4rem); }
+  .banner {
+    display: grid;
+    overflow: hidden;
+    border-radius: var(--radius-card);
+    background: var(--ink);
+    color: var(--on-ink);
+  }
+  .banner__copy { display: grid; gap: var(--space-4); align-content: center; justify-items: start; padding: clamp(1.5rem, 1rem + 2.5vw, 3rem); }
+  .banner__title {
+    font-family: var(--serif);
+    font-optical-sizing: auto;
+    font-size: var(--step-2);
+    font-weight: 400;
+    line-height: 1.2;
+    color: var(--paper);
+    text-wrap: balance;
+  }
+  .banner__body { color: var(--mist); max-width: 34rem; }
+  .banner__copy :global(.btn) { margin-top: var(--space-3); }
+
+  .banner__art { position: relative; min-height: 12rem; }
+  .banner__art :global(svg) { position: absolute; inset: 0; }
+  .banner__figure {
+    position: absolute;
+    left: var(--space-6);
+    top: var(--space-6);
+    display: grid;
+    gap: var(--space-1);
+  }
+  .banner__figure-value { font-family: var(--serif); font-size: var(--step-5); font-weight: 300; line-height: 1; color: var(--paper); }
+  .banner__figure-label { font-size: var(--step--1); font-weight: 500; color: var(--on-ink); max-width: 12rem; }
+
+  @media (min-width: 56rem) {
+    .banner { grid-template-columns: 3fr 2fr; }
+  }
+</style>

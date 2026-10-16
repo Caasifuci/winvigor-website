@@ -1,0 +1,109 @@
+---
+/**
+ * FilterBar: search field plus category chips for a CardGrid in the same
+ * section (knowledge-hub pattern). Progressive enhancement: hidden without
+ * JavaScript, and every card stays visible.
+ */
+import Icon from '@/components/ui/Icon.astro';
+
+interface Props {
+  categories: string[];
+  label?: string;
+}
+
+const { categories, label = 'Filter content' } = Astro.props;
+---
+
+<form class="filterbar" data-filterbar hidden aria-label={label} role="search">
+  <label class="filterbar__search">
+    <span class="visually-hidden">Search</span>
+    <Icon name="search" size={20} />
+    <input type="search" name="q" placeholder="Search insights and case studies" autocomplete="off" />
+  </label>
+  <fieldset class="filterbar__group">
+    <legend class="filterbar__legend">Categories</legend>
+    <div class="filterbar__chips">
+      <label class="chip"><input type="radio" name="category" value="" checked /><span>All</span></label>
+      {categories.map((c) => (
+        <label class="chip"><input type="radio" name="category" value={c} /><span>{c}</span></label>
+      ))}
+    </div>
+  </fieldset>
+  <p class="filterbar__count" aria-live="polite" data-count></p>
+</form>
+<p class="filterbar__empty" data-filter-empty hidden>Nothing matches yet. Try another word or category.</p>
+
+<script>
+  for (const form of document.querySelectorAll<HTMLFormElement>('[data-filterbar]')) {
+    const scope = form.closest('section') ?? document;
+    const cards = [...scope.querySelectorAll<HTMLElement>('[data-cards] > li')];
+    const count = form.querySelector('[data-count]')!;
+    const empty = scope.querySelector<HTMLElement>('[data-filter-empty]');
+    form.hidden = false;
+    const apply = () => {
+      const data = new FormData(form);
+      const q = String(data.get('q') ?? '').trim().toLowerCase();
+      const cat = String(data.get('category') ?? '');
+      let shown = 0;
+      for (const el of cards) {
+        const ok = (!cat || el.dataset.category === cat) && (!q || (el.dataset.text ?? '').includes(q));
+        el.hidden = !ok;
+        if (ok) shown++;
+      }
+      count.textContent = `${shown} ${shown === 1 ? 'item' : 'items'}`;
+      if (empty) empty.hidden = shown > 0;
+    };
+    form.addEventListener('input', apply);
+    form.addEventListener('submit', (e) => e.preventDefault());
+    apply();
+  }
+</script>
+
+<style>
+  .filterbar {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: end;
+    gap: var(--space-5) var(--space-7);
+    margin-bottom: var(--space-7);
+    padding: var(--space-5);
+    border: 1px solid var(--rule);
+    border-radius: var(--radius-card);
+    background: var(--paper);
+  }
+  .filterbar[hidden] { display: none; }
+
+  .filterbar__search {
+    display: flex;
+    align-items: center;
+    gap: var(--space-3);
+    flex: 1 1 18rem;
+    padding: 0.7rem 0.9rem;
+    border: 1px solid var(--rule);
+    border-radius: var(--radius);
+    color: var(--slate);
+  }
+  .filterbar__search:focus-within { border-color: var(--accent); box-shadow: 0 0 0 3px var(--accent-soft); }
+  .filterbar__search input { flex: 1; min-width: 0; border: 0; padding: 0; background: transparent; color: var(--ink); outline: none; }
+
+  .filterbar__group { border: 0; margin: 0; padding: 0; min-width: 0; }
+  .filterbar__legend { padding: 0; margin-bottom: var(--space-3); font-size: var(--step--1); font-weight: 600; color: var(--ink); }
+  .filterbar__chips { display: flex; flex-wrap: wrap; gap: var(--space-2); }
+  .chip input { position: absolute; opacity: 0; width: 1px; height: 1px; }
+  .chip span {
+    display: inline-block;
+    padding: 0.45rem 0.9rem;
+    border: 1px solid var(--rule);
+    border-radius: 999px;
+    font-size: 0.875rem;
+    font-weight: 500;
+    color: var(--graphite);
+    cursor: pointer;
+  }
+  .chip span:hover { border-color: var(--ink); }
+  .chip input:checked + span { background: var(--ink); border-color: var(--ink); color: var(--paper); }
+  .chip input:focus-visible + span { outline: 2px solid var(--accent); outline-offset: 2px; }
+
+  .filterbar__count { margin-left: auto; font-size: var(--step--1); color: var(--slate); font-variant-numeric: tabular-nums; }
+  .filterbar__empty { margin-top: var(--space-6); color: var(--graphite); }
+</style>

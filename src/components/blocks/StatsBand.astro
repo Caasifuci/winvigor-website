@@ -1,0 +1,55 @@
+---
+/**
+ * StatsBand: three or four figures with icons ("Huxley in a snapshot").
+ * Only figures that are true and computed or supplied by Winvigor belong here.
+ */
+import Icon, { type IconName } from '@/components/ui/Icon.astro';
+
+export type Stat = { icon: IconName; value: string; label: string };
+
+interface Props {
+  stats: Stat[];
+  inverse?: boolean;
+}
+
+const { stats, inverse = false } = Astro.props;
+---
+
+<ul role="list" class:list={['stats', { 'stats--inverse': inverse }]} style={`--n: ${stats.length}`}>
+  {stats.map((s) => (
+    <li class="stat">
+      <span class="stat__icon"><Icon name={s.icon} size={26} /></span>
+      <span class="stat__value">{s.value}</span>
+      <span class="stat__label">{s.label}</span>
+    </li>
+  ))}
+</ul>
+
+<style>
+  .stats { display: grid; gap: var(--space-6); margin: 0; }
+  .stat {
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-2);
+    padding: var(--space-5) 0 0;
+    border-top: 2px solid var(--accent);
+  }
+  .stat__icon { display: inline-flex; color: var(--accent-strong); margin-bottom: var(--space-2); }
+  .stat__value {
+    margin: 0;
+    font-family: var(--serif);
+    font-size: var(--step-5);
+    font-weight: 300;
+    line-height: 1;
+    letter-spacing: -0.03em;
+    color: var(--ink);
+    font-variant-numeric: lining-nums tabular-nums;
+  }
+  .stat__label { font-weight: 500; color: var(--graphite); max-width: 18rem; }
+
+  .stats--inverse .stat__icon { color: var(--accent-on-ink); }
+  .stats--inverse .stat__value { color: var(--paper); }
+  .stats--inverse .stat__label { color: var(--on-ink); }
+
+  @media (min-width: 44rem) { .stats { grid-template-columns: repeat(var(--n), minmax(0, 1fr)); gap: clamp(1rem, 3vw, 2.5rem); } }
+</style>

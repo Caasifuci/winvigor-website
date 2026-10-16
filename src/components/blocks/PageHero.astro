@@ -1,0 +1,177 @@
+---
+/**
+ * PageHero: the full-width page header used across the redesigned pages.
+ *
+ * tone="navy"  → deep-navy band (employer pattern), white text, accent button
+ * tone="light" → cool-grey band (knowledge-hub pattern)
+ *
+ * Optional: `features` renders a row of icon items under the copy (as on
+ * Huxley's employer page); the "visual" slot takes drawn artwork; the
+ * "footer" slot sits under the hero (client list).
+ */
+import Container from '@/components/ui/Container.astro';
+import Button from '@/components/ui/Button.astro';
+import Icon, { type IconName } from '@/components/ui/Icon.astro';
+
+type Cta = { label: string; href: string };
+export type Feature = { icon: IconName; title: string; body?: string; href?: string };
+
+interface Props {
+  title: string;
+  lede?: string;
+  eyebrow?: string;
+  primary?: Cta;
+  secondary?: Cta;
+  tone?: 'navy' | 'light';
+  features?: Feature[];
+  scale?: 'home' | 'page';
+}
+
+const { title, lede, eyebrow, primary, secondary, tone = 'light', features = [], scale = 'page' } = Astro.props;
+const navy = tone === 'navy';
+const hasVisual = Astro.slots.has('visual');
+---
+
+<section class:list={['phero', `phero--${tone}`, `phero--${scale}`, { 'phero--visual': hasVisual }]}>
+  <Container grid class="phero__grid">
+    <div class="phero__copy">
+      {eyebrow && <p class="phero__eyebrow">{eyebrow}</p>}
+      <h1 class="phero__title">{title}</h1>
+      {lede && <p class="phero__lede">{lede}</p>}
+      {(primary || secondary) && (
+        <div class="phero__actions">
+          {primary && <Button href={primary.href} variant="primary" size="lg" inverse={navy}>{primary.label}</Button>}
+          {secondary && <Button href={secondary.href} variant={navy ? 'secondary' : 'secondary'} size="lg" inverse={navy}>{secondary.label}</Button>}
+        </div>
+      )}
+    </div>
+    {hasVisual && (
+      <div class="phero__visual" aria-hidden="true"><slot name="visual" /></div>
+    )}
+  </Container>
+
+  {features.length > 0 && (
+    <Container class="phero__features-wrap">
+      <ul role="list" class="phero__features" style={`--n: ${features.length}`}>
+        {features.map((f) => {
+          const Tag = f.href ? 'a' : 'div';
+          return (
+            <li>
+              <Tag class="feature" href={f.href}>
+                <span class="feature__icon"><Icon name={f.icon} size={28} /></span>
+                <span class="feature__text">
+                  <span class="feature__title">{f.title}</span>
+                  {f.body && <span class="feature__body">{f.body}</span>}
+                </span>
+              </Tag>
+            </li>
+          );
+        })}
+      </ul>
+    </Container>
+  )}
+
+  {Astro.slots.has('footer') && (
+    <Container class="phero__footer"><slot name="footer" /></Container>
+  )}
+</section>
+
+<style>
+  .phero { padding-block: clamp(3rem, 2rem + 4vw, 6rem); }
+  .phero--light { background: var(--fog); border-bottom: 1px solid var(--rule); }
+  .phero--navy {
+    background:
+      radial-gradient(60rem 30rem at 85% -10%, rgb(30 107 255 / 0.28), transparent 60%),
+      var(--ink);
+    color: var(--on-ink);
+  }
+
+  :global(.phero__grid) { row-gap: var(--space-7); align-items: center; }
+  .phero__copy { grid-column: 1 / -1; }
+  .phero__eyebrow {
+    margin-bottom: var(--space-4);
+    font-size: 0.8125rem;
+    font-weight: 600;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    color: var(--accent-strong);
+  }
+  .phero--navy .phero__eyebrow { color: var(--accent-on-ink); }
+
+  .phero__title {
+    font-family: var(--serif);
+    font-optical-sizing: auto;
+    font-size: var(--step-4);
+    font-weight: 350;
+    line-height: 1.06;
+    letter-spacing: -0.02em;
+    color: var(--ink);
+    text-wrap: balance;
+  }
+  .phero--home .phero__title { font-size: var(--step-5); }
+  .phero--navy .phero__title { color: var(--paper); }
+
+  .phero__lede {
+    margin-top: var(--space-5);
+    max-width: 40rem;
+    font-size: var(--step-1);
+    line-height: 1.5;
+    color: var(--slate);
+    text-wrap: pretty;
+  }
+  .phero--navy .phero__lede { color: var(--on-ink); }
+
+  .phero__actions { display: flex; flex-wrap: wrap; gap: var(--space-4); margin-top: var(--space-7); }
+
+  .phero__visual { grid-column: 1 / -1; max-width: 30rem; width: 100%; justify-self: center; }
+  .phero__visual :global(svg) { width: 100%; height: auto; }
+
+  :global(.phero__features-wrap) { margin-top: clamp(2.5rem, 2rem + 3vw, 4.5rem); }
+  .phero__features {
+    display: grid;
+    gap: var(--space-4);
+    margin: 0;
+  }
+  .feature {
+    display: flex;
+    align-items: flex-start;
+    gap: var(--space-4);
+    height: 100%;
+    padding: var(--space-5);
+    border-radius: var(--radius-card);
+    background: var(--paper);
+    border: 1px solid var(--rule);
+    color: var(--ink);
+    text-decoration: none;
+  }
+  .phero--navy .feature { background: var(--ink-2); border-color: var(--ink-line); color: var(--paper); }
+  a.feature { transition: border-color 160ms ease, background-color 160ms ease; }
+  a.feature:hover { border-color: var(--accent); }
+  .feature__icon {
+    display: inline-flex;
+    flex: none;
+    align-items: center;
+    justify-content: center;
+    width: 3rem;
+    height: 3rem;
+    border-radius: 50%;
+    background: var(--accent-soft);
+    color: var(--accent-strong);
+  }
+  .phero--navy .feature__icon { background: rgb(30 107 255 / 0.18); color: var(--accent-on-ink); }
+  .feature__text { display: grid; gap: var(--space-1); }
+  .feature__title { font-weight: 600; line-height: 1.35; }
+  .feature__body { font-size: 0.9375rem; line-height: 1.5; color: var(--slate); }
+  .phero--navy .feature__body { color: var(--mist); }
+
+  :global(.phero__footer) { margin-top: clamp(3rem, 2rem + 3vw, 5rem); }
+
+  @media (min-width: 48rem) {
+    .phero__features { grid-template-columns: repeat(var(--n), minmax(0, 1fr)); }
+  }
+  @media (min-width: 64rem) {
+    .phero__copy { grid-column: 1 / span 8; }
+    .phero--visual .phero__copy { grid-column: 1 / span 7; }
+    .phero__visual { grid-column: 8 / -1; max-width: none; }
+  }
+</style>

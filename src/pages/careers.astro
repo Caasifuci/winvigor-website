@@ -1,48 +1,76 @@
 ---
+/**
+ * Careers, on the employer-page pattern: navy hero with three icon features
+ * → what-to-expect rows → stats band → open roles → how we hire in numbered
+ * steps → why join → two closing calls to action → latest insights.
+ */
 import BaseLayout from '@/layouts/BaseLayout.astro';
-import HeroSplit from '@/components/blocks/HeroSplit.astro';
-import Editorial from '@/components/blocks/Editorial.astro';
-import ProcessSteps from '@/components/blocks/ProcessSteps.astro';
-import StepsArt from '@/components/visuals/StepsArt.astro';
-import Typography from '@/components/ui/Typography.astro';
+import PageHero from '@/components/blocks/PageHero.astro';
+import Section from '@/components/blocks/Section.astro';
+import SplitRows from '@/components/blocks/SplitRows.astro';
+import StatsBand from '@/components/blocks/StatsBand.astro';
+import NumberedSteps from '@/components/blocks/NumberedSteps.astro';
+import CardGrid from '@/components/blocks/CardGrid.astro';
 import Button from '@/components/ui/Button.astro';
+import Icon from '@/components/ui/Icon.astro';
+import Typography from '@/components/ui/Typography.astro';
 import { site } from '@/data/site';
 import { hiringProcess } from '@/data/process';
-import { getRoles } from '@/lib/content';
+import { disciplines } from '@/data/taxonomy';
+import { getRoles, getTalent, insightCards } from '@/lib/content';
 
 const roles = await getRoles();
+const talent = await getTalent();
+const insights = (await insightCards()).slice(0, 3);
 const apply = (subject: string) => `mailto:${site.contact.email}?subject=${encodeURIComponent(subject)}`;
 
-const facts = [
-  { title: 'Clients', body: 'EU institutions, systems integrators and industrial and consumer-goods enterprises.' },
-  { title: 'Work', body: 'Software engineering, cloud and platform, data, quality and test, analysis and delivery.' },
-  { title: 'Arrangements', body: 'Permanent roles and contract assignments. You know the client, team and scope before you commit.' },
-  { title: 'Location', body: 'Our office is in Zaventem, near Brussels. Many assignments are hybrid or remote within the EU.' },
+const expect = [
+  { title: 'Clients that matter', body: 'Assignments with EU institutions, systems integrators and industrial and consumer-goods enterprises.', art: 'layers' as const },
+  { title: 'Work across the stack', body: 'Software engineering, cloud and platform, data, quality and test, analysis and delivery.', art: 'roster' as const },
+  { title: 'Permanent or contract, your choice', body: 'Permanent roles and contract assignments. You know the client, team and scope before you commit.', art: 'steps' as const },
+  { title: 'Brussels-based, EU-wide', body: 'Our office is in Zaventem, near Brussels. Many assignments are hybrid or remote within the EU.', art: 'systems' as const },
+];
+
+const why = [
+  'You know the client, team and scope before you commit.',
+  'A reply from a person, not an automated filter.',
+  'Technical review by a practitioner in your discipline. No trick questions.',
+  'Permanent roles and contract assignments.',
+  'Hybrid or remote within the EU on many assignments.',
+  'Your CV is never sent to a client without your agreement.',
 ];
 ---
 
 <BaseLayout title="Careers" description="Engineering, data, cloud and delivery roles with Winvigor Solutions, permanent or on contract, with EU institutions and enterprise clients.">
-  <HeroSplit
+  <PageHero
+    tone="navy"
+    eyebrow="Careers"
     title="Work on programmes that matter, with the scope stated up front."
     lede="We place engineers, analysts and delivery leads on enterprise and public-sector programmes. Apply for an open role or join the talent network."
     primary={{ label: 'See open roles', href: '#roles' }}
     secondary={{ label: 'Join the talent network', href: apply('Talent network') }}
-  >
-    <StepsArt slot="visual" />
-  </HeroSplit>
+    features={[
+      { icon: 'briefcase', title: 'Permanent and contract roles', body: 'With the client, team and scope described before you commit.' },
+      { icon: 'globe', title: 'EU institutions and enterprises', body: 'Public-sector and enterprise programmes across Europe.' },
+      { icon: 'pin', title: 'Hybrid or remote within the EU', body: 'Office in Zaventem, on site where the work needs it.' },
+    ]}
+  />
 
-  <Editorial title="What to expect">
-    <dl class="facts">
-      {facts.map((f) => (
-        <div>
-          <dt>{f.title}</dt>
-          <dd>{f.body}</dd>
-        </div>
-      ))}
-    </dl>
-  </Editorial>
+  <Section id="expect" title="What to expect" intro="Bringing skilled people to the programmes that need them, with the details agreed before you start.">
+    <SplitRows rows={expect} />
+  </Section>
 
-  <Editorial id="roles" title="Open roles" layout="stacked" surface="fog">
+  <Section id="snapshot" title="Winvigor in a snapshot" surface="fog" compact>
+    <StatsBand
+      stats={[
+        { icon: 'briefcase', value: String(roles.length), label: roles.length === 1 ? 'open role right now' : 'open roles right now' },
+        { icon: 'layers', value: String(disciplines.length), label: 'disciplines we place, from engineering to delivery' },
+        { icon: 'people', value: String(talent.length), label: 'engineers on our talent board' },
+      ]}
+    />
+  </Section>
+
+  <Section id="roles" title="Open roles">
     {roles.length > 0 ? (
       <>
         {roles.some((r) => r.data.sample) && <p class="sample-tag roles__tag">Sample roles, replace before launch</p>}
@@ -50,18 +78,18 @@ const facts = [
           {roles.map((r) => (
             <li class="role">
               <div class="role__main">
-                <Typography as="h3" variant="h3">{r.data.title}</Typography>
-                <Typography variant="body" tone="muted">{r.data.summary}</Typography>
+                <p class="role__tag">{r.data.discipline}</p>
+                <h3 class="role__title">{r.data.title}</h3>
+                <p class="role__summary">{r.data.summary}</p>
               </div>
-              <dl class="role__facts">
-                <div><dt>Discipline</dt><dd>{r.data.discipline}</dd></div>
-                <div><dt>Location</dt><dd>{r.data.location}</dd></div>
-                <div><dt>Type</dt><dd>{r.data.type}</dd></div>
+              <ul role="list" class="role__facts">
+                <li><Icon name="pin" size={18} /><span>{r.data.location}</span></li>
+                <li><Icon name="briefcase" size={18} /><span>{r.data.type}</span></li>
                 {r.data.clearance && (
-                  <div><dt>Clearance</dt><dd>{r.data.clearance}{r.data.clearanceStatus && <span class="role__status"> ({r.data.clearanceStatus.toLowerCase()})</span>}</dd></div>
+                  <li><Icon name="shield" size={18} /><span>{r.data.clearance}{r.data.clearanceStatus && ` (${r.data.clearanceStatus.toLowerCase()})`}</span></li>
                 )}
-              </dl>
-              <Button href={apply(`Application: ${r.data.title}`)} variant="secondary" class="role__cta">
+              </ul>
+              <Button href={apply(`Application: ${r.data.title}`)} variant="primary" class="role__cta">
                 Apply<span class="visually-hidden"> for {r.data.title}</span>
               </Button>
             </li>
@@ -71,49 +99,114 @@ const facts = [
     ) : (
       <Typography variant="lead">No open roles right now. Join the talent network and we will contact you when a matching assignment opens.</Typography>
     )}
-  </Editorial>
+  </Section>
 
-  <Editorial title="How we hire" layout="stacked">
-    <ProcessSteps steps={hiringProcess} label="Hiring process" />
-  </Editorial>
+  <Section id="hire" title={`From application to offer in ${hiringProcess.length} steps`} surface="fog">
+    <NumberedSteps steps={hiringProcess} label="Hiring process" />
+  </Section>
 
-  <Editorial surface="ink" title="Nothing that fits yet?" intro="Send your CV and the kind of work you want next. We will contact you when a matching assignment opens.">
-    <div class="network">
-      <Button href={apply('Talent network')} variant="primary" size="lg" inverse>Join the talent network</Button>
-      <Typography variant="small" tone="inverse">
-        We keep your CV for up to 24 months and never send it to a client without your agreement.
-        See our <a href="/privacy#candidates">privacy notice</a>.
-      </Typography>
+  <Section id="why" title="Why join Winvigor">
+    <ul role="list" class="why">
+      {why.map((w) => (
+        <li><span class="why__icon"><Icon name="check" size={20} /></span><span>{w}</span></li>
+      ))}
+    </ul>
+  </Section>
+
+  <section class="next" aria-label="Take the next step">
+    <div class="next__inner">
+      <div class="next__block">
+        <h2 class="next__title">Nothing that fits yet?</h2>
+        <p class="next__body">Send your CV and the kind of work you want next. We will contact you when a matching assignment opens.</p>
+        <Button href={apply('Talent network')} variant="primary" size="lg" inverse>Join the talent network</Button>
+        <p class="next__note">
+          We keep your CV for up to 24 months and never send it to a client without your agreement.
+          See our <a href="/privacy#candidates">privacy notice</a>.
+        </p>
+      </div>
+      <div class="next__block">
+        <h2 class="next__title">Hiring for your own team?</h2>
+        <p class="next__body">Add sought-after engineers, analysts and delivery leads to your programme.</p>
+        <Button href="/talent" variant="secondary" size="lg" inverse>See available engineers</Button>
+      </div>
     </div>
-  </Editorial>
+  </section>
+
+  {insights.length > 0 && (
+    <Section id="insights" title="Latest insights" viewAll={{ label: 'View all', href: '/insights' }}>
+      <CardGrid items={insights} label="Latest insights" />
+    </Section>
+  )}
 </BaseLayout>
 
 <style>
-  .network { display: grid; gap: var(--space-4); justify-items: start; max-width: 36rem; }
-  .network a { color: inherit; text-decoration-color: var(--accent); text-decoration-thickness: 2px; }
-  .facts { margin: 0; border-top: 1px solid var(--ink); }
-  .facts > div { display: grid; gap: var(--space-2); padding-block: var(--space-5); border-bottom: 1px solid var(--rule); }
-  .facts dt { font-weight: 600; color: var(--ink); }
-  .facts dd { margin: 0; color: var(--graphite); }
-
   .roles__tag { margin-bottom: var(--space-6); }
-  .roles { margin: 0; border-top: 1px solid var(--ink); }
+  .roles { display: grid; gap: var(--space-4); margin: 0; }
   .role {
     display: grid;
     gap: var(--space-5);
-    padding-block: var(--space-6);
-    border-bottom: 1px solid var(--rule);
+    padding: clamp(1.25rem, 1rem + 1.5vw, 2rem);
+    border: 1px solid var(--rule);
+    border-radius: var(--radius-card);
+    background: var(--paper);
   }
-  .role__main { display: grid; gap: var(--space-3); max-width: 40rem; }
-  .role__facts { display: grid; gap: var(--space-2); margin: 0; font-size: var(--step--1); }
-  .role__facts div { display: grid; grid-template-columns: 6rem 1fr; gap: var(--space-3); }
-  .role__facts dt { color: var(--slate); }
-  .role__facts dd { margin: 0; color: var(--ink); }
-  .role__status { color: var(--slate); }
-  :global(.role__cta) { justify-self: start; }
+  .role__main { display: grid; gap: var(--space-3); max-width: 42rem; }
+  .role__tag {
+    justify-self: start;
+    padding: 0.2rem 0.6rem;
+    border-radius: 999px;
+    background: var(--accent-soft);
+    color: var(--accent-strong);
+    font-size: 0.75rem;
+    font-weight: 600;
+  }
+  .role__title { font-family: var(--serif); font-size: var(--step-2); font-weight: 400; line-height: 1.2; color: var(--ink); }
+  .role__summary { color: var(--slate); }
+  .role__facts { display: grid; gap: var(--space-2); margin: 0; align-content: start; font-size: 0.9375rem; color: var(--graphite); }
+  .role__facts li { display: flex; gap: var(--space-3); align-items: flex-start; }
+  .role__facts :global(.icon) { flex: none; margin-top: 0.15rem; color: var(--accent-strong); }
+  :global(.role__cta) { justify-self: start; align-self: start; }
 
+  .why { display: grid; gap: var(--space-4) clamp(1rem, 3vw, 2.5rem); margin: 0; }
+  .why li { display: flex; gap: var(--space-4); align-items: flex-start; font-size: 1.0625rem; color: var(--graphite); }
+  .why__icon {
+    display: inline-flex;
+    flex: none;
+    align-items: center;
+    justify-content: center;
+    width: 2rem;
+    height: 2rem;
+    border-radius: 50%;
+    background: var(--accent-soft);
+    color: var(--accent-strong);
+  }
+
+  .next { background: var(--ink); color: var(--on-ink); }
+  .next__inner {
+    display: grid;
+    max-width: calc(var(--container) + 2 * var(--gutter));
+    margin-inline: auto;
+  }
+  .next__block {
+    display: grid;
+    gap: var(--space-4);
+    align-content: start;
+    justify-items: start;
+    padding: clamp(3rem, 2rem + 4vw, 5.5rem) var(--gutter);
+  }
+  .next__block + .next__block { border-top: 1px solid var(--ink-line); }
+  .next__title { font-family: var(--serif); font-size: var(--step-3); font-weight: 350; line-height: 1.12; color: var(--paper); }
+  .next__body { color: var(--mist); max-width: 30rem; }
+  .next__block :global(.btn) { margin-top: var(--space-3); }
+  .next__note { font-size: var(--step--1); color: var(--mist); max-width: 30rem; }
+  .next__note a { color: var(--paper); text-decoration-color: var(--accent-on-ink); text-decoration-thickness: 2px; }
+
+  @media (min-width: 52rem) {
+    .why { grid-template-columns: 1fr 1fr; }
+  }
   @media (min-width: 64rem) {
-    .role { grid-template-columns: 6fr 4fr auto; align-items: start; column-gap: clamp(1rem, 2.5vw, 2rem); }
-    .facts > div { grid-template-columns: 9rem 1fr; gap: var(--space-5); }
+    .role { grid-template-columns: 6fr 3fr auto; align-items: start; column-gap: clamp(1rem, 2.5vw, 2rem); }
+    .next__inner { grid-template-columns: 1fr 1fr; }
+    .next__block + .next__block { border-top: 0; border-left: 1px solid var(--ink-line); }
   }
 </style>

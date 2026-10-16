@@ -1,0 +1,87 @@
+---
+/**
+ * HelpCta: the closing "How can we help?" block, with two paths side by
+ * side: one for organisations hiring, one for people looking for work.
+ */
+import Container from '@/components/ui/Container.astro';
+import Button from '@/components/ui/Button.astro';
+import Icon from '@/components/ui/Icon.astro';
+import { site } from '@/data/site';
+
+interface Props {
+  title?: string;
+}
+
+const { title = 'How can we help?' } = Astro.props;
+const talentNetwork = `mailto:${site.contact.email}?subject=${encodeURIComponent('Talent network')}`;
+---
+
+<section class="help" aria-labelledby="help-title">
+  <Container>
+    <h2 class="help__title" id="help-title">{title}</h2>
+    <div class="help__paths">
+      <div class="path">
+        <span class="path__icon"><Icon name="briefcase" size={26} /></span>
+        <h3 class="path__title">I'm looking for talent or advice</h3>
+        <p class="path__body">Tell us about the programme, the role or the problem. A consultant will come back to you.</p>
+        <div class="path__actions">
+          <Button href="/contact" variant="primary" inverse>Contact us</Button>
+          <Button href="/talent" variant="quiet" inverse>Available engineers</Button>
+        </div>
+      </div>
+      <div class="path">
+        <span class="path__icon"><Icon name="people" size={26} /></span>
+        <h3 class="path__title">I'm interested in tech roles</h3>
+        <p class="path__body">See open roles, or send your CV and the kind of work you want next.</p>
+        <div class="path__actions">
+          <Button href="/careers" variant="primary" inverse>See careers</Button>
+          <Button href={talentNetwork} variant="quiet" inverse>Join the talent network</Button>
+        </div>
+      </div>
+    </div>
+  </Container>
+</section>
+
+<style>
+  .help {
+    padding-block: clamp(3.5rem, 2rem + 5vw, 6.5rem);
+    background:
+      radial-gradient(50rem 24rem at 0% 110%, rgb(30 107 255 / 0.25), transparent 60%),
+      var(--ink);
+    color: var(--on-ink);
+  }
+  .help__title {
+    margin-bottom: clamp(1.75rem, 1rem + 2vw, 2.75rem);
+    font-family: var(--serif);
+    font-size: var(--step-3);
+    font-weight: 350;
+    line-height: 1.12;
+    color: var(--paper);
+  }
+  .help__paths { display: grid; gap: clamp(1rem, 2.5vw, 1.75rem); }
+  .path {
+    display: grid;
+    gap: var(--space-3);
+    align-content: start;
+    justify-items: start;
+    padding: clamp(1.5rem, 1rem + 2vw, 2.5rem);
+    border: 1px solid var(--ink-line);
+    border-radius: var(--radius-card);
+    background: var(--ink-2);
+  }
+  .path__icon {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 3rem;
+    height: 3rem;
+    border-radius: 50%;
+    background: rgb(30 107 255 / 0.18);
+    color: var(--accent-on-ink);
+  }
+  .path__title { font-family: var(--serif); font-size: var(--step-2); font-weight: 400; line-height: 1.2; color: var(--paper); }
+  .path__body { color: var(--mist); max-width: 30rem; }
+  .path__actions { display: flex; flex-wrap: wrap; align-items: center; gap: var(--space-4) var(--space-5); margin-top: var(--space-3); }
+
+  @media (min-width: 52rem) { .help__paths { grid-template-columns: 1fr 1fr; } }
+</style>

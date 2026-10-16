@@ -99,7 +99,7 @@ const { steps, label, inverse = false } = Astro.props;
   .steps--inverse .step::before { background: var(--ink); border-color: var(--paper); }
   .steps--inverse .step:last-child::before { background: var(--paper); }
   .steps--inverse .step__num { color: var(--mist); }
-  .steps--inverse .step__output { color: var(--paper); border-top-color: #2b3a44; }
+  .steps--inverse .step__output { color: var(--paper); border-top-color: var(--ink-line); }
 
   @media (min-width: 64rem) {
     .steps {

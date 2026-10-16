@@ -1,115 +1,134 @@
 ---
+/**
+ * Who we are, on the knowledge-hub pattern: hero → featured banner (mission)
+ * → story → how we work as cards → clients → latest insights → help.
+ */
 import BaseLayout from '@/layouts/BaseLayout.astro';
-import HeroSplit from '@/components/blocks/HeroSplit.astro';
-import Editorial from '@/components/blocks/Editorial.astro';
+import PageHero from '@/components/blocks/PageHero.astro';
+import FeatureBanner from '@/components/blocks/FeatureBanner.astro';
+import Section from '@/components/blocks/Section.astro';
+import CardGrid from '@/components/blocks/CardGrid.astro';
+import HelpCta from '@/components/blocks/HelpCta.astro';
 import ClientLogos from '@/components/blocks/ClientLogos.astro';
 import LayersArt from '@/components/visuals/LayersArt.astro';
-import Typography from '@/components/ui/Typography.astro';
-import Button from '@/components/ui/Button.astro';
+import Icon from '@/components/ui/Icon.astro';
 import { site } from '@/data/site';
+import { insightCards } from '@/lib/content';
 
 const principles = [
   {
+    icon: 'layers',
     title: 'Advice and delivery under one roof',
     body: 'The consultants who set the roadmap stay accountable for delivering it, alongside the engineers who build it.',
   },
   {
+    icon: 'handshake',
     title: 'Plans that fit the organisation',
     body: 'Recommendations are shaped by your contracts, governance and people. A plan your board cannot approve is not a plan.',
   },
   {
+    icon: 'chart',
     title: 'Outcomes agreed up front',
     body: 'Every engagement starts with measurable targets and ends with a review against them.',
   },
-];
+] as const;
 
+const insights = (await insightCards()).slice(0, 3);
 const { street, postalCode, locality, country } = site.contact.address;
 ---
 
 <BaseLayout title="Who we are" description="Winvigor Solutions is a technology consulting and talent resourcing firm based in Zaventem, Belgium, working with EU institutions and enterprises.">
-  <HeroSplit
+  <PageHero
+    eyebrow="Who we are"
     title="Consultants and engineers, accountable for the same outcome."
     lede="Winvigor Solutions is a technology consulting and talent resourcing firm based in Zaventem, on the edge of Brussels. We work with leadership teams to streamline operations, reduce delivery risk and staff critical programmes."
   >
     <LayersArt slot="visual" />
-  </HeroSplit>
+  </PageHero>
 
-  <Editorial title="Our story">
-    <div class="prose">
-      <p>
+  <FeatureBanner
+    title="To help enterprises build operational excellence and sustainable growth through technology consulting and talent resourcing."
+    body="Our mission. We strengthen our clients' own capabilities, so what we build keeps working after we leave."
+    action={{ label: 'See how we work', href: '/insights#processes' }}
+    seed={12}
+  />
+
+  <Section id="story" title="Our story">
+    <div class="story">
+      <p class="story__lead">
         Winvigor was founded on a simple observation: technology programmes go wrong when the people advising on them are not accountable for delivering them.
       </p>
       <p>
         We combine three things most organisations buy separately: strategic IT consulting, software delivery and specialist talent. Our clients include EU institutions, systems integrators such as Capgemini and Atos, and industrial and consumer-goods enterprises including Dresser-Rand and Reckitt.
       </p>
     </div>
-  </Editorial>
+  </Section>
 
-  <Editorial title="Mission" surface="ink">
-    <p class="mission">
-      To help enterprises build operational excellence and sustainable growth through technology consulting and talent resourcing.
-    </p>
-    <Typography variant="body" tone="inverse" class="mission__sub">
-      We strengthen our clients' own capabilities, so what we build keeps working after we leave.
-    </Typography>
-  </Editorial>
-
-  <Editorial title="How we work">
-    <dl class="principles">
+  <Section id="how" title="How we work" surface="fog" viewAll={{ label: 'Our process step by step', href: '/insights#processes' }}>
+    <ul role="list" class="principles">
       {principles.map((p) => (
-        <div>
-          <dt><Typography as="span" variant="h3">{p.title}</Typography></dt>
-          <dd><Typography as="span" variant="body" tone="muted">{p.body}</Typography></dd>
-        </div>
+        <li class="principle">
+          <span class="principle__icon"><Icon name={p.icon} size={26} /></span>
+          <h3 class="principle__title">{p.title}</h3>
+          <p class="principle__body">{p.body}</p>
+        </li>
       ))}
-    </dl>
-    <Button href="/insights" variant="quiet" class="principles__link">See our process step by step</Button>
-  </Editorial>
+    </ul>
+  </Section>
 
-  <Editorial surface="fog" layout="stacked">
+  <Section id="clients" compact>
     <ClientLogos />
-  </Editorial>
+  </Section>
 
-  <Editorial title="Office" rule>
+  <Section id="office" title="Our office" surface="fog" compact>
     <div class="office">
+      <span class="office__icon"><Icon name="pin" size={26} /></span>
       <address>
         {site.name}<br />
-        {street}<br />
-        {postalCode} {locality}<br />
-        {country}
+        {street}, {postalCode} {locality}, {country}
       </address>
-      <div class="office__actions">
-        <Button href="/contact" variant="primary" size="lg">Contact us</Button>
-        <Button href="/careers" variant="quiet">Careers</Button>
-      </div>
     </div>
-  </Editorial>
+  </Section>
+
+  {insights.length > 0 && (
+    <Section id="insights" title="Latest insights" viewAll={{ label: 'View all', href: '/insights' }}>
+      <CardGrid items={insights} label="Latest insights" />
+    </Section>
+  )}
+
+  <HelpCta />
 </BaseLayout>
 
 <style>
-  .mission {
-    font-family: var(--serif);
-    font-optical-sizing: auto;
-    font-size: var(--step-3);
-    font-weight: 350;
-    line-height: 1.22;
-    letter-spacing: -0.01em;
-    color: var(--paper);
-    text-wrap: pretty;
-  }
-  :global(.mission__sub) { margin-top: var(--space-6); }
+  .story { display: grid; gap: var(--space-5); max-width: 46rem; font-size: 1.125rem; line-height: 1.7; color: var(--graphite); }
+  .story__lead { font-family: var(--serif); font-size: var(--step-2); font-weight: 350; line-height: 1.3; color: var(--ink); }
 
-  .principles { margin: 0; border-top: 1px solid var(--ink); }
-  .principles > div {
+  .principles { display: grid; gap: clamp(1rem, 2.5vw, 1.75rem); margin: 0; }
+  .principle {
     display: grid;
     gap: var(--space-3);
-    padding-block: var(--space-6);
-    border-bottom: 1px solid var(--rule);
+    align-content: start;
+    padding: clamp(1.25rem, 1rem + 1.5vw, 2rem);
+    border: 1px solid var(--rule);
+    border-radius: var(--radius-card);
+    background: var(--paper);
   }
-  .principles dd { margin: 0; }
-  :global(.principles__link) { margin-top: var(--space-6); }
+  .principle__icon {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 3rem;
+    height: 3rem;
+    border-radius: 50%;
+    background: var(--accent-soft);
+    color: var(--accent-strong);
+  }
+  .principle__title { font-family: var(--serif); font-size: var(--step-1); font-weight: 450; line-height: 1.25; color: var(--ink); }
+  .principle__body { color: var(--slate); }
 
-  .office { display: grid; gap: var(--space-6); }
+  .office { display: flex; align-items: flex-start; gap: var(--space-4); }
+  .office__icon { display: inline-flex; color: var(--accent-strong); margin-top: 0.15rem; }
   .office address { font-style: normal; font-size: var(--step-1); line-height: 1.5; color: var(--ink); }
-  .office__actions { display: flex; flex-wrap: wrap; align-items: center; gap: var(--space-4) var(--space-6); }
+
+  @media (min-width: 52rem) { .principles { grid-template-columns: repeat(3, minmax(0, 1fr)); } }
 </style>

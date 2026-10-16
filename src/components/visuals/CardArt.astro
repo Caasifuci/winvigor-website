@@ -1,0 +1,63 @@
+---
+/**
+ * CardArt: the image slot of a card. Instead of stock photography it draws a
+ * small composition of the logo's 21° slanted bars on navy, varied by `seed`
+ * so neighbouring cards differ. One bar carries the electric-blue accent.
+ */
+import { bar, gridLines } from './geometry';
+
+interface Props {
+  seed?: number;
+  /** "navy" (default) or "light" background. */
+  tone?: 'navy' | 'light';
+  /** Keep bars low, leaving the top clear for a figure laid over the art. */
+  low?: boolean;
+}
+
+const { seed = 0, tone = 'navy', low = false } = Astro.props;
+const W = 480, H = 300, BASE = 250;
+
+// Small deterministic generator so each seed always draws the same picture.
+let s = (seed * 9301 + 49297) % 233280 || 1;
+const rand = () => ((s = (s * 9301 + 49297) % 233280) / 233280);
+
+const count = 5 + (seed % 3);
+const width = 22 + (seed % 2) * 6;
+const gap = 18 + (seed % 4) * 4;
+const start = low ? 200 + (seed % 4) * 10 : 40 + (seed % 5) * 14;
+const accentAt = (seed * 3) % count;
+const bars = Array.from({ length: count }, (_, i) => {
+  const h = low
+    ? 40 + Math.round(rand() * 50) + (i === accentAt ? 20 : 0)
+    : 60 + Math.round(rand() * 120) + (i === accentAt ? 40 : 0);
+  return { d: bar(start + i * (width + gap), BASE, width, h), accent: i === accentAt, faint: rand() > 0.6 };
+});
+const grid = gridLines(W, H, 30);
+---
+
+<svg class:list={['card-art', `card-art--${tone}`]} viewBox={`0 0 ${W} ${H}`} preserveAspectRatio="xMidYMid slice" xmlns="http://www.w3.org/2000/svg" aria-hidden="true" focusable="false">
+  <rect class="card-art__bg" width={W} height={H} />
+  <g class="card-art__grid">
+    {grid.v.map((x) => <line x1={x} y1="0" x2={x} y2={H} />)}
+    {grid.h.map((y) => <line x1="0" y1={y} x2={W} y2={y} />)}
+  </g>
+  {bars.map((b) => <path d={b.d} class:list={['card-art__bar', { 'is-accent': b.accent, 'is-faint': b.faint && !b.accent }]} />)}
+  <line class="card-art__base" x1="24" y1={BASE} x2={W - 24} y2={BASE} />
+</svg>
+
+<style>
+  .card-art { display: block; width: 100%; height: 100%; }
+  .card-art--navy .card-art__bg { fill: var(--ink); }
+  .card-art--navy .card-art__grid line { stroke: var(--ink-line); stroke-width: 1; }
+  .card-art--navy .card-art__bar { fill: var(--on-ink); }
+  .card-art--navy .card-art__bar.is-faint { fill: var(--ink-line); }
+  .card-art--navy .card-art__base { stroke: var(--mist); stroke-width: 1.25; }
+
+  .card-art--light .card-art__bg { fill: var(--fog); }
+  .card-art--light .card-art__grid line { stroke: var(--rule); stroke-width: 1; }
+  .card-art--light .card-art__bar { fill: var(--ink); }
+  .card-art--light .card-art__bar.is-faint { fill: var(--rule); }
+  .card-art--light .card-art__base { stroke: var(--ink); stroke-width: 1.25; }
+
+  .card-art .card-art__bar.is-accent { fill: var(--accent); }
+</style>

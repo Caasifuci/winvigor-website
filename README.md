@@ -56,18 +56,20 @@ Navigation: WHO WE ARE · WHAT WE DO · INSIGHTS · CAREERS · CONTACT. The logo
 
 | Token | Value | Use |
 |---|---|---|
-| `--ink` | `#0E1A22` | Headings, dark sections |
-| `--graphite` | `#2C3A44` | Body copy |
-| `--slate` | `#5E6B74` | Secondary copy |
-| `--rule` | `#D6DBDF` | Hairlines |
-| `--fog` | `#F2F4F5` | Quiet section surface |
-| `--accent` | `#0A96D6` | **Only**: primary button, focus ring, link underline, one element per artwork, the "available now" marker |
+| `--ink` | `#0B1F3A` | Primary deep navy: headings, dark bands, hero |
+| `--graphite` | `#1A2430` | Body copy |
+| `--slate` | `#4E5B6A` | Secondary copy |
+| `--rule` | `#DCE1E7` | Hairlines, card borders |
+| `--fog` | `#F4F6F8` | Neutral surface |
+| `--accent` | `#1E6BFF` | Electric blue: buttons, links, focus, highlights (white label 4.6:1) |
+| `--accent-strong` | `#1656D6` | Hover, accent text on light surfaces |
+| `--accent-on-ink` | `#7FA8FF` | Accent text and links on navy |
 
 - **Newsreader** (variable, optical sizes) for headings at light weights; **Inter** for body. Both self-hosted through Astro's Fonts API with metric-matched fallbacks (no third-party requests, no layout shift).
 - Fluid type scale `--step--1` … `--step-5`; all text goes through `<Typography variant>`. Uppercase is reserved for the navigation and footer headings.
 - 12-column grid via `<Container grid>`; `Editorial` places heading in columns 1–5 and content in 7–12.
 - **No photographs of people.** Hero artwork lives in `components/visuals/` and is drawn in SVG from the logo's slanted stroke (`geometry.ts`).
-- `#0A96D6` is 3.3:1 on white, so it is never used for text on white. Button labels on the accent are ink (5.3:1).
+- Layouts follow two patterns: knowledge hub (Home, Who we are, What we do, Insights: hero, featured banner, card grids, "How can we help?") and employer page (Careers, Contact: navy hero with icon features, split rows, stats, numbered steps).
 
 ## Talent board
 

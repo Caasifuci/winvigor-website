@@ -1,20 +1,25 @@
 /* ==========================================================================
    Winvigor design tokens
-   Monochrome first. One accent (#0A96D6, taken from the logo) used only for:
-   primary action, focus, link underline, and the hero stroke.
+   Deep navy anchor, crisp cool-grey neutrals, one electric-blue accent for
+   actions and conversions (buttons, links, focus, highlights).
    ========================================================================== */
 
 :root {
   /* Colour */
-  --ink: #0e1a22;          /* headings, dark surfaces */
-  --graphite: #2c3a44;     /* body copy */
-  --slate: #5e6b74;        /* secondary copy, captions */
-  --mist: #9aa7af;         /* muted copy on ink */
-  --rule: #d6dbdf;         /* hairlines */
-  --fog: #f2f4f5;          /* quiet surface */
+  --ink: #0b1f3a;          /* primary: deep navy, headings, dark surfaces */
+  --ink-2: #13294b;        /* raised navy surface (cards on navy) */
+  --ink-line: #24395c;     /* hairlines on navy */
+  --graphite: #1a2430;     /* body copy (15.7:1 on white) */
+  --slate: #4e5b6a;        /* secondary copy (6.9:1 on white) */
+  --mist: #a9b4c2;         /* muted copy on navy (7.9:1) */
+  --rule: #dce1e7;         /* hairlines */
+  --fog: #f4f6f8;          /* neutral surface */
   --paper: #ffffff;
-  --accent: #0a96d6;       /* the single accent */
-  --on-ink: #e7ecef;
+  --accent: #1e6bff;       /* electric blue: actions (4.6:1 with white) */
+  --accent-strong: #1656d6;/* hover, accent text on fog (6.3:1) */
+  --accent-soft: #e8f0ff;  /* tinted surface, tags */
+  --accent-on-ink: #7fa8ff;/* accent text and links on navy (7:1) */
+  --on-ink: #e6ecf4;
 
   /* Type families: populated by Astro's <Font /> */
   --serif: var(--font-serif), Georgia, serif;
@@ -45,7 +50,9 @@
   --container: 76rem;
   --container-text: 46rem;
   --gutter: clamp(1.25rem, 4vw, 3rem);
-  --radius: 2px;
+  --radius: 4px;
+  --radius-card: 8px;
+  --shadow-card: 0 1px 2px rgb(11 31 58 / 0.06), 0 8px 24px rgb(11 31 58 / 0.06);
   --header-h: 4.5rem;
 }
 

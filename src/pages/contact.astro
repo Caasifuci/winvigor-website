@@ -1,7 +1,12 @@
 ---
 import BaseLayout from '@/layouts/BaseLayout.astro';
-import HeroSplit from '@/components/blocks/HeroSplit.astro';
+import PageHero from '@/components/blocks/PageHero.astro';
+import Section from '@/components/blocks/Section.astro';
+import NumberedSteps from '@/components/blocks/NumberedSteps.astro';
+import CardGrid from '@/components/blocks/CardGrid.astro';
 import Container from '@/components/ui/Container.astro';
+import Icon from '@/components/ui/Icon.astro';
+import { insightCards } from '@/lib/content';
 import Typography from '@/components/ui/Typography.astro';
 import Button from '@/components/ui/Button.astro';
 import { site } from '@/data/site';
@@ -9,15 +14,28 @@ import { site } from '@/data/site';
 const { email, phone, phoneHref, address, formEndpoint } = site.contact;
 const usesMailClient = !formEndpoint;
 const turnstileKey = import.meta.env.PUBLIC_TURNSTILE_SITE_KEY as string | undefined;
+const insights = (await insightCards()).slice(0, 3);
 ---
 
 <BaseLayout title="Contact" description={`Contact ${site.name} about technology consulting and talent resourcing. ${address.street}, ${address.postalCode} ${address.locality}.`}>
-  <HeroSplit
+  <PageHero
+    tone="navy"
+    eyebrow="Contact"
     title="Tell us about your programme or hiring need."
     lede="Strategic advice, a delivery team or a specialist engineer: tell us what you need and how to reach you."
+    primary={{ label: 'Send an enquiry', href: '#enquiry' }}
+    features={[
+      { icon: 'strategy', title: 'Strategic IT consulting', body: 'Roadmaps your organisation can fund, staff and deliver.', href: '/what-we-do#strategic-it-consulting' },
+      { icon: 'people', title: 'Specialist engineers', body: 'Senior talent placed into your teams, contract or permanent.', href: '/talent' },
+      { icon: 'code', title: 'Software delivery', body: 'Maintainable systems built around how you work.', href: '/what-we-do#custom-software-development' },
+    ]}
   />
 
   <Container grid class="contact">
+    <div class="form-head">
+      <h2 class="form-head__title">Send us a message</h2>
+      <p class="form-head__body">All fields except organisation are required. A consultant will come back to you.</p>
+    </div>
     <form
       id="enquiry"
       class="form"
@@ -65,24 +83,50 @@ const turnstileKey = import.meta.env.PUBLIC_TURNSTILE_SITE_KEY as string | undef
     </form>
 
     <aside class="details" aria-label="Contact details">
-      <div>
-        <Typography as="h2" variant="meta">Email</Typography>
-        <p><a href={`mailto:${email}`}>{email}</a></p>
+      <div class="detail">
+        <span class="detail__icon"><Icon name="mail" size={22} /></span>
+        <div>
+          <Typography as="h2" variant="meta">Email</Typography>
+          <p><a href={`mailto:${email}`}>{email}</a></p>
+        </div>
       </div>
-      <div>
-        <Typography as="h2" variant="meta">Phone</Typography>
-        <p><a href={phoneHref}>{phone}</a></p>
+      <div class="detail">
+        <span class="detail__icon"><Icon name="phone" size={22} /></span>
+        <div>
+          <Typography as="h2" variant="meta">Phone</Typography>
+          <p><a href={phoneHref}>{phone}</a></p>
+        </div>
       </div>
-      <div>
-        <Typography as="h2" variant="meta">Office</Typography>
-        <address>
-          {address.street}<br />
-          {address.postalCode} {address.locality}<br />
-          {address.country}
-        </address>
+      <div class="detail">
+        <span class="detail__icon"><Icon name="pin" size={22} /></span>
+        <div>
+          <Typography as="h2" variant="meta">Office</Typography>
+          <address>
+            {address.street}<br />
+            {address.postalCode} {address.locality}<br />
+            {address.country}
+          </address>
+        </div>
       </div>
     </aside>
   </Container>
+
+  <Section id="next" title="What happens next" surface="fog">
+    <NumberedSteps
+      label="What happens after you get in touch"
+      steps={[
+        { title: 'Tell us what you need', body: 'The programme, the role or the problem, in as much detail as you have.' },
+        { title: 'A consultant comes back to you', body: 'Someone who works in your area reads your message and arranges a first conversation.' },
+        { title: 'We agree the next step', body: 'An assessment, a shortlist of profiles or a proposal, sized to what you actually need.' },
+      ]}
+    />
+  </Section>
+
+  {insights.length > 0 && (
+    <Section id="insights" title="Latest insights" viewAll={{ label: 'View all', href: '/insights' }}>
+      <CardGrid items={insights} label="Latest insights" />
+    </Section>
+  )}
 </BaseLayout>
 
 {turnstileKey && !usesMailClient && <script is:inline src="https://challenges.cloudflare.com/turnstile/v0/api.js" async defer></script>}
@@ -116,9 +160,22 @@ const turnstileKey = import.meta.env.PUBLIC_TURNSTILE_SITE_KEY as string | undef
 </script>
 
 <style>
-  :global(.contact) { padding-block: var(--space-section); row-gap: var(--space-8); }
+  :global(.contact) { padding-block: clamp(3.5rem, 2rem + 5vw, 6.5rem); row-gap: var(--space-7); }
 
-  .form { grid-column: 1 / -1; display: grid; gap: var(--space-6); }
+  .form-head { grid-column: 1 / -1; display: grid; gap: var(--space-3); }
+  .form-head__title { font-family: var(--serif); font-size: var(--step-3); font-weight: 350; line-height: 1.12; color: var(--ink); }
+  .form-head__body { color: var(--slate); }
+
+  .form {
+    grid-column: 1 / -1;
+    display: grid;
+    gap: var(--space-6);
+    padding: clamp(1.25rem, 1rem + 2vw, 2.5rem);
+    border: 1px solid var(--rule);
+    border-radius: var(--radius-card);
+    background: var(--paper);
+    box-shadow: var(--shadow-card);
+  }
   .field { display: grid; gap: var(--space-2); }
   label { font-weight: 500; color: var(--ink); }
   .optional { font-weight: 400; color: var(--slate); }
@@ -147,12 +204,31 @@ const turnstileKey = import.meta.env.PUBLIC_TURNSTILE_SITE_KEY as string | undef
   .form__status { padding: var(--space-3) var(--space-4); border-left: 2px solid var(--ink); background: var(--fog); color: var(--ink); }
   .form__actions { display: flex; flex-wrap: wrap; align-items: center; gap: var(--space-4) var(--space-5); margin-top: var(--space-3); }
 
-  .details { grid-column: 1 / -1; display: grid; gap: var(--space-6); align-content: start; }
-  .details p, .details address { margin-top: var(--space-2); font-size: var(--step-1); font-style: normal; color: var(--ink); line-height: 1.45; }
+  .details { grid-column: 1 / -1; display: grid; gap: var(--space-4); align-content: start; }
+  .detail {
+    display: flex;
+    gap: var(--space-4);
+    align-items: flex-start;
+    padding: var(--space-5);
+    border-radius: var(--radius-card);
+    background: var(--fog);
+  }
+  .detail__icon {
+    display: inline-flex;
+    flex: none;
+    align-items: center;
+    justify-content: center;
+    width: 2.75rem;
+    height: 2.75rem;
+    border-radius: 50%;
+    background: var(--accent-soft);
+    color: var(--accent-strong);
+  }
+  .details p, .details address { margin-top: var(--space-1); font-size: 1.0625rem; overflow-wrap: anywhere; font-style: normal; color: var(--ink); line-height: 1.45; }
   .details a { text-decoration-color: var(--accent); text-decoration-thickness: 2px; }
 
   @media (min-width: 64rem) {
     .form { grid-column: 1 / span 7; }
-    .details { grid-column: 9 / -1; padding-top: var(--space-2); }
+    .details { grid-column: 9 / -1; }
   }
 </style>

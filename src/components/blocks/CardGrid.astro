@@ -1,0 +1,152 @@
+---
+/**
+ * CardGrid: the knowledge-hub card pattern. Each card has an image slot
+ * (drawn CardArt, never stock photography), a category tag, a title, an
+ * optional summary and a meta line such as the read time.
+ *
+ * Cards carry data-category and data-text so FilterBar can filter them.
+ */
+import CardArt from '@/components/visuals/CardArt.astro';
+import Icon from '@/components/ui/Icon.astro';
+
+export interface CardItem {
+  href: string;
+  title: string;
+  tag: string;
+  summary?: string;
+  /** e.g. "5 min read", "Case study", "Service". */
+  meta?: string;
+  /** Large figure shown on the card art, e.g. "25.5%". */
+  figure?: string;
+  figureLabel?: string;
+  seed?: number;
+}
+
+interface Props {
+  items: CardItem[];
+  columns?: 2 | 3 | 4;
+  /** Hide card art (text-only cards). */
+  plain?: boolean;
+  label?: string;
+}
+
+const { items, columns = 3, plain = false, label } = Astro.props;
+---
+
+<ul role="list" class="cards" style={`--cols: ${columns}`} aria-label={label} data-cards>
+  {items.map((c, i) => (
+    <li class="card" data-category={c.tag} data-text={`${c.title} ${c.summary ?? ''} ${c.tag}`.toLowerCase()}>
+      <a href={c.href} class="card__link">
+        {!plain && (
+          <div class="card__media">
+            <CardArt seed={c.seed ?? i + 1} low={Boolean(c.figure)} />
+            {c.figure && (
+              <p class="card__figure">
+                <span class="card__figure-value">{c.figure}</span>
+                {c.figureLabel && <span class="card__figure-label">{c.figureLabel}</span>}
+              </p>
+            )}
+          </div>
+        )}
+        <div class="card__body">
+          <p class="card__tag">{c.tag}</p>
+          <h3 class="card__title">{c.title}</h3>
+          {c.summary && <p class="card__summary">{c.summary}</p>}
+          <p class="card__foot">
+            {c.meta && <span class="card__meta">{c.meta}</span>}
+            <span class="card__go" aria-hidden="true"><Icon name="arrow" size={20} /></span>
+          </p>
+        </div>
+      </a>
+    </li>
+  ))}
+</ul>
+
+<style>
+  .cards {
+    display: grid;
+    gap: clamp(1rem, 2.5vw, 1.75rem);
+    margin: 0;
+  }
+  .card[hidden] { display: none; }
+
+  .card__link {
+    display: flex;
+    flex-direction: column;
+    height: 100%;
+    overflow: hidden;
+    border: 1px solid var(--rule);
+    border-radius: var(--radius-card);
+    background: var(--paper);
+    color: inherit;
+    text-decoration: none;
+    transition: box-shadow 180ms ease, transform 180ms ease, border-color 180ms ease;
+  }
+  .card__link:hover { border-color: transparent; box-shadow: var(--shadow-card); transform: translateY(-2px); }
+  .card__link:focus-visible { outline: 2px solid var(--accent); outline-offset: 3px; }
+
+  .card__media { position: relative; aspect-ratio: 16 / 10; background: var(--ink); }
+  .card__figure {
+    position: absolute;
+    left: var(--space-5);
+    top: var(--space-5);
+    display: grid;
+    gap: var(--space-1);
+    color: var(--paper);
+  }
+  .card__figure-value {
+    font-family: var(--serif);
+    font-size: var(--step-4);
+    font-weight: 300;
+    line-height: 1;
+    letter-spacing: -0.02em;
+  }
+  .card__figure-label { font-size: var(--step--1); font-weight: 500; color: var(--on-ink); max-width: 14rem; }
+
+  .card__body {
+    display: flex;
+    flex: 1;
+    flex-direction: column;
+    gap: var(--space-3);
+    padding: var(--space-5);
+  }
+  .card__tag {
+    align-self: start;
+    padding: 0.2rem 0.6rem;
+    border-radius: 999px;
+    background: var(--accent-soft);
+    color: var(--accent-strong);
+    font-size: 0.75rem;
+    font-weight: 600;
+    letter-spacing: 0.02em;
+  }
+  .card__title {
+    font-family: var(--serif);
+    font-optical-sizing: auto;
+    font-size: var(--step-1);
+    font-weight: 450;
+    line-height: 1.25;
+    color: var(--ink);
+    text-wrap: balance;
+  }
+  .card__summary { font-size: 0.9375rem; line-height: 1.55; color: var(--slate); }
+  .card__foot {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: var(--space-4);
+    margin-top: auto;
+    padding-top: var(--space-3);
+    font-size: var(--step--1);
+    color: var(--slate);
+  }
+  .card__go { display: inline-flex; color: var(--accent); margin-left: auto; transition: transform 180ms ease; }
+  .card__link:hover .card__go { transform: translateX(3px); }
+
+  @media (prefers-reduced-motion: reduce) {
+    .card__link:hover { transform: none; }
+  }
+
+  @media (min-width: 40rem) { .cards { grid-template-columns: repeat(2, minmax(0, 1fr)); } }
+  @media (min-width: 64rem) { .cards { grid-template-columns: repeat(var(--cols), minmax(0, 1fr)); } }
+</style>
