@@ -56,7 +56,7 @@ Navigation: WHO WE ARE · WHAT WE DO · INSIGHTS · CAREERS · CONTACT. The logo
 
 | Token | Value | Use |
 |---|---|---|
-| `--ink` | `#0B1F3A` | Primary deep navy: headings, dark bands, hero |
+| `--ink` | `#0B3C49` | Primary dark teal blue: headings, dark bands, home hero |
 | `--graphite` | `#1A2430` | Body copy |
 | `--slate` | `#4E5B6A` | Secondary copy |
 | `--rule` | `#DCE1E7` | Hairlines, card borders |

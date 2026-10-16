@@ -2,7 +2,7 @@
 /**
  * PageHero: the full-width page header used across the redesigned pages.
  *
- * tone="navy"  → deep-navy band (employer pattern), white text, accent button
+ * tone="dark"  → dark teal-blue band (employer pattern, home hero), white text, accent button
  * tone="light" → cool-grey band (knowledge-hub pattern)
  *
  * Optional: `features` renders a row of icon items under the copy (as on
@@ -22,13 +22,13 @@ interface Props {
   eyebrow?: string;
   primary?: Cta;
   secondary?: Cta;
-  tone?: 'navy' | 'light';
+  tone?: 'dark' | 'light';
   features?: Feature[];
   scale?: 'home' | 'page';
 }
 
 const { title, lede, eyebrow, primary, secondary, tone = 'light', features = [], scale = 'page' } = Astro.props;
-const navy = tone === 'navy';
+const dark = tone === 'dark';
 const hasVisual = Astro.slots.has('visual');
 ---
 
@@ -40,8 +40,8 @@ const hasVisual = Astro.slots.has('visual');
       {lede && <p class="phero__lede">{lede}</p>}
       {(primary || secondary) && (
         <div class="phero__actions">
-          {primary && <Button href={primary.href} variant="primary" size="lg" inverse={navy}>{primary.label}</Button>}
-          {secondary && <Button href={secondary.href} variant={navy ? 'secondary' : 'secondary'} size="lg" inverse={navy}>{secondary.label}</Button>}
+          {primary && <Button href={primary.href} variant="primary" size="lg" inverse={dark}>{primary.label}</Button>}
+          {secondary && <Button href={secondary.href} variant="secondary" size="lg" inverse={dark}>{secondary.label}</Button>}
         </div>
       )}
     </div>
@@ -79,9 +79,9 @@ const hasVisual = Astro.slots.has('visual');
 <style>
   .phero { padding-block: clamp(3rem, 2rem + 4vw, 6rem); }
   .phero--light { background: var(--fog); border-bottom: 1px solid var(--rule); }
-  .phero--navy {
+  .phero--dark {
     background:
-      radial-gradient(60rem 30rem at 85% -10%, rgb(30 107 255 / 0.28), transparent 60%),
+      radial-gradient(60rem 30rem at 85% -10%, rgb(46 140 160 / 0.38), transparent 60%),
       var(--ink);
     color: var(--on-ink);
   }
@@ -96,7 +96,7 @@ const hasVisual = Astro.slots.has('visual');
     text-transform: uppercase;
     color: var(--accent-strong);
   }
-  .phero--navy .phero__eyebrow { color: var(--accent-on-ink); }
+  .phero--dark .phero__eyebrow { color: var(--accent-on-ink); }
 
   .phero__title {
     font-family: var(--serif);
@@ -109,7 +109,7 @@ const hasVisual = Astro.slots.has('visual');
     text-wrap: balance;
   }
   .phero--home .phero__title { font-size: var(--step-5); }
-  .phero--navy .phero__title { color: var(--paper); }
+  .phero--dark .phero__title { color: var(--paper); }
 
   .phero__lede {
     margin-top: var(--space-5);
@@ -119,7 +119,7 @@ const hasVisual = Astro.slots.has('visual');
     color: var(--slate);
     text-wrap: pretty;
   }
-  .phero--navy .phero__lede { color: var(--on-ink); }
+  .phero--dark .phero__lede { color: var(--on-ink); }
 
   .phero__actions { display: flex; flex-wrap: wrap; gap: var(--space-4); margin-top: var(--space-7); }
 
@@ -144,7 +144,7 @@ const hasVisual = Astro.slots.has('visual');
     color: var(--ink);
     text-decoration: none;
   }
-  .phero--navy .feature { background: var(--ink-2); border-color: var(--ink-line); color: var(--paper); }
+  .phero--dark .feature { background: var(--ink-2); border-color: var(--ink-line); color: var(--paper); }
   a.feature { transition: border-color 160ms ease, background-color 160ms ease; }
   a.feature:hover { border-color: var(--accent); }
   .feature__icon {
@@ -158,13 +158,24 @@ const hasVisual = Astro.slots.has('visual');
     background: var(--accent-soft);
     color: var(--accent-strong);
   }
-  .phero--navy .feature__icon { background: rgb(30 107 255 / 0.18); color: var(--accent-on-ink); }
+  .phero--dark .feature__icon { background: rgb(143 179 255 / 0.16); color: var(--accent-on-ink); }
   .feature__text { display: grid; gap: var(--space-1); }
   .feature__title { font-weight: 600; line-height: 1.35; }
   .feature__body { font-size: 0.9375rem; line-height: 1.5; color: var(--slate); }
-  .phero--navy .feature__body { color: var(--mist); }
+  .phero--dark .feature__body { color: var(--mist); }
 
   :global(.phero__footer) { margin-top: clamp(3rem, 2rem + 3vw, 5rem); }
+
+  /* Drawings and the client list, recoloured for the dark teal band. */
+  .phero--dark .phero__visual :global(.art__grid line) { stroke: var(--ink-line); opacity: 1; }
+  .phero--dark .phero__visual :global(.tone--ink) { fill: var(--on-ink); }
+  .phero--dark .phero__visual :global(.tone--slate) { fill: var(--mist); }
+  .phero--dark .phero__visual :global(.art__base),
+  .phero--dark .phero__visual :global(.art__trend) { stroke: var(--on-ink); }
+  .phero--dark .phero__visual :global(.art__node) { fill: var(--ink); stroke: var(--on-ink); }
+  .phero--dark :global(.clients) { border-top-color: var(--ink-line); }
+  .phero--dark :global(.clients__title) { color: var(--mist); }
+  .phero--dark :global(.clients__name) { color: var(--on-ink); }
 
   @media (min-width: 48rem) {
     .phero__features { grid-template-columns: repeat(var(--n), minmax(0, 1fr)); }

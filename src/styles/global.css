@@ -1,25 +1,25 @@
 /* ==========================================================================
    Winvigor design tokens
-   Deep navy anchor, crisp cool-grey neutrals, one electric-blue accent for
+   Dark teal-blue anchor, crisp cool-grey neutrals, one electric-blue accent for
    actions and conversions (buttons, links, focus, highlights).
    ========================================================================== */
 
 :root {
   /* Colour */
-  --ink: #0b1f3a;          /* primary: deep navy, headings, dark surfaces */
-  --ink-2: #13294b;        /* raised navy surface (cards on navy) */
-  --ink-line: #24395c;     /* hairlines on navy */
+  --ink: #0b3c49;          /* primary: dark teal blue, headings, dark surfaces (11.9:1 with white) */
+  --ink-2: #124a58;        /* raised teal surface (cards on teal) */
+  --ink-line: #245d6c;     /* hairlines on teal */
   --graphite: #1a2430;     /* body copy (15.7:1 on white) */
   --slate: #4e5b6a;        /* secondary copy (6.9:1 on white) */
-  --mist: #a9b4c2;         /* muted copy on navy (7.9:1) */
+  --mist: #a7c1c8;         /* muted copy on teal (6.3:1) */
   --rule: #dce1e7;         /* hairlines */
   --fog: #f4f6f8;          /* neutral surface */
   --paper: #ffffff;
   --accent: #1e6bff;       /* electric blue: actions (4.6:1 with white) */
   --accent-strong: #1656d6;/* hover, accent text on fog (6.3:1) */
   --accent-soft: #e8f0ff;  /* tinted surface, tags */
-  --accent-on-ink: #7fa8ff;/* accent text and links on navy (7:1) */
-  --on-ink: #e6ecf4;
+  --accent-on-ink: #8fb3ff;/* accent text and links on teal (5.7:1) */
+  --on-ink: #e6eef0;
 
   /* Type families: populated by Astro's <Font /> */
   --serif: var(--font-serif), Georgia, serif;
@@ -52,7 +52,7 @@
   --gutter: clamp(1.25rem, 4vw, 3rem);
   --radius: 4px;
   --radius-card: 8px;
-  --shadow-card: 0 1px 2px rgb(11 31 58 / 0.06), 0 8px 24px rgb(11 31 58 / 0.06);
+  --shadow-card: 0 1px 2px rgb(11 60 73 / 0.06), 0 8px 24px rgb(11 60 73 / 0.06);
   --header-h: 4.5rem;
 }
 

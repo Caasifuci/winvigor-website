@@ -1,20 +1,20 @@
 ---
 /**
  * CardArt: the image slot of a card. Instead of stock photography it draws a
- * small composition of the logo's 21° slanted bars on navy, varied by `seed`
+ * small composition of the logo's 21° slanted bars on dark teal, varied by `seed`
  * so neighbouring cards differ. One bar carries the electric-blue accent.
  */
 import { bar, gridLines } from './geometry';
 
 interface Props {
   seed?: number;
-  /** "navy" (default) or "light" background. */
-  tone?: 'navy' | 'light';
+  /** "dark" (default) or "light" background. */
+  tone?: 'dark' | 'light';
   /** Keep bars low, leaving the top clear for a figure laid over the art. */
   low?: boolean;
 }
 
-const { seed = 0, tone = 'navy', low = false } = Astro.props;
+const { seed = 0, tone = 'dark', low = false } = Astro.props;
 const W = 480, H = 300, BASE = 250;
 
 // Small deterministic generator so each seed always draws the same picture.
@@ -47,11 +47,11 @@ const grid = gridLines(W, H, 30);
 
 <style>
   .card-art { display: block; width: 100%; height: 100%; }
-  .card-art--navy .card-art__bg { fill: var(--ink); }
-  .card-art--navy .card-art__grid line { stroke: var(--ink-line); stroke-width: 1; }
-  .card-art--navy .card-art__bar { fill: var(--on-ink); }
-  .card-art--navy .card-art__bar.is-faint { fill: var(--ink-line); }
-  .card-art--navy .card-art__base { stroke: var(--mist); stroke-width: 1.25; }
+  .card-art--dark .card-art__bg { fill: var(--ink); }
+  .card-art--dark .card-art__grid line { stroke: var(--ink-line); stroke-width: 1; }
+  .card-art--dark .card-art__bar { fill: var(--on-ink); }
+  .card-art--dark .card-art__bar.is-faint { fill: var(--ink-line); }
+  .card-art--dark .card-art__base { stroke: var(--mist); stroke-width: 1.25; }
 
   .card-art--light .card-art__bg { fill: var(--fog); }
   .card-art--light .card-art__grid line { stroke: var(--rule); stroke-width: 1; }
