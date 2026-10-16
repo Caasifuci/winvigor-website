@@ -91,16 +91,23 @@ const isCurrent = (href: string) => path === href || path.startsWith(`${href}/`)
     text-transform: uppercase;
     color: var(--graphite);
   }
+  .nav--desktop li a { transition: color var(--dur-fast) var(--ease-standard); }
   .nav--desktop li a:hover { color: var(--ink); }
   .nav--desktop li a[aria-current='page'] { color: var(--ink); }
-  .nav--desktop li a[aria-current='page']::after,
-  .nav--desktop li a:hover::after {
+  /* Underline draws from the left on hover; the current page keeps it. */
+  .nav--desktop li a::after {
     content: '';
     position: absolute;
     left: 0; right: 0; bottom: 0;
     height: 2px;
     background: var(--ink);
+    transform: scaleX(0);
+    transform-origin: left center;
+    transition: transform var(--dur-base) var(--ease-out-expo);
   }
+  .nav--desktop li a:hover::after,
+  .nav--desktop li a[aria-current='page']::after { transform: scaleX(1); }
+  @media (prefers-reduced-motion: reduce) { .nav--desktop li a::after { transition: none; } }
 
   /* Mobile */
   .nav--mobile summary {

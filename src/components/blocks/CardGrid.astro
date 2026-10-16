@@ -27,15 +27,17 @@ interface Props {
   columns?: 2 | 3 | 4;
   /** Hide card art (text-only cards). */
   plain?: boolean;
+  /** Reveal cards in sequence and slide their titles up (strategic pillars). */
+  reveal?: boolean;
   label?: string;
 }
 
-const { items, columns = 3, plain = false, label } = Astro.props;
+const { items, columns = 3, plain = false, reveal = false, label } = Astro.props;
 ---
 
 <ul role="list" class="cards" style={`--cols: ${columns}`} aria-label={label} data-cards>
   {items.map((c, i) => (
-    <li class="card" data-category={c.tag} data-text={`${c.title} ${c.summary ?? ''} ${c.tag}`.toLowerCase()}>
+    <li class="card" data-reveal={reveal ? 'fade' : undefined} style={reveal ? `--d: ${i * 90}ms` : undefined} data-category={c.tag} data-text={`${c.title} ${c.summary ?? ''} ${c.tag}`.toLowerCase()}>
       <a href={c.href} class="card__link">
         {!plain && (
           <div class="card__media">
@@ -50,7 +52,7 @@ const { items, columns = 3, plain = false, label } = Astro.props;
         )}
         <div class="card__body">
           <p class="card__tag">{c.tag}</p>
-          <h3 class="card__title">{c.title}</h3>
+          <h3 class="card__title" data-reveal={reveal ? 'lines' : undefined} style={reveal ? `--d: ${i * 90 + 180}ms` : undefined}>{c.title}</h3>
           {c.summary && <p class="card__summary">{c.summary}</p>}
           <p class="card__foot">
             {c.meta && <span class="card__meta">{c.meta}</span>}
@@ -80,12 +82,15 @@ const { items, columns = 3, plain = false, label } = Astro.props;
     background: var(--paper);
     color: inherit;
     text-decoration: none;
-    transition: box-shadow 180ms ease, transform 180ms ease, border-color 180ms ease;
+    transition: box-shadow var(--dur-base) var(--ease-out-expo), transform var(--dur-base) var(--ease-out-expo), border-color var(--dur-fast) var(--ease-standard);
   }
   .card__link:hover { border-color: transparent; box-shadow: var(--shadow-card); transform: translateY(-2px); }
   .card__link:focus-visible { outline: 2px solid var(--accent); outline-offset: 3px; }
 
-  .card__media { position: relative; aspect-ratio: 16 / 10; background: var(--ink); }
+  .card__media { position: relative; overflow: hidden; aspect-ratio: 16 / 10; background: var(--ink); }
+  /* The drawing settles a few pixels on hover: noticed only if looked for. */
+  .card__media :global(.card-art) { transition: transform 700ms var(--ease-out-expo); }
+  .card__link:hover .card__media :global(.card-art) { transform: scale(1.03) translate3d(0, -2px, 0); }
   .card__figure {
     position: absolute;
     left: var(--space-5);
@@ -139,11 +144,11 @@ const { items, columns = 3, plain = false, label } = Astro.props;
     font-size: var(--step--1);
     color: var(--slate);
   }
-  .card__go { display: inline-flex; color: var(--accent); margin-left: auto; transition: transform 180ms ease; }
+  .card__go { display: inline-flex; color: var(--accent); margin-left: auto; transition: transform var(--dur-base) var(--ease-out-expo); }
   .card__link:hover .card__go { transform: translateX(3px); }
 
   @media (prefers-reduced-motion: reduce) {
-    .card__link:hover { transform: none; }
+    .card__link:hover, .card__link:hover .card__media :global(.card-art) { transform: none; }
   }
 
   @media (min-width: 40rem) { .cards { grid-template-columns: repeat(2, minmax(0, 1fr)); } }

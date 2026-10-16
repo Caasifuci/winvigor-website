@@ -192,7 +192,8 @@ const insights = (await insightCards()).slice(0, 3);
     color: var(--ink);
   }
   textarea { resize: vertical; min-height: 8rem; }
-  input:focus, textarea:focus { outline: none; border-bottom: 2px solid var(--accent); padding-bottom: calc(0.8rem - 1px); }
+  input, textarea { transition: border-color var(--dur-fast) var(--ease-standard), box-shadow var(--dur-base) var(--ease-out-expo); }
+  input:focus, textarea:focus { outline: none; border-bottom-color: var(--accent); box-shadow: 0 1px 0 0 var(--accent); }
   input:focus-visible, textarea:focus-visible { outline: none; }
 
   .consent { display: grid; grid-template-columns: auto 1fr; gap: var(--space-3); align-items: start; }

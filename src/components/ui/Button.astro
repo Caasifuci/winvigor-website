@@ -29,6 +29,9 @@ const classes = ['btn', `btn--${variant}`, `btn--${size}`, { 'btn--inverse': inv
 )}
 
 <style>
+  @media (prefers-reduced-motion: reduce) {
+    .btn, .btn:active { transform: none; transition: none; }
+  }
   .btn {
     display: inline-flex;
     align-items: center;
@@ -45,12 +48,20 @@ const classes = ['btn', `btn--${variant}`, `btn--${size}`, { 'btn--inverse': inv
     letter-spacing: 0.005em;
     text-decoration: none;
     cursor: pointer;
-    transition: background-color 160ms ease, color 160ms ease, border-color 160ms ease;
+    transition:
+      background-color var(--dur-fast) var(--ease-standard),
+      color var(--dur-fast) var(--ease-standard),
+      border-color var(--dur-fast) var(--ease-standard),
+      box-shadow var(--dur-base) var(--ease-out-expo),
+      transform var(--dur-base) var(--ease-out-expo);
   }
+  /* Press: a 2% settle, like a hardware key. */
+  .btn:active { transform: scale(0.98); transition-duration: 80ms; }
+  .btn:focus-visible { outline: 2px solid var(--accent); outline-offset: 3px; }
   .btn--lg { min-height: 3.25rem; padding: 0.9rem 1.75rem; font-size: 1rem; }
 
   .btn--primary { background: var(--accent); color: var(--paper); }
-  .btn--primary:hover { background: var(--accent-strong); color: var(--paper); }
+  .btn--primary:hover { background: var(--accent-strong); color: var(--paper); box-shadow: 0 6px 18px -8px rgb(30 107 255 / 0.65); }
   .btn--inverse.btn--primary:hover { background: var(--paper); color: var(--ink); }
 
   .btn--secondary { border-color: var(--ink); color: var(--ink); background: transparent; }
@@ -66,7 +77,9 @@ const classes = ['btn', `btn--${variant}`, `btn--${size}`, { 'btn--inverse': inv
     text-decoration-color: var(--accent);
     text-decoration-thickness: 2px;
     text-underline-offset: 0.35em;
+    transition: text-decoration-color var(--dur-fast) var(--ease-standard), text-underline-offset var(--dur-base) var(--ease-out-expo);
   }
-  .btn--quiet:hover { text-decoration-color: currentColor; }
+  .btn--quiet:hover { text-decoration-color: currentColor; text-underline-offset: 0.45em; }
+  .btn--quiet:active { transform: none; }
   .btn--inverse.btn--quiet { color: var(--paper); text-decoration-color: var(--accent-on-ink); }
 </style>

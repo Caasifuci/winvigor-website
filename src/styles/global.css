@@ -54,6 +54,16 @@
   --radius-card: 8px;
   --shadow-card: 0 1px 2px rgb(11 60 73 / 0.06), 0 8px 24px rgb(11 60 73 / 0.06);
   --header-h: 4.5rem;
+
+  /* Motion: functional, fluid, near-invisible. One curve for everything that
+     arrives (ease-out-expo: fast start, long settle) and short durations for
+     interaction feedback. */
+  --ease-out-expo: cubic-bezier(0.16, 1, 0.3, 1);
+  --ease-standard: cubic-bezier(0.2, 0, 0, 1);
+  --dur-fast: 160ms;
+  --dur-base: 280ms;
+  --dur-reveal: 1100ms;
+  --stagger: 90ms;
 }
 
 /* --------------------------------------------------------------------------
@@ -183,3 +193,56 @@ a { color: inherit; text-decoration-thickness: 1px; text-underline-offset: 0.2em
   color: var(--ink);
 }
 .prose hr { border: 0; border-top: 1px solid var(--rule); margin-block: 3em; }
+
+/* --------------------------------------------------------------------------
+   Motion
+   Reveal: elements marked data-reveal are hidden only when JavaScript and
+   motion are both available (html.motion, set in <head>). src/scripts/motion.ts
+   splits "lines" targets into overflow-hidden masks and slides each line up.
+   If the script never runs, a failsafe shows everything after 1.5s.
+   -------------------------------------------------------------------------- */
+.motion [data-reveal]:not(.is-revealed) { opacity: 0; }
+.motion:not(.motion-ready) [data-reveal] { animation: rv-failsafe 0s 1.5s forwards; }
+@keyframes rv-failsafe { to { opacity: 1; } }
+
+.rv-mask {
+  display: block;
+  overflow: hidden;
+  /* room for descenders inside the mask without changing line spacing */
+  padding-bottom: 0.12em;
+  margin-bottom: -0.12em;
+}
+.rv-line {
+  display: block;
+  transform: translate3d(0, 108%, 0);
+  animation: rv-line-up var(--dur-reveal) var(--ease-out-expo) forwards;
+  animation-delay: calc(var(--d, 0ms) + var(--i, 0) * var(--stagger));
+  will-change: transform;
+}
+@keyframes rv-line-up { to { transform: translate3d(0, 0, 0); } }
+
+[data-reveal='fade'].is-revealed {
+  animation: rv-fade-up 900ms var(--ease-out-expo) both;
+  animation-delay: var(--d, 0ms);
+}
+@keyframes rv-fade-up {
+  from { opacity: 0; transform: translate3d(0, 14px, 0); }
+  to { opacity: 1; transform: none; }
+}
+
+/* Links in running text: underline draws in rather than snapping. */
+.prose a, a.link-draw {
+  text-decoration: none;
+  background-image: linear-gradient(currentColor, currentColor);
+  background-size: 100% 1px;
+  background-position: 0 100%;
+  background-repeat: no-repeat;
+  transition: background-size var(--dur-base) var(--ease-out-expo), color var(--dur-fast) var(--ease-standard);
+}
+.prose a { background-image: linear-gradient(var(--accent), var(--accent)); background-size: 100% 2px; }
+.prose a:hover, a.link-draw:hover { background-size: 0% 2px; background-position: 100% 100%; }
+
+@media (prefers-reduced-motion: reduce) {
+  .motion [data-reveal]:not(.is-revealed) { opacity: 1; }
+  .rv-line { transform: none; animation: none; }
+}

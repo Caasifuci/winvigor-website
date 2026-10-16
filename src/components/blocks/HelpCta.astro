@@ -7,6 +7,7 @@ import Container from '@/components/ui/Container.astro';
 import Button from '@/components/ui/Button.astro';
 import Icon from '@/components/ui/Icon.astro';
 import { site } from '@/data/site';
+import Ambient from '@/components/motion/Ambient.astro';
 
 interface Props {
   title?: string;
@@ -17,12 +18,13 @@ const talentNetwork = `mailto:${site.contact.email}?subject=${encodeURIComponent
 ---
 
 <section class="help" aria-labelledby="help-title">
+  <Ambient seed={8} />
   <Container>
     <h2 class="help__title" id="help-title">{title}</h2>
     <div class="help__paths">
       <div class="path">
         <span class="path__icon"><Icon name="briefcase" size={26} /></span>
-        <h3 class="path__title">I'm looking for talent or advice</h3>
+        <h3 class="path__title" data-reveal="lines">I'm looking for talent or advice</h3>
         <p class="path__body">Tell us about the programme, the role or the problem. A consultant will come back to you.</p>
         <div class="path__actions">
           <Button href="/contact" variant="primary" inverse>Contact us</Button>
@@ -31,7 +33,7 @@ const talentNetwork = `mailto:${site.contact.email}?subject=${encodeURIComponent
       </div>
       <div class="path">
         <span class="path__icon"><Icon name="people" size={26} /></span>
-        <h3 class="path__title">I'm interested in tech roles</h3>
+        <h3 class="path__title" data-reveal="lines" style="--d: 120ms">I'm interested in tech roles</h3>
         <p class="path__body">See open roles, or send your CV and the kind of work you want next.</p>
         <div class="path__actions">
           <Button href="/careers" variant="primary" inverse>See careers</Button>
@@ -45,11 +47,12 @@ const talentNetwork = `mailto:${site.contact.email}?subject=${encodeURIComponent
 <style>
   .help {
     padding-block: clamp(3.5rem, 2rem + 5vw, 6.5rem);
-    background:
-      radial-gradient(50rem 24rem at 0% 110%, rgb(46 140 160 / 0.34), transparent 60%),
-      var(--ink);
+    position: relative;
+    isolation: isolate;
+    background: var(--ink);
     color: var(--on-ink);
   }
+  .help > :global(:not(.ambient)) { position: relative; z-index: 1; }
   .help__title {
     margin-bottom: clamp(1.75rem, 1rem + 2vw, 2.75rem);
     font-family: var(--display);

@@ -1,0 +1,163 @@
+---
+/**
+ * Ambient: a quiet, mathematical background for the dark teal bands.
+ *
+ * 1. Slow-drift gradient: charcoal slate → dark teal → deep navy, sliding on
+ *    the compositor (transform only) over a 20-second loop.
+ * 2. Fine grid: a hairline grid that creeps one cell over 60 seconds.
+ * 3. Constellation (optional): low-opacity points and links that breathe by a
+ *    few pixels on slow sine functions and lean a few pixels toward the cursor.
+ *
+ * Pure SVG + CSS, about 1 KB of script. Paused when off screen or when the tab
+ * is hidden; static under prefers-reduced-motion. Decorative: aria-hidden.
+ */
+interface Props {
+  constellation?: boolean;
+  /** Seed for the point layout, so each band differs. */
+  seed?: number;
+}
+
+const { constellation = false, seed = 3 } = Astro.props;
+
+const W = 1200, H = 640;
+let s = (seed * 7919 + 104729) % 233280 || 1;
+const rand = () => ((s = (s * 9301 + 49297) % 233280) / 233280);
+
+// Jittered grid of points so the spread looks even, not clumped.
+const COLS = 9, ROWS = 5;
+const points = constellation
+  ? Array.from({ length: COLS * ROWS }, (_, n) => {
+      const c = n % COLS, r = Math.floor(n / COLS);
+      return {
+        x: Math.round(((c + 0.2 + rand() * 0.6) / COLS) * W),
+        y: Math.round(((r + 0.2 + rand() * 0.6) / ROWS) * H),
+        a: 2 + rand() * 4, // drift amplitude, px
+        w: 0.00012 + rand() * 0.00018, // angular speed per ms
+        p: rand() * Math.PI * 2, // phase
+      };
+    })
+  : [];
+
+// Link each point to its nearest neighbours under a distance limit.
+const links: [number, number][] = [];
+const LIMIT = 190;
+points.forEach((a, i) => {
+  points
+    .map((b, j) => ({ j, d: Math.hypot(a.x - b.x, a.y - b.y) }))
+    .filter(({ j, d }) => j > i && d < LIMIT)
+    .sort((x, y) => x.d - y.d)
+    .slice(0, 2)
+    .forEach(({ j }) => links.push([i, j]));
+});
+const accentIndex = constellation ? Math.floor(points.length * 0.62) : -1;
+---
+
+<div class="ambient" aria-hidden="true" data-ambient>
+  <div class="ambient__wash"></div>
+  <svg class="ambient__grid" xmlns="http://www.w3.org/2000/svg" focusable="false">
+    <defs>
+      <pattern id={`amb-grid-${seed}`} width="48" height="48" patternUnits="userSpaceOnUse">
+        <path d="M48 0H0V48" fill="none" />
+      </pattern>
+    </defs>
+    <rect class="ambient__grid-rect" x="-48" y="-48" width="200%" height="200%" fill={`url(#amb-grid-${seed})`} />
+  </svg>
+  {constellation && (
+    <svg class="ambient__stars" viewBox={`0 0 ${W} ${H}`} preserveAspectRatio="xMidYMid slice" xmlns="http://www.w3.org/2000/svg" focusable="false"
+      data-points={JSON.stringify(points.map((p) => [p.x, p.y, +p.a.toFixed(2), +p.w.toFixed(6), +p.p.toFixed(3)]))}
+      data-links={JSON.stringify(links)}>
+      <g class="ambient__shift">
+        {links.map(([i, j]) => (
+          <line x1={points[i].x} y1={points[i].y} x2={points[j].x} y2={points[j].y} />
+        ))}
+        {points.map((p, i) => <circle cx={p.x} cy={p.y} r={i === accentIndex ? 2.6 : 1.6} class:list={{ 'is-accent': i === accentIndex }} />)}
+      </g>
+    </svg>
+  )}
+</div>
+
+<script>
+  const reduce = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+  for (const host of document.querySelectorAll<HTMLElement>('[data-ambient]')) {
+    const svg = host.querySelector<SVGSVGElement>('.ambient__stars');
+    if (!svg || reduce) continue;
+    const pts: number[][] = JSON.parse(svg.dataset.points ?? '[]');
+    const links: number[][] = JSON.parse(svg.dataset.links ?? '[]');
+    const lines = [...svg.querySelectorAll('line')];
+    const dots = [...svg.querySelectorAll('circle')];
+    const shift = svg.querySelector<SVGGElement>('.ambient__shift')!;
+    const band = host.parentElement!;
+
+    let visible = false, raf = 0, last = 0;
+    let tx = 0, ty = 0, cx = 0, cy = 0; // cursor target and current lean
+
+    band.addEventListener('pointermove', (e) => {
+      const r = band.getBoundingClientRect();
+      tx = ((e.clientX - r.left) / r.width - 0.5) * 12; // ±6px
+      ty = ((e.clientY - r.top) / r.height - 0.5) * 8; // ±4px
+    });
+    band.addEventListener('pointerleave', () => { tx = 0; ty = 0; });
+
+    const frame = (t: number) => {
+      raf = requestAnimationFrame(frame);
+      if (t - last < 33) return; // ~30fps is plenty for pixel drift
+      last = t;
+      const pos = pts.map(([x, y, a, w, p]) => [x + Math.sin(t * w + p) * a, y + Math.cos(t * w * 0.8 + p) * a]);
+      dots.forEach((d, i) => { d.setAttribute('cx', pos[i][0].toFixed(1)); d.setAttribute('cy', pos[i][1].toFixed(1)); });
+      lines.forEach((l, k) => {
+        const [i, j] = links[k];
+        l.setAttribute('x1', pos[i][0].toFixed(1)); l.setAttribute('y1', pos[i][1].toFixed(1));
+        l.setAttribute('x2', pos[j][0].toFixed(1)); l.setAttribute('y2', pos[j][1].toFixed(1));
+      });
+      cx += (tx - cx) * 0.06; cy += (ty - cy) * 0.06; // eased lean toward the cursor
+      shift.style.transform = `translate3d(${cx.toFixed(2)}px, ${cy.toFixed(2)}px, 0)`;
+    };
+    const run = () => { if (visible && !document.hidden && !raf) raf = requestAnimationFrame(frame); };
+    const stop = () => { cancelAnimationFrame(raf); raf = 0; };
+
+    new IntersectionObserver(([e]) => { visible = e.isIntersecting; visible ? run() : stop(); }).observe(host);
+    document.addEventListener('visibilitychange', () => (document.hidden ? stop() : run()));
+  }
+</script>
+
+<style>
+  .ambient { position: absolute; inset: 0; overflow: hidden; pointer-events: none; z-index: 0; }
+
+  /* 1. Slow-drift gradient, moved by transform so it never repaints. */
+  .ambient__wash {
+    position: absolute;
+    inset: -10% -100% -10% 0;
+    background: linear-gradient(105deg,
+      #0e2a33 0%,      /* charcoal slate */
+      #0b3c49 28%,     /* dark teal blue (brand) */
+      #0c3346 52%,
+      #0d2a44 74%,     /* deep navy */
+      #0b3c49 100%);
+    animation: amb-drift 20s var(--ease-standard) infinite alternate;
+    will-change: transform;
+  }
+  @keyframes amb-drift {
+    from { transform: translate3d(0, 0, 0); }
+    to { transform: translate3d(-50%, 0, 0); }
+  }
+
+  /* 2. Fine grid creeping one cell per minute. */
+  .ambient__grid { position: absolute; inset: 0; width: 100%; height: 100%; opacity: 0.5; }
+  .ambient__grid path { stroke: var(--ink-line); stroke-width: 1; }
+  .ambient__grid-rect { animation: amb-grid 60s linear infinite; }
+  @keyframes amb-grid {
+    from { transform: translate3d(0, 0, 0); }
+    to { transform: translate3d(48px, 48px, 0); }
+  }
+
+  /* 3. Constellation. */
+  .ambient__stars { position: absolute; inset: 0; width: 100%; height: 100%; }
+  .ambient__stars line { stroke: var(--mist); stroke-width: 0.8; opacity: 0.16; }
+  .ambient__stars circle { fill: var(--on-ink); opacity: 0.35; }
+  .ambient__stars circle.is-accent { fill: var(--accent-on-ink); opacity: 0.9; }
+  .ambient__shift { will-change: transform; }
+
+  @media (prefers-reduced-motion: reduce) {
+    .ambient__wash, .ambient__grid-rect { animation: none; }
+  }
+</style>

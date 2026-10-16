@@ -12,6 +12,7 @@
 import Container from '@/components/ui/Container.astro';
 import Button from '@/components/ui/Button.astro';
 import Icon, { type IconName } from '@/components/ui/Icon.astro';
+import Ambient from '@/components/motion/Ambient.astro';
 
 type Cta = { label: string; href: string };
 export type Feature = { icon: IconName; title: string; body?: string; href?: string };
@@ -33,13 +34,14 @@ const hasVisual = Astro.slots.has('visual');
 ---
 
 <section class:list={['phero', `phero--${tone}`, `phero--${scale}`, { 'phero--visual': hasVisual }]}>
+  {dark && <Ambient constellation seed={scale === 'home' ? 3 : title.length} />}
   <Container grid class="phero__grid">
     <div class="phero__copy">
-      {eyebrow && <p class="phero__eyebrow">{eyebrow}</p>}
-      <h1 class="phero__title">{title}</h1>
-      {lede && <p class="phero__lede">{lede}</p>}
+      {eyebrow && <p class="phero__eyebrow" data-reveal="fade">{eyebrow}</p>}
+      <h1 class="phero__title" data-reveal="lines">{title}</h1>
+      {lede && <p class="phero__lede" data-reveal="fade" style="--d: 320ms">{lede}</p>}
       {(primary || secondary) && (
-        <div class="phero__actions">
+        <div class="phero__actions" data-reveal="fade" style="--d: 480ms">
           {primary && <Button href={primary.href} variant="primary" size="lg" inverse={dark}>{primary.label}</Button>}
           {secondary && <Button href={secondary.href} variant="secondary" size="lg" inverse={dark}>{secondary.label}</Button>}
         </div>
@@ -53,10 +55,10 @@ const hasVisual = Astro.slots.has('visual');
   {features.length > 0 && (
     <Container class="phero__features-wrap">
       <ul role="list" class="phero__features" style={`--n: ${features.length}`}>
-        {features.map((f) => {
+        {features.map((f, i) => {
           const Tag = f.href ? 'a' : 'div';
           return (
-            <li>
+            <li data-reveal="fade" style={`--d: ${560 + i * 90}ms`}>
               <Tag class="feature" href={f.href}>
                 <span class="feature__icon"><Icon name={f.icon} size={28} /></span>
                 <span class="feature__text">
@@ -79,12 +81,8 @@ const hasVisual = Astro.slots.has('visual');
 <style>
   .phero { padding-block: clamp(3rem, 2rem + 4vw, 6rem); }
   .phero--light { background: var(--fog); border-bottom: 1px solid var(--rule); }
-  .phero--dark {
-    background:
-      radial-gradient(60rem 30rem at 85% -10%, rgb(46 140 160 / 0.38), transparent 60%),
-      var(--ink);
-    color: var(--on-ink);
-  }
+  .phero--dark { position: relative; isolation: isolate; background: var(--ink); color: var(--on-ink); }
+  .phero--dark > :global(:not(.ambient)) { position: relative; z-index: 1; }
 
   :global(.phero__grid) { row-gap: var(--space-7); align-items: center; }
   .phero__copy { grid-column: 1 / -1; }
@@ -144,8 +142,9 @@ const hasVisual = Astro.slots.has('visual');
     text-decoration: none;
   }
   .phero--dark .feature { background: var(--ink-2); border-color: var(--ink-line); color: var(--paper); }
-  a.feature { transition: border-color 160ms ease, background-color 160ms ease; }
-  a.feature:hover { border-color: var(--accent); }
+  a.feature { transition: border-color var(--dur-fast) var(--ease-standard), transform var(--dur-base) var(--ease-out-expo); }
+  a.feature:hover { border-color: var(--accent); transform: translate3d(0, -2px, 0); }
+  @media (prefers-reduced-motion: reduce) { a.feature:hover { transform: none; } }
   .feature__icon {
     display: inline-flex;
     flex: none;

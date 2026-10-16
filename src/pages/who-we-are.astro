@@ -67,10 +67,10 @@ const { street, postalCode, locality, country } = site.contact.address;
 
   <Section id="how" title="How we work" surface="fog" viewAll={{ label: 'Our process step by step', href: '/insights#processes' }}>
     <ul role="list" class="principles">
-      {principles.map((p) => (
-        <li class="principle">
+      {principles.map((p, i) => (
+        <li class="principle" data-reveal="fade" style={`--d: ${i * 110}ms`}>
           <span class="principle__icon"><Icon name={p.icon} size={26} /></span>
-          <h3 class="principle__title">{p.title}</h3>
+          <h3 class="principle__title" data-reveal="lines" style={`--d: ${i * 110 + 180}ms`}>{p.title}</h3>
           <p class="principle__body">{p.body}</p>
         </li>
       ))}
