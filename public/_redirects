@@ -4,3 +4,28 @@
 /about       /who-we-are   301
 /services    /what-we-do   301
 /contact-us  /contact      301
+
+# Old WordPress pages (both with and without the trailing slash)
+/technology-consulting     /what-we-do    301
+/technology-consulting/    /what-we-do    301
+/productivity-improvement  /what-we-do    301
+/productivity-improvement/ /what-we-do    301
+/training                  /what-we-do    301
+/training/                 /what-we-do    301
+/business-consulting       /what-we-do    301
+/business-consulting/      /what-we-do    301
+/financial-consulting      /what-we-do    301
+/financial-consulting/     /what-we-do    301
+/sales-marketing           /what-we-do    301
+/sales-marketing/          /what-we-do    301
+/hr-consulting             /what-we-do    301
+/hr-consulting/            /what-we-do    301
+/success-stories           /case-studies  301
+/success-stories/          /case-studies  301
+/privacy-policy            /privacy       301
+/privacy-policy/           /privacy       301
+/home-2/                   /              301
+/blog/                     /insights      301
+/about/                    /who-we-are    301
+/services/                 /what-we-do    301
+/contact-us/               /contact       301

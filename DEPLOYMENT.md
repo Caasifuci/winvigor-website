@@ -114,16 +114,57 @@ What Claude can do through this connection (and nothing else):
 
 All writes pass the same validation and public-content guard as the admin screens: anything mentioning security clearance or defence work is saved as a draft and flagged. The one exception is open roles, which may state a required clearance level in their **Security clearance** field (never on talent profiles).
 
-## Phase 5: Content and launch
+## Phase 5: Go live on www.winvigor.com (you, about 30 minutes)
 
-1. Claude loads the content into WordPress through MCP. You review it in the WordPress admin.
-2. Replace sample content with real material and untick **Sample content** on each item. Then set `PUBLIC_SHOW_SAMPLES=false` in Pages.
-3. Add privacy and cookie pages (EU/GDPR), the LinkedIn URL and the VAT number.
-4. **Go live:** Worker → Settings → **Domains & Routes** → Add → **Custom domain** → `www.winvigor.com`, then `winvigor.com`. Cloudflare creates those two DNS records automatically (remove any old A/CNAME records for those two names first) and leaves MX/TXT alone.
-   - Redirect apex to www: Cloudflare → Rules → Redirect Rules → "Redirect from root to WWW" template.
-   - WordPress → Settings → Winvigor website → set **Public site address** to `https://www.winvigor.com`.
-5. Check that email to services@winvigor.com still arrives, and send a test enquiry through the contact form.
-6. Retire the old site's WordPress install once everything is confirmed.
+Do these steps in order. Every Cloudflare step happens in **your account dashboard at https://dash.cloudflare.com**, not on cloudflare.com (that is Cloudflare's public website, and its /rules page returns a 404).
+
+**Result:** `https://www.winvigor.com` serves the new site, `https://winvigor.com` redirects to it, old WordPress addresses redirect to the matching new pages, and email keeps working.
+
+### 5.1 Before you start (5 minutes)
+
+1. Send a test enquiry through the contact form on the `workers.dev` address and confirm it arrives by email and under WordPress → **Enquiries**.
+2. Cloudflare dashboard → select **winvigor.com** → **DNS** → **Records**. Write down (or screenshot) the current records named **winvigor.com** (shown as `@`) and **www**. These point to the old WordPress site, and you need them only if you have to roll back.
+3. Do **not** change any record of type **MX** or **TXT**, or the record named **cms**. Those carry your email, email security and the CMS.
+
+### 5.2 Point www.winvigor.com at the new site
+
+1. Still in **DNS → Records**, delete the existing record named **www** (type A or CNAME). Cloudflare cannot attach the site while it exists. The www address is briefly unavailable from here until step 3.
+2. Left menu → **Compute (Workers)** → **Workers & Pages** → select **winvigor-website** → **Settings** → **Domains & Routes** → **Add** → **Custom domain**.
+3. Enter `www.winvigor.com` → **Add custom domain**. Cloudflare creates the DNS record and the certificate itself. Wait until the status shows **Active** (usually 1–5 minutes).
+4. Open `https://www.winvigor.com` in a private window. You should see the new site.
+
+### 5.3 Redirect winvigor.com to www.winvigor.com
+
+The redirect only runs if the bare domain has a **proxied** DNS record, so this step gives it a placeholder address first.
+
+1. **DNS → Records**: delete the old record(s) named **winvigor.com** / `@` of type A or AAAA (the old WordPress host). Leave MX and TXT records with the same name untouched.
+2. **Add record** → Type **A**, Name `@`, IPv4 address `192.0.2.1`, Proxy status **Proxied** (orange cloud) → **Save**. This address is a reserved placeholder; Cloudflare answers every request before it is used.
+3. Left menu (with winvigor.com selected) → **Rules** → **Overview** → **Templates** → **Redirect from Root to WWW** → **Use template**. If you do not see the template, choose **Create rule** → **Redirect Rule** and fill it in by hand:
+   - Rule name: `Root to www`
+   - When incoming requests match: **Custom filter expression** → Field **Hostname**, Operator **equals**, Value `winvigor.com`
+   - Then: Type **Dynamic**, Expression `concat("https://www.winvigor.com", http.request.uri.path)`, Status code **301**, tick **Preserve query string**
+4. **Deploy**. Open `https://winvigor.com/contact` in a private window: it should land on `https://www.winvigor.com/contact`.
+
+### 5.4 Tell WordPress its new public address
+
+WordPress → **Settings** → **Winvigor website** → **Public site address** → `https://www.winvigor.com` → **Save settings** → **Rebuild site now**. Contact-form replies and the CMS's own redirects now use the live domain.
+
+### 5.5 Check everything (10 minutes)
+
+- [ ] `https://www.winvigor.com` shows the new site; `https://winvigor.com` redirects to it.
+- [ ] An old address redirects, for example `https://www.winvigor.com/about/` → **Who we are** and `/privacy-policy/` → **Privacy notice**.
+- [ ] A test enquiry from the live site arrives by email and under WordPress → **Enquiries**.
+- [ ] An email sent to services@winvigor.com from an outside address still arrives.
+
+### 5.6 After the site is live
+
+1. **Turn off the staging address:** Workers & Pages → **winvigor-website** → **Settings** → **Domains & Routes** → **workers.dev** → **Disable**. (Do the same for **Preview URLs** if you do not use them.)
+2. **Search engines:** add `https://www.winvigor.com` to Google Search Console and Bing Webmaster Tools and submit `https://www.winvigor.com/sitemap-index.xml`.
+3. **Old WordPress site:** keep its files for a month in case you need anything from it, then remove that install at ChemiCloud. The CMS at `cms.winvigor.com` is a separate install; keep it.
+
+### If something goes wrong
+
+Delete the custom domain on the Worker (5.2) and the placeholder `@` record (5.3), then re-create the records you noted in 5.1. The old site is back within a few minutes.
 
 ---
 
