@@ -8,7 +8,10 @@ publishDate: 2026-06-15
 order: 1
 featured: true
 sample: false
-results: []
+results:
+  - value: "25.5%"
+    label: Lower annual run cost
+    detail: Licensing and hosting, after consolidation.
 ---
 
 ## Context
@@ -25,6 +28,6 @@ Delivery runs in planned release windows. Each window moves one group of service
 
 ## Outcome
 
-- Overlapping applications retired in favour of a smaller set of core platforms.
+- Annual run cost reduced by 25.5%, with overlapping applications retired in favour of a smaller set of core platforms.
 - A migration sequence aligned with governance cycles and contract dates.
 - Public services kept available throughout the transition, run by the institution's own staff afterwards.

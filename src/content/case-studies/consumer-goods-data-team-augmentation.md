@@ -8,7 +8,10 @@ publishDate: 2026-04-20
 order: 2
 featured: true
 sample: false
-results: []
+results:
+  - value: "Long / Short-term"
+    label: Placements
+    detail: Engagement length matched to the programme timeline.
 ---
 
 ## Context

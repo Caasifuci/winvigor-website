@@ -7,7 +7,10 @@ services: [Operational risk management, Custom software development]
 publishDate: 2026-02-10
 order: 3
 sample: false
-results: []
+results:
+  - value: "45%"
+    label: Fewer priority-one incidents
+    detail: Before versus after the engagement.
 ---
 
 ## Context
@@ -22,6 +25,6 @@ We rebuilt the most fragile integrations, introduced monitoring that alerted on 
 
 ## Outcome
 
-- Fewer priority-one incidents, and faster recovery when they occur.
+- Priority-one incidents down 45%, with faster recovery when they occur.
 - Monitoring and runbooks owned by the client's operations team.
 - Controls the client now runs and reviews itself.
