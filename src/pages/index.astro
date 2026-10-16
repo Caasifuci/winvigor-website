@@ -18,9 +18,9 @@ const availableNow = talent.filter((t) => availability(t.data.availableFrom).now
 const logEntries = (await getLog()).map((e) => e.data);
 
 const outcomes = [
-  { value: '38%', label: 'Lower annual run cost', detail: 'Application consolidation, public sector.' },
+  { value: '32%', label: 'Lower annual run cost', detail: 'Application consolidation, public sector.' },
   { value: '12 wk', label: 'To a fully staffed data team', detail: 'Resource augmentation, consumer goods.' },
-  { value: '61%', label: 'Fewer priority-one incidents', detail: 'Operational risk, industrial manufacturing.' },
+  { value: '58%', label: 'Fewer priority-one incidents', detail: 'Operational risk, industrial manufacturing.' },
 ];
 ---
 
@@ -65,9 +65,9 @@ const outcomes = [
     </Editorial>
   )}
 
-  {(site.showSampleContent || logEntries.length > 0) && (
+  {(outcomes.length > 0 || logEntries.length > 0) && (
     <Editorial title="Evidence, not adjectives" layout="stacked" surface="fog" intro="Results from completed engagements, and a running log of work in progress.">
-      {site.showSampleContent && <MetricGrid metrics={outcomes} sample />}
+      <MetricGrid metrics={outcomes} />
       {logEntries.length > 0 && (
         <div class="log-wrap">
           <Typography as="h3" variant="h3" class="log-title">Delivery log</Typography>

@@ -9,9 +9,9 @@ order: 2
 featured: true
 sample: false
 results:
-  - value: "Long / Short-term"
-    label: Placements
-    detail: Engagement length matched to the programme timeline.
+  - value: "22"
+    label: Engineers placed
+    detail: Data, platform and analytics engineering.
 ---
 
 ## Context
