@@ -1,7 +1,7 @@
 ---
 /**
  * MetricGrid: outcome figures as a definition list. The value is set large
- * in the serif; the label says what it measures; the optional detail says
+ * in the display face; the label says what it measures; the optional detail says
  * where it came from. Pass `sample` to tag the figures as illustrative.
  */
 import Typography from '@/components/ui/Typography.astro';
@@ -61,10 +61,9 @@ const { metrics, sample = false, inverse = false, columns = 3 } = Astro.props;
   .metric__value {
     order: -1;
     margin-bottom: var(--space-3);
-    font-family: var(--serif);
-    font-optical-sizing: auto;
+    font-family: var(--display);
     font-size: var(--step-5);
-    font-weight: 300;
+    font-weight: 600;
     line-height: 1;
     letter-spacing: -0.03em;
     font-variant-numeric: lining-nums tabular-nums;

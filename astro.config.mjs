@@ -22,14 +22,13 @@ export default defineConfig({
   // metric-matched fallbacks to avoid layout shift.
   fonts: [
     {
-      name: 'Newsreader',
-      cssVariable: '--font-serif',
+      name: 'Plus Jakarta Sans',
+      cssVariable: '--font-display',
       provider: fontProviders.local(),
-      fallbacks: ['Georgia', 'serif'],
+      fallbacks: ['system-ui', 'sans-serif'],
       options: {
         variants: [
-          { src: ['./src/assets/fonts/newsreader-latin-opsz-normal.woff2'], weight: '200 800', style: 'normal' },
-          { src: ['./src/assets/fonts/newsreader-latin-opsz-italic.woff2'], weight: '200 800', style: 'italic' },
+          { src: ['./src/assets/fonts/plus-jakarta-sans-latin-wght-normal.woff2'], weight: '200 800', style: 'normal' },
         ],
       },
     },

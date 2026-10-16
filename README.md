@@ -65,7 +65,7 @@ Navigation: WHO WE ARE · WHAT WE DO · INSIGHTS · CAREERS · CONTACT. The logo
 | `--accent-strong` | `#1656D6` | Hover, accent text on light surfaces |
 | `--accent-on-ink` | `#7FA8FF` | Accent text and links on navy |
 
-- **Newsreader** (variable, optical sizes) for headings at light weights; **Inter** for body. Both self-hosted through Astro's Fonts API with metric-matched fallbacks (no third-party requests, no layout shift).
+- **Plus Jakarta Sans** (variable) for headings H1–H3 and figures; **Inter** for body copy and UI labels. Both self-hosted through Astro's Fonts API with metric-matched fallbacks (no third-party requests, no layout shift).
 - Fluid type scale `--step--1` … `--step-5`; all text goes through `<Typography variant>`. Uppercase is reserved for the navigation and footer headings.
 - 12-column grid via `<Container grid>`; `Editorial` places heading in columns 1–5 and content in 7–12.
 - **No photographs of people.** Hero artwork lives in `components/visuals/` and is drawn in SVG from the logo's slanted stroke (`geometry.ts`).

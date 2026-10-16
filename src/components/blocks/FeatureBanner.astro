@@ -53,10 +53,9 @@ const { title, body, action, figure, figureLabel, seed = 7 } = Astro.props;
   }
   .banner__copy { display: grid; gap: var(--space-4); align-content: center; justify-items: start; padding: clamp(1.5rem, 1rem + 2.5vw, 3rem); }
   .banner__title {
-    font-family: var(--serif);
-    font-optical-sizing: auto;
+    font-family: var(--display);
     font-size: var(--step-2);
-    font-weight: 400;
+    font-weight: 600;
     line-height: 1.2;
     color: var(--paper);
     text-wrap: balance;
@@ -73,7 +72,7 @@ const { title, body, action, figure, figureLabel, seed = 7 } = Astro.props;
     display: grid;
     gap: var(--space-1);
   }
-  .banner__figure-value { font-family: var(--serif); font-size: var(--step-5); font-weight: 300; line-height: 1; color: var(--paper); }
+  .banner__figure-value { font-family: var(--display); font-size: var(--step-5); font-weight: 600; line-height: 1; color: var(--paper); }
   .banner__figure-label { font-size: var(--step--1); font-weight: 500; color: var(--on-ink); max-width: 12rem; }
 
   @media (min-width: 56rem) {
