@@ -91,14 +91,15 @@ Metrics, the delivery log, talent profiles, open roles, case studies and insight
 
 ## Before launch
 
-- [ ] Replace sample case studies, insights and home-page outcome figures
+- [x] Replace sample case studies and insights (now generic, no client-identifying details)
+- [ ] Replace the home-page outcome figures and delivery log with real ones
 - [ ] Set `PUBLIC_FORM_ENDPOINT` to the WordPress enquiry endpoint (DEPLOYMENT.md, Phase 3). Without it the form opens the visitor's mail client.
 - [ ] Add the LinkedIn URL in `src/data/site.ts`
 - [ ] Add approved client logo SVGs to `clients` in `src/data/site.ts` (names render as text until then)
 - [ ] Confirm the production domain in `astro.config.mjs` (`site`) and `public/robots.txt`
-- [ ] Add a privacy notice page (EU/GDPR) and link it in the footer
+- [x] Add a privacy notice page (EU/GDPR) and link it in the footer (`/privacy`, consent box on the contact form)
 - [ ] Confirm the process steps in `src/data/process.ts` match how you actually work
-- [ ] Add the VAT number in `src/data/site.ts`
+- [x] Add the enterprise and VAT numbers in `src/data/site.ts` (`legal`)
 
 ## Migration notes
 

@@ -39,13 +39,20 @@ const turnstileKey = import.meta.env.PUBLIC_TURNSTILE_SITE_KEY as string | undef
       </div>
       <input type="hidden" name="profile" id="profile" />
       {/* Honeypot: hidden from people, filled in by bots. */}
-      <div class="hp" aria-hidden="true">
+      <div class="hp" aria-hidden="true" hidden>
         <label for="website">Leave this field empty</label>
         <input id="website" name="website" type="text" tabindex="-1" autocomplete="off" />
       </div>
       <div class="field">
         <label for="message">How can we help?</label>
         <textarea id="message" name="message" rows="6" required></textarea>
+      </div>
+      <div class="consent">
+        <input id="consent" name="consent" type="checkbox" value="yes" required />
+        <label for="consent">
+          I agree that {site.name} uses my details to respond to this enquiry, as described in the{' '}
+          <a href="/privacy">privacy notice</a>.
+        </label>
       </div>
       {turnstileKey && !usesMailClient && <div class="cf-turnstile" data-sitekey={turnstileKey} data-theme="light"></div>}
       <p class="form__status" role="alert" data-status hidden></p>
@@ -83,7 +90,7 @@ const turnstileKey = import.meta.env.PUBLIC_TURNSTILE_SITE_KEY as string | undef
 <script>
   // Error states returned by the enquiry endpoint (?status=…)
   const statusMessages: Record<string, string> = {
-    invalid: 'Please add your name, a valid email address and a message, then send again.',
+    invalid: 'Please add your name, a valid email address and a message, tick the privacy notice box, then send again.',
     limit: 'Too many messages from this connection in the last hour. Please email us directly instead.',
     verify: 'The security check did not complete. Please try again.',
   };
@@ -130,6 +137,11 @@ const turnstileKey = import.meta.env.PUBLIC_TURNSTILE_SITE_KEY as string | undef
   textarea { resize: vertical; min-height: 8rem; }
   input:focus, textarea:focus { outline: none; border-bottom: 2px solid var(--accent); padding-bottom: calc(0.8rem - 1px); }
   input:focus-visible, textarea:focus-visible { outline: none; }
+
+  .consent { display: grid; grid-template-columns: auto 1fr; gap: var(--space-3); align-items: start; }
+  .consent input { width: 1.1rem; height: 1.1rem; margin-top: 0.2rem; padding: 0; accent-color: var(--ink); }
+  .consent label { font-weight: 400; color: var(--graphite); line-height: 1.5; }
+  .consent a { color: var(--ink); text-decoration-color: var(--accent); text-decoration-thickness: 2px; }
 
   .hp { position: absolute; left: -10000px; width: 1px; height: 1px; overflow: hidden; }
   .form__status { padding: var(--space-3) var(--space-4); border-left: 2px solid var(--ink); background: var(--fog); color: var(--ink); }

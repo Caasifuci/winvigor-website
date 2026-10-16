@@ -78,11 +78,19 @@ const facts = [
   </Editorial>
 
   <Editorial surface="ink" title="Nothing that fits yet?" intro="Send your CV and the kind of work you want next. We will contact you when a matching assignment opens.">
-    <Button href={apply('Talent network')} variant="primary" size="lg" inverse>Join the talent network</Button>
+    <div class="network">
+      <Button href={apply('Talent network')} variant="primary" size="lg" inverse>Join the talent network</Button>
+      <Typography variant="small" tone="inverse">
+        We keep your CV for up to 24 months and never send it to a client without your agreement.
+        See our <a href="/privacy#candidates">privacy notice</a>.
+      </Typography>
+    </div>
   </Editorial>
 </BaseLayout>
 
 <style>
+  .network { display: grid; gap: var(--space-4); justify-items: start; max-width: 36rem; }
+  .network a { color: inherit; text-decoration-color: var(--accent); text-decoration-thickness: 2px; }
   .facts { margin: 0; border-top: 1px solid var(--ink); }
   .facts > div { display: grid; gap: var(--space-2); padding-block: var(--space-5); border-bottom: 1px solid var(--rule); }
   .facts dt { font-weight: 600; color: var(--ink); }

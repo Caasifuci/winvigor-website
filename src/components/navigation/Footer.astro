@@ -43,7 +43,12 @@ const { street, postalCode, locality, country } = site.contact.address;
     </div>
 
     <div class="footer-legal">
-      <p>© {year} {site.name}{site.vat && <>, VAT {site.vat}</>}</p>
+      <p>
+        © {year} {site.name} · Enterprise number {site.legal.enterpriseNumber} · VAT {site.legal.vat}
+      </p>
+      <ul role="list" class="footer-legal__links">
+        <li><a href="/privacy">Privacy notice</a></li>
+      </ul>
     </div>
   </Container>
 </footer>
@@ -84,7 +89,12 @@ const { street, postalCode, locality, country } = site.contact.address;
     padding-top: var(--space-5);
     border-top: 1px solid #24323b;
     font-size: 0.8125rem;
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: space-between;
+    gap: var(--space-3) var(--space-6);
   }
+  .footer-legal__links { display: flex; flex-wrap: wrap; gap: var(--space-5); }
 
   @media (min-width: 40rem) {
     .footer-col { grid-column: span 6; }

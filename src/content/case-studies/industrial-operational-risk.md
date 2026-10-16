@@ -4,33 +4,24 @@ summary: An industrial equipment manufacturer depended on a maintenance platform
 client: An industrial equipment manufacturer
 sector: Industrial manufacturing
 services: [Operational risk management, Custom software development]
-duration: 9 months
 publishDate: 2026-02-10
 order: 3
-sample: true
-results:
-  - value: "61%"
-    label: Fewer priority-one incidents
-    detail: Twelve months before versus after.
-  - value: "4×"
-    label: Faster recovery
-    detail: Median time to restore service.
+sample: false
+results: []
 ---
-
-> **Sample case study.** The structure is real; the client, figures and narrative are illustrative. Replace this file with an approved engagement before launch.
 
 ## Context
 
-Field engineers relied on the platform to schedule maintenance on equipment in service around the world. Outages were becoming more frequent, and nobody owned a complete picture of why.
+Field engineers relied on the platform to schedule maintenance on equipment in service internationally. Outages were becoming more frequent, and nobody owned a complete picture of why.
 
 ## Approach
 
-We traced every priority-one incident from the previous year to its root cause and grouped them by system, supplier and process. Most traced back to a small number of brittle integrations and undocumented manual steps.
+We traced recent priority-one incidents to their root causes and grouped them by system, supplier and process. Most traced back to a small number of brittle integrations and undocumented manual steps.
 
-We rebuilt the two most fragile integrations, introduced monitoring that alerted on the conditions that preceded outages, and wrote runbooks with the client's operations team so recovery no longer depended on individual memory.
+We rebuilt the most fragile integrations, introduced monitoring that alerted on the conditions that preceded outages, and wrote runbooks with the client's operations team so recovery no longer depended on individual memory.
 
 ## Outcome
 
-- Priority-one incidents fell by 61% over the following year.
-- Median time to restore service improved fourfold.
-- The client's own team now runs the controls and reviews them quarterly.
+- Fewer priority-one incidents, and faster recovery when they occur.
+- Monitoring and runbooks owned by the client's operations team.
+- Controls the client now runs and reviews itself.

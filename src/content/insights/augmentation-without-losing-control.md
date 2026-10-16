@@ -3,10 +3,9 @@ title: Resource augmentation without losing architectural control
 description: Adding external engineers should increase capacity, not dilute ownership. Four practices that keep decisions with the client.
 publishDate: 2026-09-08
 topics: [Resource augmentation, Delivery]
-sample: true
+sample: false
 ---
 
-> **Sample article.** Illustrative content written to demonstrate the layout. Replace or remove before launch.
 
 Bringing external engineers into a programme is usually a question of capacity. The risk is that it quietly becomes a question of control: decisions drift toward whoever is writing the most code, and the organisation ends up depending on people it does not employ.
 

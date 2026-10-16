@@ -2,7 +2,7 @@
 /**
  * Plugin Name:       Winvigor Headless
  * Description:       Turns this WordPress install into the content back end for www.winvigor.com (Astro on Cloudflare Pages): content types, fields, rebuild trigger, enquiry endpoint, MCP abilities and front-end lockdown.
- * Version:           1.2.0
+ * Version:           1.3.0
  * Requires at least: 6.9
  * Requires PHP:      8.0
  * Author:            Winvigor Solutions
@@ -17,7 +17,7 @@
 
 defined( 'ABSPATH' ) || exit;
 
-define( 'WV_PLUGIN_VERSION', '1.2.0' );
+define( 'WV_PLUGIN_VERSION', '1.3.0' );
 define( 'WV_PLUGIN_DIR', plugin_dir_path( __FILE__ ) );
 
 require_once WV_PLUGIN_DIR . 'includes/config.php';

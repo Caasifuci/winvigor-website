@@ -57,7 +57,7 @@ const present = disciplines.filter((d) => profiles.some((p) => p.data.discipline
               <p class:list={['profile__avail', { 'is-now': avail.now }]}>{avail.label}</p>
             </header>
             <Typography as="h3" variant="h3" id={`${d.id}-role`} class="profile__role">{d.role}</Typography>
-            <p class="profile__level">{d.seniority}, {d.years} years</p>
+            <p class="profile__level">{d.seniority}, {d.years}+ years</p>
             <ul role="list" class="skills" aria-label="Key skills">
               {d.skills.map((s) => <li>{s}</li>)}
             </ul>

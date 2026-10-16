@@ -35,8 +35,11 @@ export const site = {
     linkedin: '',
   },
 
-  /** TODO: company number / VAT (BTW) for the footer, e.g. 'BE0123.456.789'. */
-  vat: '',
+  /** Legal identification shown in the footer and privacy notice (Belgian CBE / KBO). */
+  legal: {
+    enterpriseNumber: '0728.703.095',
+    vat: 'BE0728703095',
+  },
 
   /**
    * Sample content (illustrative metrics, case studies, insights) is shown

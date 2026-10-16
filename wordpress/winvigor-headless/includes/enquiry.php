@@ -76,8 +76,9 @@ function wv_handle_enquiry( WP_REST_Request $req ) {
 	$org     = sanitize_text_field( (string) ( $p['organisation'] ?? '' ) );
 	$profile = sanitize_text_field( (string) ( $p['profile'] ?? '' ) );
 	$message = sanitize_textarea_field( (string) ( $p['message'] ?? '' ) );
+	$consent = ! empty( $p['consent'] );
 
-	if ( '' === $name || ! is_email( $email ) || mb_strlen( $message ) < 5 ) {
+	if ( '' === $name || ! is_email( $email ) || mb_strlen( $message ) < 5 || ! $consent ) {
 		return wv_enquiry_redirect( 'invalid' );
 	}
 	$message = mb_substr( $message, 0, 5000 );
@@ -98,6 +99,8 @@ function wv_handle_enquiry( WP_REST_Request $req ) {
 		update_post_meta( $post_id, 'wv_email', $email );
 		update_post_meta( $post_id, 'wv_organisation', $org );
 		update_post_meta( $post_id, 'wv_profile', $profile );
+		// GDPR: record when the privacy notice was accepted.
+		update_post_meta( $post_id, 'wv_consent', gmdate( 'Y-m-d H:i:s' ) . ' UTC' );
 	}
 
 	$body = "Name: {$name}\nEmail: {$email}\nOrganisation: " . ( $org ?: '-' ) . "\n" . ( $profile ? "Profile: {$profile}\n" : '' ) . "\n{$message}\n\n-- \nStored in WordPress: " . admin_url( 'edit.php?post_type=wv_enquiry' );
@@ -114,7 +117,7 @@ add_action(
 			'wv_enquiry_from',
 			'From',
 			function ( $post ) {
-				foreach ( array( 'name' => 'Name', 'email' => 'Email', 'organisation' => 'Organisation', 'profile' => 'Profile' ) as $k => $label ) {
+				foreach ( array( 'name' => 'Name', 'email' => 'Email', 'organisation' => 'Organisation', 'profile' => 'Profile', 'consent' => 'Privacy notice accepted' ) as $k => $label ) {
 					$v = get_post_meta( $post->ID, 'wv_' . $k, true );
 					if ( $v ) {
 						printf( '<p><strong>%s:</strong> %s</p>', esc_html( $label ), 'email' === $k ? '<a href="mailto:' . esc_attr( $v ) . '">' . esc_html( $v ) . '</a>' : esc_html( $v ) );

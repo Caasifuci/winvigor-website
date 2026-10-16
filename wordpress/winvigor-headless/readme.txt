@@ -1,7 +1,7 @@
 === Winvigor Headless ===
 Requires at least: 6.9
 Requires PHP: 8.0
-Stable tag: 1.2.0
+Stable tag: 1.3.0
 License: GPLv2 or later
 
 Content back end for www.winvigor.com.

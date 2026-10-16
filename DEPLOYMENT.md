@@ -43,7 +43,7 @@ The current site stays live until the launch step. Nothing below touches email (
 5. **Permalinks:** WordPress → Settings → Permalinks → **Post name** → Save.
 6. **Plugins:** Plugins → Add New → Upload Plugin, then activate each:
    - `mcp-adapter-0.7.0.zip` (official WordPress MCP Adapter, dependencies included)
-   - `winvigor-headless-1.2.0.zip`
+   - `winvigor-headless-1.3.0.zip`
    Remove the default plugins you don't use (Hello Dolly, Akismet).
 7. **Plugin settings:** WordPress → **Settings** → **Winvigor website**. Fill in **Send enquiries to** (`services@winvigor.com`) and **Public site address** (your `*.workers.dev` address until launch, then `https://www.winvigor.com`). The deploy hook is added in Phase 3. The page also shows a setup checklist.
    No `wp-config.php` editing and no cron job are needed. (Optional, for very low-traffic CMSs: a cPanel cron job running `wp-cron.php` every 5 minutes makes queued follow-up rebuilds fire promptly.)
