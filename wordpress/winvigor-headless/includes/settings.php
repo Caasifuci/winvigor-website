@@ -45,11 +45,13 @@ add_action(
 			$errors[] = 'The deploy hook must be the URL Cloudflare gives you, starting with https://api.cloudflare.com/';
 		}
 
-		$email = trim( (string) ( $in['enquiry_to'] ?? '' ) );
-		if ( '' === $email || is_email( $email ) ) {
-			$saved['enquiry_to'] = sanitize_email( $email );
+		// One or more addresses, separated by commas.
+		$list = array_filter( array_map( 'trim', explode( ',', (string) ( $in['enquiry_to'] ?? '' ) ) ) );
+		$bad  = array_filter( $list, fn( $e ) => ! is_email( $e ) );
+		if ( ! $bad ) {
+			$saved['enquiry_to'] = implode( ', ', array_map( 'sanitize_email', $list ) );
 		} else {
-			$errors[] = 'Enquiry email is not a valid address.';
+			$errors[] = 'Not a valid email address: ' . implode( ', ', $bad ) . '. Separate several addresses with commas.';
 		}
 
 		$secret = trim( (string) ( $in['turnstile_secret'] ?? '' ) );
@@ -130,7 +132,7 @@ function wv_render_settings_page(): void {
 				<?php
 				$field( 'WV_DEPLOY_HOOK', 'deploy_hook', 'Cloudflare deploy hook', 'From Cloudflare: Workers & Pages → winvigor-website → Settings → Builds → Deploy Hooks → Create. Paste the whole URL.', 'url', 'https://api.cloudflare.com/client/v4/workers/builds/deploy_hooks/…' );
 				$field( 'WV_SITE_URL', 'site_url', 'Public site address', 'Where visitors to this WordPress are sent, and where "View" links point. Use the workers.dev address until launch, then https://www.winvigor.com.', 'url', 'https://www.winvigor.com' );
-				$field( 'WV_ENQUIRY_TO', 'enquiry_to', 'Send enquiries to', 'Contact form messages are emailed here (and kept under Enquiries).', 'email', 'services@winvigor.com' );
+				$field( 'WV_ENQUIRY_TO', 'enquiry_to', 'Send enquiries to', 'Contact form messages are emailed here (and kept under Enquiries). For several recipients, separate addresses with commas.', 'text', 'services@winvigor.com, name@example.com' );
 				$field( 'WV_TURNSTILE_SECRET', 'turnstile_secret', 'Turnstile secret key (optional)', 'Only if you enable Cloudflare Turnstile spam protection on the contact form.', 'password' );
 				?>
 				</tbody>
