@@ -128,16 +128,18 @@ Do these steps in order. Every Cloudflare step happens in **your account dashboa
 
 ### 5.2 Point www.winvigor.com at the new site
 
-1. Still in **DNS → Records**, delete the existing record named **www** (type A or CNAME). Cloudflare cannot attach the site while it exists. The www address is briefly unavailable from here until step 3.
-2. Left menu → **Compute (Workers)** → **Workers & Pages** → select **winvigor-website** → **Settings** → **Domains & Routes** → **Add** → **Custom domain**.
-3. Enter `www.winvigor.com` → **Add custom domain**. Cloudflare creates the DNS record and the certificate itself. Wait until the status shows **Active** (usually 1–5 minutes).
-4. Open `https://www.winvigor.com` in a private window. You should see the new site.
+Use a DNS record plus a Worker route. (The Worker's **Add Domain** dialog can treat `www.winvigor.com` as a new domain to buy and open a "Purchase domain" screen. Cancel it; never click **Onboard** or buy anything.)
+
+1. **DNS → Records**: delete any existing record named **www** (type A or CNAME) that points at the old host.
+2. **Add record** → Type **AAAA**, Name `www`, IPv6 address `100::`, Proxy status **Proxied** (orange cloud) → **Save**. `100::` is a reserved placeholder; the Worker answers before it is ever used.
+3. **Workers & Pages** → **winvigor-website** → **Domains** → **Add Route** (not Add Domain). Zone `winvigor.com`, Route `www.winvigor.com/*`, failure mode **Fail closed** if asked → **Add route**.
+4. After 2–5 minutes, open `https://www.winvigor.com` in a private window. If the browser says the address cannot be found, try a phone on mobile data: a computer can remember the earlier failed lookup for up to 30 minutes.
 
 ### 5.3 Redirect winvigor.com to www.winvigor.com
 
 The redirect only runs if the bare domain has a **proxied** DNS record.
 
-> **Already added `winvigor.com` as a custom domain on the Worker?** Then Cloudflare already manages a proxied record for it, and adding the placeholder fails with *"A DNS record managed by Workers already exists on that host."* Skip steps 1–2 and go straight to step 3. Check that `www.winvigor.com` is also listed under the Worker's **Domains & Routes** first.
+> **Already added `winvigor.com` as a custom domain on the Worker?** Then Cloudflare already manages a proxied record for it, and adding the placeholder fails with *"A DNS record managed by Workers already exists on that host."* Skip steps 1–2 and go straight to step 3. Check that the `www.winvigor.com/*` route from 5.2 is listed under the Worker's **Domains** tab first.
 
 Otherwise, give the bare domain a placeholder address first:
 
