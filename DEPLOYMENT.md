@@ -135,7 +135,11 @@ Do these steps in order. Every Cloudflare step happens in **your account dashboa
 
 ### 5.3 Redirect winvigor.com to www.winvigor.com
 
-The redirect only runs if the bare domain has a **proxied** DNS record, so this step gives it a placeholder address first.
+The redirect only runs if the bare domain has a **proxied** DNS record.
+
+> **Already added `winvigor.com` as a custom domain on the Worker?** Then Cloudflare already manages a proxied record for it, and adding the placeholder fails with *"A DNS record managed by Workers already exists on that host."* Skip steps 1–2 and go straight to step 3. Check that `www.winvigor.com` is also listed under the Worker's **Domains & Routes** first.
+
+Otherwise, give the bare domain a placeholder address first:
 
 1. **DNS → Records**: delete the old record(s) named **winvigor.com** / `@` of type A or AAAA (the old WordPress host). Leave MX and TXT records with the same name untouched.
 2. **Add record** → Type **A**, Name `@`, IPv4 address `192.0.2.1`, Proxy status **Proxied** (orange cloud) → **Save**. This address is a reserved placeholder; Cloudflare answers every request before it is used.
