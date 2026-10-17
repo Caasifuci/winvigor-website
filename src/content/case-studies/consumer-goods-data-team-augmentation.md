@@ -1,6 +1,8 @@
 ---
 title: Standing up a data engineering capability for a consumer-goods group
 summary: A multinational consumer-goods group needed a senior data engineering team in place before a multi-market analytics launch. We sourced, onboarded and embedded the team under the client's own delivery leadership.
+seoTitle: A data engineering team for a consumer-goods group
+seoDescription: How we sourced, onboarded and embedded 22 data engineers for a multinational consumer-goods group ahead of a multi-market analytics launch.
 client: A multinational consumer-goods group
 sector: Consumer goods
 services: [Resource augmentation]

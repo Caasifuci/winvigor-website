@@ -21,7 +21,8 @@ import { caseStudyCards, getLog, getTalent, availability, insightCards } from '@
 
 const talent = await getTalent();
 const availableNow = talent.filter((t) => availability(t.data.availableFrom).now).length;
-const logEntries = (await getLog()).map((e) => e.data);
+// Only real entries are shown; sample entries stay hidden until replaced.
+const logEntries = (await getLog()).filter((e) => !e.data.sample).map((e) => e.data);
 const work = (await caseStudyCards()).slice(0, 3);
 const insights = (await insightCards()).slice(0, 3);
 
@@ -73,7 +74,7 @@ const outcomes = [
     </Section>
   )}
 
-  <Section id="evidence" title="Evidence, not adjectives" intro="Results from completed engagements, and a running log of work in progress.">
+  <Section id="evidence" title="Evidence, not adjectives" intro={logEntries.length > 0 ? 'Results from completed engagements, and a running log of work in progress.' : 'Results from completed engagements.'}>
     <MetricGrid metrics={outcomes} />
     {logEntries.length > 0 && (
       <div class="log-wrap">

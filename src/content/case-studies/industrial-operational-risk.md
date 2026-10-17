@@ -1,6 +1,8 @@
 ---
 title: Reducing operational risk in an industrial maintenance platform
 summary: An industrial equipment manufacturer depended on a maintenance platform that had outgrown its original design. We mapped the risk, stabilised the platform and put controls in place that the client now runs itself.
+seoTitle: Reducing operational risk in an industrial platform
+seoDescription: How we stabilised an industrial maintenance platform and handed over controls the client runs itself, with 45% fewer priority-one incidents.
 client: An industrial equipment manufacturer
 sector: Industrial manufacturing
 services: [Operational risk management, Custom software development]

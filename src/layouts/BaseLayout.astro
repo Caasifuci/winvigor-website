@@ -23,13 +23,16 @@ interface Props {
 const {
   title,
   description = site.description,
-  ogImage = '/android-chrome-512.png',
+  ogImage = '/og-image.jpg',
   ogType = 'website',
   noindex = false,
   schema,
 } = Astro.props;
 
-const pageTitle = title ? `${title} | ${site.name}` : `${site.name}: technology consulting and talent resourcing`;
+// Keep titles within ~60 characters so search results show them in full.
+const pageTitle = !title
+  ? `Technology consulting and talent resourcing | ${site.shortName}`
+  : [`${title} | ${site.name}`, `${title} | ${site.shortName}`, title].find((t) => t.length <= 60) ?? title;
 const canonical = new URL(Astro.url.pathname, Astro.site ?? site.url).href.replace(/\/$/, '') || site.url;
 const ogImageUrl = new URL(ogImage, Astro.site ?? site.url).href;
 
@@ -37,7 +40,11 @@ const organisation = {
   '@context': 'https://schema.org',
   '@type': 'ProfessionalService',
   name: site.name,
+  '@id': `${site.url}/#organisation`,
   url: site.url,
+  logo: `${site.url}/android-chrome-512.png`,
+  image: `${site.url}/og-image.jpg`,
+  description: site.description,
   email: site.contact.email,
   telephone: site.contact.phoneHref.replace('tel:', ''),
   address: {
@@ -47,8 +54,13 @@ const organisation = {
     addressLocality: site.contact.address.locality,
     addressCountry: 'BE',
   },
+  vatID: site.legal.vat,
+  taxID: site.legal.enterpriseNumber,
+  areaServed: 'EU',
+  ...(site.social.linkedin ? { sameAs: [site.social.linkedin] } : {}),
 };
-const jsonLd = [organisation, ...(schema ? (Array.isArray(schema) ? schema : [schema]) : [])];
+const website = { '@context': 'https://schema.org', '@type': 'WebSite', name: site.name, url: site.url, publisher: { '@id': `${site.url}/#organisation` } };
+const jsonLd = [organisation, ...(Astro.url.pathname === '/' ? [website] : []), ...(schema ? (Array.isArray(schema) ? schema : [schema]) : [])];
 ---
 
 <!doctype html>
@@ -81,6 +93,9 @@ const jsonLd = [organisation, ...(schema ? (Array.isArray(schema) ? schema : [sc
     <meta property="og:description" content={description} />
     <meta property="og:url" content={canonical} />
     <meta property="og:image" content={ogImageUrl} />
+    <meta property="og:image:width" content="1200" />
+    <meta property="og:image:height" content="630" />
+    <meta property="og:image:alt" content={`${site.name}: technology consulting and talent resourcing`} />
     <meta property="og:locale" content="en_GB" />
     <meta name="twitter:card" content="summary_large_image" />
 

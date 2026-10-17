@@ -30,7 +30,7 @@ const article = {
 };
 ---
 
-<BaseLayout title={d.title} description={d.description} ogType="article" noindex={d.sample} schema={article}>
+<BaseLayout title={d.seoTitle ?? d.title} description={d.seoDescription ?? d.description} ogType="article" noindex={d.sample} schema={article}>
   <article>
     <Container width="text" as="header" class="post-head">
       <p class="post-head__back"><a href="/insights">Insights</a></p>

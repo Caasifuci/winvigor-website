@@ -30,7 +30,10 @@ const availableNow = talent.filter((t) => availability(t.data.availableFrom).now
 
   <Container class="board-wrap">
     {talent.length > 0 ? (
-      <TalentBoard profiles={talent} filters />
+      <>
+        <h2 class="visually-hidden">Engineer profiles</h2>
+        <TalentBoard profiles={talent} filters />
+      </>
     ) : (
       <div class="empty">
         <Typography variant="lead">The board is being refreshed. Send us your brief and we will search our network directly.</Typography>

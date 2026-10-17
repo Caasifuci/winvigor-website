@@ -126,7 +126,9 @@ const accentIndex = constellation ? Math.floor(points.length * 0.62) : -1;
   /* 1. Slow-drift gradient, moved by transform so it never repaints. */
   .ambient__wash {
     position: absolute;
-    inset: -10% -100% -10% 0;
+    /* Top edge pinned at 0: if the band grows (late web fonts), the wash
+       only gets taller rather than moving, so it never counts as layout shift. */
+    inset: 0 -100% 0 0;
     background: linear-gradient(105deg,
       #0e2a33 0%,      /* charcoal slate */
       #0b3c49 28%,     /* dark teal blue (brand) */

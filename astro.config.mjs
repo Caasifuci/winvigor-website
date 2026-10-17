@@ -8,7 +8,7 @@ export default defineConfig({
   trailingSlash: 'never',
   build: { format: 'directory', inlineStylesheets: 'auto' },
   prefetch: { prefetchAll: false, defaultStrategy: 'hover' },
-  integrations: [mdx(), sitemap()],
+  integrations: [mdx(), sitemap({ filter: (page) => !page.includes('/contact/thanks') })],
 
   // Legacy WordPress URLs → new information architecture
   redirects: {

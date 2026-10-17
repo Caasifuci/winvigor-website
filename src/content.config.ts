@@ -26,6 +26,9 @@ const insights = defineCollection({
   schema: z.object({
     title: z.string().max(110),
     description: z.string().max(220),
+    /** Optional shorter title (≤ 60) and description (≤ 160) for search results and link previews. */
+    seoTitle: z.string().max(60).optional(),
+    seoDescription: z.string().max(160).optional(),
     publishDate: z.coerce.date(),
     updatedDate: z.coerce.date().optional(),
     author: z.string().default('Winvigor Solutions'),
@@ -41,6 +44,9 @@ const caseStudies = defineCollection({
     z.object({
       title: z.string().max(110),
       summary: z.string().max(260),
+      /** Optional shorter title (≤ 60) and description (≤ 160) for search results and link previews. */
+      seoTitle: z.string().max(60).optional(),
+      seoDescription: z.string().max(160).optional(),
       /** How the client is named publicly. Use an anonymised description unless the client has approved naming. */
       client: z.string(),
       sector: z.string(),

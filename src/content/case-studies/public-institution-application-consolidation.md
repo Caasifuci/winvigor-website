@@ -1,6 +1,8 @@
 ---
 title: Consolidating fragmented applications across public institutions in the EU
 summary: Years of project-by-project delivery leave public bodies running overlapping systems on ageing infrastructure. We set the target architecture and sequence the consolidation without disrupting public services.
+seoTitle: Consolidating EU public-sector applications
+seoDescription: How we set the target architecture and sequenced the consolidation of overlapping public-sector systems, cutting annual run cost by 25.5%.
 client: Public institutions in the EU
 sector: Public sector
 services: [Strategic IT consulting, Custom software development]

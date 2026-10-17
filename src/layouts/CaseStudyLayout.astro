@@ -29,7 +29,7 @@ const facts = [
 ];
 ---
 
-<BaseLayout title={d.title} description={d.summary} ogType="article" noindex={d.sample}>
+<BaseLayout title={d.seoTitle ?? d.title} description={d.seoDescription ?? d.summary} ogType="article" noindex={d.sample}>
   <article>
     <header class="cs-head">
       <Container grid>

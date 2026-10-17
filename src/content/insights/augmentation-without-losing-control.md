@@ -1,6 +1,7 @@
 ---
 title: Resource augmentation without losing architectural control
 description: Adding external engineers should increase capacity, not dilute ownership. Four practices that keep decisions with the client.
+seoTitle: Resource augmentation without losing control
 publishDate: 2026-09-08
 topics: [Resource augmentation, Delivery]
 sample: false
