@@ -143,11 +143,16 @@ Otherwise, give the bare domain a placeholder address first:
 
 1. **DNS → Records**: delete the old record(s) named **winvigor.com** / `@` of type A or AAAA (the old WordPress host). Leave MX and TXT records with the same name untouched.
 2. **Add record** → Type **A**, Name `@`, IPv4 address `192.0.2.1`, Proxy status **Proxied** (orange cloud) → **Save**. This address is a reserved placeholder; Cloudflare answers every request before it is used.
-3. Left menu (with winvigor.com selected) → **Rules** → **Overview** → **Templates** → **Redirect from Root to WWW** → **Use template**. If you do not see the template, choose **Create rule** → **Redirect Rule** and fill it in by hand:
+3. Left menu (with winvigor.com selected) → **Rules** → **Overview**. Under **Rule templates**, find **Redirect from root to WWW** (not "Redirect from WWW to root") → **Create from template**. This opens a pre-filled form; check it shows:
+   - Request URL: `https://winvigor.com/*`
+   - Target URL: `https://www.winvigor.com/${1}`
+   - Status code: **301**, with **Preserve query string** ticked
+
+   If the domain shows `example.com` or is empty, replace it with `winvigor.com`; keep `/*` and `${1}`, which carry the page path across. If no template is offered, choose **Create rule** → **Redirect Rule** and fill it in by hand:
    - Rule name: `Root to www`
    - When incoming requests match: **Custom filter expression** → Field **Hostname**, Operator **equals**, Value `winvigor.com`
    - Then: Type **Dynamic**, Expression `concat("https://www.winvigor.com", http.request.uri.path)`, Status code **301**, tick **Preserve query string**
-4. **Deploy**. Open `https://winvigor.com/contact` in a private window: it should land on `https://www.winvigor.com/contact`.
+4. Click **Deploy** at the bottom of the form. Open `https://winvigor.com/contact` in a private window: it should land on `https://www.winvigor.com/contact`.
 
 ### 5.4 Tell WordPress its new public address
 
