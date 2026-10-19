@@ -37,6 +37,9 @@ export const site = {
 
   /** Legal identification shown in the footer and privacy notice (Belgian CBE / KBO). */
   legal: {
+    /** Registered name and legal form at the KBO/BCE. */
+    name: 'Winvigor BV',
+    privacyEmail: 'privacy@winvigor.com',
     enterpriseNumber: '0728.703.095',
     vat: 'BE0728703095',
   },

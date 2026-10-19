@@ -1,178 +1,318 @@
 ---
 /**
  * Privacy notice (EU GDPR, Regulation (EU) 2016/679, and the Belgian
- * Act of 30 July 2018). Covers website visitors, enquiries, candidates
- * and CVs. Update `updated` whenever the content changes.
+ * Act of 30 July 2018). Text supplied by Winvigor on 19 October 2026,
+ * with the actual service providers named. Update `updated` whenever the
+ * content changes. Keep id="candidates": the Careers page links to it.
  */
 import BaseLayout from '@/layouts/BaseLayout.astro';
 import Container from '@/components/ui/Container.astro';
 import Typography from '@/components/ui/Typography.astro';
 import { site } from '@/data/site';
 
-const { email, address } = site.contact;
-const updated = '16 October 2026';
+const { address } = site.contact;
+const { name: legalName, privacyEmail, enterpriseNumber, vat } = site.legal;
+const privacyHref = `mailto:${privacyEmail}?subject=Privacy%20request`;
+const updated = '19 October 2026';
+
+const retention = [
+  ['General enquiries not leading to an engagement', 'Up to 24 months after the last meaningful communication'],
+  ['Applications for a specific role', 'Up to 12 months after the recruitment process ends'],
+  ['Talent network records and CVs', 'Up to 24 months after the last meaningful interaction, unless consent is withdrawn earlier'],
+  ['Client and supplier records', 'During the relationship and afterwards for statutory limitation and legal compliance periods'],
+  ['Accounting and tax records', '10 years, or longer where Belgian law requires'],
+  ['Website hosting and security logs', 'Only for the period reasonably required for security and operational purposes'],
+];
 ---
 
 <BaseLayout
   title="Privacy notice"
-  description={`How ${site.name} collects, uses and protects personal data from website visitors, clients and candidates.`}
+  description={`How ${site.name} collects, uses, shares and protects personal data from website visitors, clients, suppliers and candidates.`}
 >
   <article>
     <Container width="text" as="header" class="policy-head">
       <Typography as="h1" variant="h1">Privacy notice</Typography>
       <Typography variant="lead" class="policy-head__lede">
-        How we collect, use and protect personal data when you visit this website, contact us or send us your CV.
+        How we collect, use, share and protect personal data when you visit our website, contact us, become a client
+        or supplier, or submit your CV.
       </Typography>
       <Typography variant="meta" class="policy-head__meta">Last updated {updated}</Typography>
     </Container>
 
     <Container width="text" class="policy-body">
       <div class="prose">
-        <h2 id="controller">1. Who is responsible for your data</h2>
+        <h2 id="controller">1. Who is responsible for your data?</h2>
         <p>
-          {site.name} ("Winvigor", "we", "us") is the controller of the personal data described in this notice.
+          {legalName}, trading as {site.name} ("Winvigor", "we", "us", "our"), is the controller responsible for the
+          personal data described in this notice.
         </p>
         <ul>
           <li>Address: {address.street}, {address.postalCode} {address.locality}, {address.country}</li>
-          <li>Enterprise number: {site.legal.enterpriseNumber}</li>
-          <li>VAT: {site.legal.vat}</li>
-          <li>Privacy contact: <a href={`mailto:${email}?subject=Privacy%20request`}>{email}</a></li>
+          <li>Enterprise number: {enterpriseNumber}</li>
+          <li>VAT number: {vat}</li>
+          <li>Privacy contact: <a href={privacyHref}>{privacyEmail}</a></li>
         </ul>
         <p>
-          This notice applies to personal data processed in accordance with the General Data Protection Regulation
-          (Regulation (EU) 2016/679, "GDPR") and the Belgian Act of 30 July 2018 on the protection of natural persons
-          with regard to the processing of personal data.
+          This notice is provided in accordance with the General Data Protection Regulation (Regulation (EU) 2016/679,
+          "GDPR") and the Belgian Act of 30 July 2018 on the protection of natural persons with regard to the
+          processing of personal data.
         </p>
 
-        <h2 id="what">2. What data we collect and why</h2>
+        <h2 id="what">2. What personal data we collect and why</h2>
 
-        <h3>Website visits</h3>
+        <h3 id="website">Website visits</h3>
         <p>
-          This website does not use analytics, advertising or tracking cookies, and does not load fonts or scripts
-          from third-party trackers. Our hosting provider processes technical data needed to deliver the site
-          securely, such as your IP address, browser type and the pages requested. It may set a strictly necessary
-          security cookie to protect the site against automated attacks. Because these cookies are essential to
-          operating the site, they do not require consent.
+          When you visit our website, our hosting and security providers process technical information necessary to
+          deliver and protect the website, including:
         </p>
-        <p><strong>Legal basis:</strong> our legitimate interest in running a secure, working website (Article 6(1)(f) GDPR).</p>
+        <ul>
+          <li>IP address</li>
+          <li>Browser and device information</li>
+          <li>Date and time of requests</li>
+          <li>Pages requested</li>
+          <li>Basic security and diagnostic information</li>
+        </ul>
+        <p>
+          Our website does not use analytics, advertising, marketing or profiling cookies. Only strictly necessary
+          security cookies may be used where required to protect the website against malicious activity and ensure
+          its proper operation.
+        </p>
+        <p>
+          <strong>Legal basis:</strong> our legitimate interest in maintaining the security, availability and
+          integrity of our website and information systems (Article 6(1)(f) GDPR).
+        </p>
 
-        <h3>Enquiries through the contact form or by email</h3>
+        <h3 id="enquiries">Enquiries through the contact form or by email</h3>
+        <p>When you contact us, we may process:</p>
+        <ul>
+          <li>Your name</li>
+          <li>Email address</li>
+          <li>Organisation name (if provided)</li>
+          <li>The profile or service you are enquiring about (if applicable)</li>
+          <li>The contents of your message</li>
+          <li>Any information you choose to provide</li>
+        </ul>
+        <p>We use this information to:</p>
+        <ul>
+          <li>Respond to your enquiry</li>
+          <li>Discuss potential engagements</li>
+          <li>Maintain records of our communications</li>
+          <li>Protect our services from spam and abuse</li>
+        </ul>
         <p>
-          When you contact us, we receive your name, email address, organisation (if you give it), the profile
-          reference you asked about (if any) and the content of your message. We use this to answer you, to discuss a
-          possible engagement and to keep a record of our correspondence. If the form shows a security check, it
-          processes technical data to tell people from automated spam.
+          If a security check is used on the website, limited technical information may be processed to distinguish
+          genuine users from automated submissions.
         </p>
-        <p>
-          <strong>Legal basis:</strong> steps taken at your request before entering into a contract (Article 6(1)(b)),
-          and our legitimate interest in responding to business enquiries and keeping records of them (Article 6(1)(f)).
-        </p>
+        <p><strong>Legal basis:</strong></p>
+        <ul>
+          <li>Steps taken at your request before entering into a contract (Article 6(1)(b) GDPR)</li>
+          <li>
+            Our legitimate interest in responding to business enquiries, maintaining correspondence records and
+            protecting our legal interests (Article 6(1)(f) GDPR)
+          </li>
+        </ul>
 
         <h3 id="candidates">Candidates, CVs and the talent network</h3>
+        <p>When you apply for a role or ask to join our talent network, we may process:</p>
+        <ul>
+          <li>Contact details</li>
+          <li>CV and employment history</li>
+          <li>Skills and qualifications</li>
+          <li>Language skills</li>
+          <li>Availability</li>
+          <li>References you choose to provide</li>
+          <li>Preferences regarding future opportunities</li>
+          <li>Interview notes and recruitment-related communications</li>
+        </ul>
+        <p>We use this information to:</p>
+        <ul>
+          <li>Assess suitability for current and future opportunities</li>
+          <li>Contact you about relevant assignments</li>
+          <li>Arrange interviews</li>
+          <li>Maintain our talent network</li>
+        </ul>
         <p>
-          When you apply for a role or join our talent network, we receive the information you choose to send: your
-          CV, contact details, work history, skills, qualifications, language skills, availability and preferences
-          for future work. We use it to assess your fit for current and future assignments, to contact you about
-          relevant opportunities, and to arrange interviews.
+          <strong>We never share your CV or identifying information with a client without your agreement for the
+          specific opportunity concerned.</strong> Where candidate profiles are displayed on our talent board, they are
+          anonymised and do not identify individuals.
         </p>
         <p>
-          <strong>We never send your CV or identifying details to a client without your agreement for that specific
-          opportunity.</strong> Profiles on our talent board are anonymised and do not identify individuals.
+          Please do not include special categories of personal data in your CV unless specifically required and
+          legally justified. This includes information relating to health, religious beliefs, political opinions,
+          ethnic origin, trade union membership, sexual orientation or similar sensitive information. Please also avoid
+          providing national identification numbers unless specifically requested.
         </p>
         <p>
-          Please do not include special categories of data in your CV (for example health, religion, political
-          opinions or ethnic origin), or national identification numbers. If an assignment legally requires a
-          security clearance or background check, we will explain what is needed and the legal basis before any
-          such information is collected.
+          If a role requires a security clearance, background verification or other legally required checks, we will
+          explain the purpose, legal basis and requirements before collecting such information.
         </p>
         <p>
-          <strong>Legal basis:</strong> steps taken at your request before entering into a contract for a specific
-          application (Article 6(1)(b)); your consent for keeping your CV in our talent network for future
-          opportunities (Article 6(1)(a)), which you can withdraw at any time.
+          Most candidate data is obtained directly from candidates. In some cases, we may receive information through
+          professional networking platforms, referrals or publicly available professional profiles. Where required by
+          law, we will provide the information required under applicable data protection legislation. We may review
+          information that you have made publicly available on professional networking platforms, such as LinkedIn,
+          where relevant to assessing your suitability for professional opportunities.
+        </p>
+        <p><strong>Legal basis:</strong></p>
+        <ul>
+          <li>Steps taken at your request before entering into a contract for a specific application (Article 6(1)(b) GDPR)</li>
+          <li>Your consent to retain your information in our talent network for future opportunities (Article 6(1)(a) GDPR)</li>
+        </ul>
+        <p>
+          You may withdraw your consent and request removal from the talent network at any time by contacting us at{' '}
+          <a href={privacyHref}>{privacyEmail}</a>.
         </p>
 
-        <h3>Clients and suppliers</h3>
+        <h3 id="clients">Clients and suppliers</h3>
         <p>
-          We process the business contact details of people at our clients and suppliers to manage engagements,
-          invoicing and the relationship.
+          We process business contact details and related information concerning representatives of clients,
+          suppliers and professional partners. This may include:
         </p>
-        <p>
-          <strong>Legal basis:</strong> performance of a contract (Article 6(1)(b)), our legal obligations, for
-          example accounting and tax (Article 6(1)(c)), and our legitimate interest in managing business
-          relationships (Article 6(1)(f)).
-        </p>
+        <ul>
+          <li>Names and job titles</li>
+          <li>Business contact details</li>
+          <li>Contractual and engagement information</li>
+          <li>Invoicing and payment information</li>
+          <li>Communications relating to the business relationship</li>
+        </ul>
+        <p>We use this information to:</p>
+        <ul>
+          <li>Manage engagements and projects</li>
+          <li>Maintain business relationships</li>
+          <li>Administer contracts</li>
+          <li>Meet legal, accounting and tax obligations</li>
+        </ul>
+        <p><strong>Legal basis:</strong></p>
+        <ul>
+          <li>Performance of a contract (Article 6(1)(b) GDPR)</li>
+          <li>Compliance with legal obligations (Article 6(1)(c) GDPR)</li>
+          <li>Our legitimate interest in managing and developing professional relationships (Article 6(1)(f) GDPR)</li>
+        </ul>
 
         <h2 id="sharing">3. Who we share data with</h2>
-        <p>We do not sell personal data. We share it only with:</p>
+        <p>We do not sell personal data. We may share personal data with:</p>
         <ul>
-          <li><strong>Clients</strong>, when you have agreed to be put forward for a specific opportunity.</li>
           <li>
-            <strong>Service providers acting on our behalf</strong> under data processing agreements: website hosting
-            and security (Cloudflare), hosting of our content system and enquiry records (ChemiCloud), and our email
-            provider.
+            <strong>Clients</strong>, where you have agreed to be presented for a specific assignment, employment
+            opportunity or engagement.
           </li>
-          <li><strong>Professional advisers and authorities</strong>, such as accountants, lawyers or regulators, where required by law or to protect our legal rights.</li>
+          <li>
+            <strong>Service providers acting on our behalf</strong>, under appropriate contractual safeguards,
+            including data processing agreements where required:
+            <ul>
+              <li>Cloudflare: website hosting, content delivery and security</li>
+              <li>ChemiCloud: hosting of our content management system, enquiry records and business email</li>
+              <li>Google (Gmail): receipt of enquiry notifications</li>
+              <li>Other IT, security, cloud storage and communication providers we may use from time to time</li>
+            </ul>
+          </li>
+          <li>
+            <strong>Professional advisers and authorities</strong>, including accountants, auditors, lawyers,
+            regulators and public authorities, where required by law or necessary to establish, exercise or defend
+            legal claims.
+          </li>
         </ul>
 
         <h2 id="transfers">4. Transfers outside the European Economic Area</h2>
         <p>
-          Some service providers may process data outside the European Economic Area. Where they do, we rely on an
-          adequacy decision of the European Commission (including the EU-US Data Privacy Framework for certified
-          providers) or on the European Commission's Standard Contractual Clauses, with additional safeguards where
-          needed. You can ask us for a copy of the relevant safeguards.
+          Some of our service providers may process personal data outside the European Economic Area (EEA). Cloudflare
+          and Google, for example, are based in the United States. Where this occurs, we rely on appropriate
+          safeguards recognised under the GDPR, including:
         </p>
+        <ul>
+          <li>European Commission adequacy decisions;</li>
+          <li>the EU-U.S. Data Privacy Framework, where the provider is certified; or</li>
+          <li>European Commission Standard Contractual Clauses, together with supplementary safeguards where required.</li>
+        </ul>
+        <p>You may contact us if you would like further information about these safeguards.</p>
 
         <h2 id="retention">5. How long we keep data</h2>
+        <p>
+          We retain personal data only for as long as necessary for the purposes described in this notice or as
+          required by law.
+        </p>
+        <div class="policy-table">
+          <table>
+            <thead>
+              <tr><th scope="col">Data category</th><th scope="col">Retention period</th></tr>
+            </thead>
+            <tbody>
+              {retention.map(([category, period]) => (
+                <tr><th scope="row">{category}</th><td>{period}</td></tr>
+              ))}
+            </tbody>
+          </table>
+        </div>
+        <p>
+          Before the talent network retention period expires, we may contact you to ask whether you wish to remain in
+          our network. If we receive no response, your information may be deleted.
+        </p>
+
+        <h2 id="mandatory">6. Is providing personal data mandatory?</h2>
+        <p>
+          Providing personal data is generally voluntary. However, if you choose not to provide information necessary
+          for a particular enquiry, application, engagement or contractual relationship, we may be unable to respond
+          to your request, assess your application or enter into a business relationship with you.
+        </p>
+
+        <h2 id="rights">7. Your rights</h2>
+        <p>Under the GDPR, you may have the right to:</p>
         <ul>
-          <li><strong>Enquiries</strong> that do not lead to an engagement: up to 24 months after our last exchange.</li>
-          <li><strong>Applications for a specific role</strong>: up to 12 months after the recruitment process ends, unless you join the talent network.</li>
-          <li><strong>Talent network CVs</strong>: up to 24 months after your last contact with us. Before that period ends we will ask whether you want to stay in the network; if you do not reply, we delete your data.</li>
-          <li><strong>Client and supplier records</strong>: for the duration of the relationship and afterwards for as long as required by law, for example 7 years for accounting records under Belgian law.</li>
-          <li><strong>Hosting and security logs</strong>: for the short period set by our hosting provider, normally no longer than needed to keep the site secure.</li>
+          <li>access the personal data we hold about you;</li>
+          <li>obtain a copy of your personal data;</li>
+          <li>correct inaccurate or incomplete data;</li>
+          <li>request the erasure of your data;</li>
+          <li>restrict processing in certain circumstances;</li>
+          <li>object to processing based on our legitimate interests;</li>
+          <li>object to direct marketing at any time;</li>
+          <li>receive personal data in a portable format where applicable;</li>
+          <li>withdraw consent at any time where processing is based on consent, without affecting processing carried out before the withdrawal;</li>
+          <li>not be subject to a decision based solely on automated processing where legal conditions apply.</li>
+        </ul>
+        <p>
+          To exercise any of these rights, please contact <a href={privacyHref}>{privacyEmail}</a>. We will normally
+          respond within one month. We may request reasonable proof of identity where necessary.
+        </p>
+
+        <h2 id="complaints">8. Complaints</h2>
+        <p>
+          If you have concerns regarding how we process your personal data, we encourage you to contact us first so
+          that we can try to resolve the issue. You also have the right to lodge a complaint with the Belgian Data
+          Protection Authority (Gegevensbeschermingsautoriteit / Autorité de protection des données), Drukpersstraat
+          35 / Rue de la Presse 35, 1000 Brussels, Belgium,{' '}
+          <a href="https://www.dataprotectionauthority.be" rel="noopener">www.dataprotectionauthority.be</a>.
+        </p>
+        <p>
+          You may also lodge a complaint with the supervisory authority of the EU Member State where you reside, work
+          or believe an infringement has occurred.
+        </p>
+
+        <h2 id="security">9. Security</h2>
+        <p>
+          We implement appropriate technical and organisational measures designed to protect personal data against
+          unlawful or unauthorised access, loss, disclosure, alteration or destruction. These measures include, where
+          appropriate:
+        </p>
+        <ul>
+          <li>Access controls</li>
+          <li>Authentication measures</li>
+          <li>Encrypted communications</li>
+          <li>Security monitoring</li>
+          <li>Contractual confidentiality obligations for service providers</li>
         </ul>
 
-        <h2 id="rights">6. Your rights</h2>
-        <p>Under the GDPR you have the right to:</p>
-        <ul>
-          <li>access the personal data we hold about you and receive a copy;</li>
-          <li>have inaccurate data corrected;</li>
-          <li>have your data erased;</li>
-          <li>restrict how we use your data;</li>
-          <li>object to processing based on our legitimate interests, including at any time to direct marketing;</li>
-          <li>receive data you gave us in a portable format;</li>
-          <li>withdraw your consent at any time, without affecting processing carried out before the withdrawal.</li>
-        </ul>
+        <h2 id="automated">10. Automated decision-making</h2>
         <p>
-          To exercise any of these rights, email <a href={`mailto:${email}?subject=Privacy%20request`}>{email}</a>.
-          We reply within one month. We may ask you to confirm your identity before acting on a request.
+          We do not make decisions about individuals based solely on automated processing, including profiling, that
+          produce legal or similarly significant effects. Candidate assessments and recruitment decisions always
+          involve human review.
         </p>
 
-        <h2 id="complaints">7. Complaints</h2>
+        <h2 id="changes">11. Changes to this notice</h2>
         <p>
-          If you have a concern, please contact us first so we can try to resolve it. You also have the right to
-          lodge a complaint with the Belgian Data Protection Authority (Gegevensbeschermingsautoriteit / Autorité de
-          protection des données), Drukpersstraat 35 / rue de la Presse 35, 1000 Brussels,{' '}
-          <a href="https://www.dataprotectionauthority.be" rel="noopener">www.dataprotectionauthority.be</a>, or with
-          the supervisory authority in the EU country where you live or work.
-        </p>
-
-        <h2 id="security">8. Security</h2>
-        <p>
-          We protect personal data with appropriate technical and organisational measures, including encrypted
-          connections, access limited to the people who need it, and providers bound by confidentiality and data
-          protection obligations.
-        </p>
-
-        <h2 id="automated">9. Automated decisions</h2>
-        <p>
-          We do not make decisions about you based solely on automated processing, including profiling. Every
-          candidate is assessed by a person.
-        </p>
-
-        <h2 id="changes">10. Changes to this notice</h2>
-        <p>
-          We may update this notice when our practices or the law change. The date at the top shows when it was last
-          updated.
+          We may update this notice from time to time to reflect changes in our activities, services, legal
+          requirements or data protection practices. The date shown at the top of this notice indicates the latest
+          revision.
         </p>
       </div>
     </Container>
@@ -184,4 +324,12 @@ const updated = '16 October 2026';
   :global(.policy-head__lede) { margin-top: var(--space-5); }
   :global(.policy-head__meta) { margin-top: var(--space-6); }
   :global(.policy-body) { padding-block: var(--space-7) var(--space-section); }
+
+  .policy-table { overflow-x: auto; margin-block: var(--space-5); }
+  .policy-table table { width: 100%; border-collapse: collapse; font-size: 0.9375rem; line-height: 1.5; }
+  .policy-table th, .policy-table td { padding: var(--space-3) var(--space-4); text-align: left; vertical-align: top; border-bottom: 1px solid var(--rule); }
+  .policy-table thead th { background: var(--fog); color: var(--ink); font-weight: 600; border-bottom-color: var(--ink); }
+  .policy-table tbody th { width: 42%; font-weight: 600; color: var(--ink); }
+  .policy-table td { color: var(--graphite); }
+  .prose ul ul { margin-top: var(--space-2); }
 </style>
