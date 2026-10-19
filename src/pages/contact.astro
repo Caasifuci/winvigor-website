@@ -68,8 +68,8 @@ const insights = (await insightCards()).slice(0, 3);
       <div class="consent">
         <input id="consent" name="consent" type="checkbox" value="yes" required />
         <label for="consent">
-          I agree that {site.name} uses my details to respond to this enquiry, as described in the{' '}
-          <a href="/privacy">privacy notice</a>.
+          I have read the <a href="/privacy#enquiries">privacy notice</a>, which explains how {site.name} uses my
+          details to respond to this enquiry.
         </label>
       </div>
       {turnstileKey && !usesMailClient && <div class="cf-turnstile" data-sitekey={turnstileKey} data-theme="light"></div>}
