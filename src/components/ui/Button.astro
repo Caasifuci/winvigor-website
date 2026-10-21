@@ -5,27 +5,31 @@
  * secondary → ink outline.
  * quiet     → underlined text action.
  * `inverse` adapts secondary/quiet for ink surfaces.
+ * `arrow` adds a trailing arrow that nudges forward on hover.
+ * Shape: fully rounded (pill).
  */
 import type { HTMLAttributes } from 'astro/types';
+import Icon from '@/components/ui/Icon.astro';
 
 type Common = {
   variant?: 'primary' | 'secondary' | 'quiet';
   size?: 'md' | 'lg';
   inverse?: boolean;
+  arrow?: boolean;
 };
 type Props = Common & (
   | ({ href: string } & Omit<HTMLAttributes<'a'>, 'href'>)
   | ({ href?: undefined } & HTMLAttributes<'button'>)
 );
 
-const { variant = 'primary', size = 'md', inverse = false, href, class: className, ...rest } = Astro.props;
+const { variant = 'primary', size = 'md', inverse = false, arrow = false, href, class: className, ...rest } = Astro.props;
 const classes = ['btn', `btn--${variant}`, `btn--${size}`, { 'btn--inverse': inverse }, className];
 ---
 
 {href ? (
-  <a href={href} class:list={classes} {...(rest as HTMLAttributes<'a'>)}><slot /></a>
+  <a href={href} class:list={classes} {...(rest as HTMLAttributes<'a'>)}><slot />{arrow && <span class="btn__arrow" aria-hidden="true"><Icon name="arrow" size={18} /></span>}</a>
 ) : (
-  <button class:list={classes} {...(rest as HTMLAttributes<'button'>)}><slot /></button>
+  <button class:list={classes} {...(rest as HTMLAttributes<'button'>)}><slot />{arrow && <span class="btn__arrow" aria-hidden="true"><Icon name="arrow" size={18} /></span>}</button>
 )}
 
 <style>
@@ -38,9 +42,9 @@ const classes = ['btn', `btn--${variant}`, `btn--${size}`, { 'btn--inverse': inv
     justify-content: center;
     gap: 0.5em;
     min-height: 2.875rem;
-    padding: 0.75rem 1.375rem;
+    padding: 0.75rem 1.625rem;
     border: 1px solid transparent;
-    border-radius: var(--radius);
+    border-radius: 999px;
     font-family: var(--sans);
     font-size: 0.9375rem;
     font-weight: 550;
@@ -58,7 +62,9 @@ const classes = ['btn', `btn--${variant}`, `btn--${size}`, { 'btn--inverse': inv
   /* Press: a 2% settle, like a hardware key. */
   .btn:active { transform: scale(0.98); transition-duration: 80ms; }
   .btn:focus-visible { outline: 2px solid var(--accent); outline-offset: 3px; }
-  .btn--lg { min-height: 3.25rem; padding: 0.9rem 1.75rem; font-size: 1rem; }
+  .btn--lg { min-height: 3.5rem; padding: 0.95rem 2.125rem; font-size: 1rem; }
+  .btn__arrow { display: inline-flex; margin-right: -0.25em; transition: transform var(--dur-base) var(--ease-out-expo); }
+  .btn:hover .btn__arrow { transform: translateX(3px); }
 
   .btn--primary { background: var(--accent); color: var(--paper); }
   .btn--primary:hover { background: var(--accent-strong); color: var(--paper); box-shadow: 0 6px 18px -8px rgb(30 107 255 / 0.65); }
@@ -66,12 +72,13 @@ const classes = ['btn', `btn--${variant}`, `btn--${size}`, { 'btn--inverse': inv
 
   .btn--secondary { border-color: var(--ink); color: var(--ink); background: transparent; }
   .btn--secondary:hover { background: var(--ink); color: var(--paper); }
-  .btn--inverse.btn--secondary { border-color: var(--on-ink); color: var(--paper); }
+  .btn--inverse.btn--secondary { border-color: rgb(230 238 240 / 0.35); background: rgb(255 255 255 / 0.06); color: var(--paper); }
   .btn--inverse.btn--secondary:hover { background: var(--paper); color: var(--ink); }
 
   .btn--quiet {
     min-height: auto;
     padding: 0.25rem 0;
+    border-radius: 0;
     color: var(--ink);
     text-decoration: underline;
     text-decoration-color: var(--accent);

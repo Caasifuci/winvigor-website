@@ -52,7 +52,7 @@ const hasVisual = Astro.slots.has('visual');
       {lede && <p class="phero__lede">{lede}</p>}
       {(primary || secondary) && (
         <div class="phero__actions" data-reveal="fade" style="--d: 480ms">
-          {primary && <Button href={primary.href} variant="primary" size="lg" inverse={dark}>{primary.label}</Button>}
+          {primary && <Button href={primary.href} variant="primary" size="lg" inverse={dark} arrow>{primary.label}</Button>}
           {secondary && <Button href={secondary.href} variant="secondary" size="lg" inverse={dark}>{secondary.label}</Button>}
         </div>
       )}
