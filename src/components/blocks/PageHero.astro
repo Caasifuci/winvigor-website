@@ -151,6 +151,12 @@ const hasVisual = Astro.slots.has('visual');
     margin-right: calc(-1 * var(--display-tracking-wide));
   }
   .phero__banner-line { display: block; }
+  /* Centred layout: artwork sits under the banner, on the same centre line. */
+  .phero--center .phero__visual { grid-column: 1 / -1; justify-self: center; width: min(78%, 22rem); margin-top: var(--space-2); }
+  @media (min-width: 64rem) {
+    .phero--center.phero--visual .phero__copy { grid-column: 1 / -1; }
+    .phero--center .phero__visual { grid-column: 1 / -1; max-width: 24rem; }
+  }
   @media (max-width: 40rem) {
     .phero .phero__title--banner { letter-spacing: 0.08em; margin-right: -0.08em; }
     .phero--center .phero__lede { font-size: var(--step-0); }
