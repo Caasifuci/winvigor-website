@@ -23,9 +23,9 @@
 
   /* Type families: populated by Astro's <Font /> */
   --display: var(--font-display), system-ui, sans-serif;
-  /* Body shares the heading family (Montserrat), set Light for a lean look. */
-  --sans: var(--font-display), system-ui, sans-serif;
-  --body-weight: 200; /* Montserrat ExtraLight, matching cognifiti.com (Thin/Thin-Light) */
+  /* Body: Work Sans Light, clean and easy to read on white. */
+  --sans: var(--font-sans), system-ui, sans-serif;
+  --body-weight: 300; /* Work Sans Light */
   /* Headings: Montserrat Light with open tracking for a lean, minimal look.
      Small headings (step 1 and below) sit one weight up so they stay legible. */
   --display-weight: 300;

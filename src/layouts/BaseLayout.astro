@@ -78,6 +78,7 @@ const jsonLd = [organisation, ...(Astro.url.pathname === '/' ? [website] : []), 
       if (!matchMedia('(prefers-reduced-motion: reduce)').matches) document.documentElement.classList.add('motion');
     </script>
     <Font cssVariable="--font-display" preload />
+    <Font cssVariable="--font-sans" preload />
 
     <link rel="icon" href="/favicon.ico" sizes="any" />
     <link rel="icon" href="/favicon.svg" type="image/svg+xml" />
