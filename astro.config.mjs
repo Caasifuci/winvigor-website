@@ -32,16 +32,5 @@ export default defineConfig({
         ],
       },
     },
-    {
-      name: 'Inter',
-      cssVariable: '--font-sans',
-      provider: fontProviders.local(),
-      fallbacks: ['system-ui', 'sans-serif'],
-      options: {
-        variants: [
-          { src: ['./src/assets/fonts/inter-latin-opsz-normal.woff2'], weight: '100 900', style: 'normal' },
-        ],
-      },
-    },
   ],
 });

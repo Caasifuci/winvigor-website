@@ -23,7 +23,9 @@
 
   /* Type families: populated by Astro's <Font /> */
   --display: var(--font-display), system-ui, sans-serif;
-  --sans: var(--font-sans), system-ui, sans-serif;
+  /* Body shares the heading family (Montserrat), set Light for a lean look. */
+  --sans: var(--font-display), system-ui, sans-serif;
+  --body-weight: 300;
   /* Headings: Montserrat Light with open tracking for a lean, minimal look.
      Small headings (step 1 and below) sit one weight up so they stay legible. */
   --display-weight: 300;
@@ -90,9 +92,9 @@ body {
   background: var(--paper);
   color: var(--graphite);
   font-family: var(--sans);
-  font-size: var(--step-0);
-  line-height: 1.6;
-  font-feature-settings: 'cv11', 'ss01';
+  font-size: 1rem;
+  font-weight: var(--body-weight);
+  line-height: 1.75;
   -webkit-font-smoothing: antialiased;
   text-rendering: optimizeLegibility;
 }
@@ -163,7 +165,7 @@ a { color: inherit; text-decoration-thickness: 1px; text-underline-offset: 0.2em
 /* --------------------------------------------------------------------------
    Long-form prose (insights, case studies)
    -------------------------------------------------------------------------- */
-.prose { max-width: var(--measure); font-size: 1.125rem; line-height: 1.7; }
+.prose { max-width: var(--measure); font-size: 1.0625rem; line-height: 1.8; }
 .prose > * + * { margin-top: 1.25em; }
 .prose h2 {
   margin-top: 2.4em;
@@ -188,7 +190,7 @@ a { color: inherit; text-decoration-thickness: 1px; text-underline-offset: 0.2em
 .prose li::marker { color: var(--slate); }
 .prose a { text-decoration-color: var(--accent); text-decoration-thickness: 2px; }
 .prose a:hover { color: var(--ink); }
-.prose strong { color: var(--ink); font-weight: 600; }
+.prose strong { color: var(--ink); font-weight: 500; }
 .prose blockquote {
   margin-block: 2em;
   padding-left: var(--space-5);
