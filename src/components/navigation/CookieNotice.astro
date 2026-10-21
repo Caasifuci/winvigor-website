@@ -1,0 +1,134 @@
+---
+/**
+ * CookieNotice: an information notice, not a consent banner.
+ *
+ * The site sets no analytics, advertising or tracking cookies; the only
+ * cookies are strictly necessary security cookies from the hosting provider
+ * (see the privacy notice). Under the ePrivacy rules those need no consent,
+ * so the notice informs and offers a single acknowledgement. Offering
+ * "Accept" / "Reject" for cookies that do not exist would be misleading.
+ *
+ * If analytics or marketing tools are ever added, this must become a real
+ * consent banner (no non-essential cookie before an explicit opt-in, and a
+ * reject option as easy as accept).
+ *
+ * The dismissal is remembered in this browser's localStorage only (no
+ * cookie). The footer's "Cookie notice" link reopens it.
+ */
+import Icon from '@/components/ui/Icon.astro';
+---
+
+<aside class="cookie" aria-label="Cookie notice" data-cookie-notice hidden>
+  <span class="cookie__icon"><Icon name="cookie" size={22} /></span>
+  <p class="cookie__text">
+    <strong>We value your privacy.</strong> This website uses only strictly necessary cookies to stay secure and
+    online. No analytics, advertising or tracking cookies, so there is nothing to accept or reject. See our
+    <a href="/privacy#website">privacy notice</a>.
+  </p>
+  <div class="cookie__actions">
+    <a class="cookie__btn cookie__btn--quiet" href="/privacy#website">Privacy notice</a>
+    <button type="button" class="cookie__btn cookie__btn--primary" data-cookie-ok>Got it</button>
+  </div>
+</aside>
+
+<script>
+  const KEY = 'wv-cookie-notice';
+  const VERSION = '1'; // bump if the cookie position changes, so everyone sees the notice again
+  const box = document.querySelector<HTMLElement>('[data-cookie-notice]');
+
+  const seen = () => { try { return localStorage.getItem(KEY) === VERSION; } catch { return false; } };
+  const remember = () => { try { localStorage.setItem(KEY, VERSION); } catch { /* storage blocked: show again next visit */ } };
+
+  const open = () => { if (box) { box.hidden = false; requestAnimationFrame(() => box.classList.add('is-open')); } };
+  const close = () => {
+    if (!box) return;
+    box.classList.remove('is-open');
+    remember();
+    setTimeout(() => { box.hidden = true; }, 250);
+  };
+
+  if (box) {
+    if (!seen()) open();
+    box.querySelector('[data-cookie-ok]')?.addEventListener('click', close);
+    box.addEventListener('keydown', (e) => { if (e.key === 'Escape') close(); });
+  }
+  for (const link of document.querySelectorAll<HTMLElement>('[data-cookie-open]')) {
+    link.addEventListener('click', (e) => { e.preventDefault(); open(); box?.querySelector<HTMLElement>('[data-cookie-ok]')?.focus(); });
+  }
+</script>
+
+<style>
+  .cookie {
+    position: fixed;
+    z-index: 60;
+    left: var(--space-4);
+    right: var(--space-4);
+    bottom: var(--space-4);
+    display: grid;
+    grid-template-columns: auto 1fr;
+    gap: var(--space-4) var(--space-5);
+    align-items: start;
+    max-width: 68rem;
+    margin-inline: auto;
+    padding: var(--space-5) var(--space-6);
+    border: 1px solid var(--ink-line);
+    border-radius: 14px;
+    background: #082f3a;
+    color: var(--on-ink);
+    box-shadow: 0 18px 50px rgb(5 25 32 / 0.35);
+    opacity: 0;
+    transform: translate3d(0, 16px, 0);
+    transition: opacity 250ms var(--ease-out-expo), transform 450ms var(--ease-out-expo);
+  }
+  .cookie.is-open { opacity: 1; transform: none; }
+  .cookie[hidden] { display: none; }
+
+  .cookie__icon {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 2.75rem;
+    height: 2.75rem;
+    border-radius: 10px;
+    background: rgb(143 179 255 / 0.12);
+    color: var(--accent-on-ink);
+  }
+  .cookie__text { font-size: 0.9375rem; line-height: 1.6; color: var(--on-ink); max-width: 44rem; }
+  .cookie__text strong { color: var(--paper); font-weight: 600; }
+  .cookie__text a { color: var(--accent-on-ink); text-decoration: underline; text-underline-offset: 0.2em; }
+  .cookie__text a:hover { color: var(--paper); }
+
+  .cookie__actions { grid-column: 1 / -1; display: flex; flex-wrap: wrap; gap: var(--space-3); justify-content: flex-end; }
+  .cookie__btn {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    min-height: 2.75rem;
+    padding: 0 1.4rem;
+    border-radius: 999px;
+    font: inherit;
+    font-size: 0.9375rem;
+    font-weight: 500;
+    text-decoration: none;
+    cursor: pointer;
+    transition: background-color var(--dur-fast) var(--ease-standard), color var(--dur-fast) var(--ease-standard), border-color var(--dur-fast) var(--ease-standard);
+  }
+  .cookie__btn--quiet { border: 1px solid var(--ink-line); background: transparent; color: var(--on-ink); }
+  .cookie__btn--quiet:hover { border-color: var(--mist); color: var(--paper); }
+  .cookie__btn--primary { border: 1px solid var(--accent); background: var(--accent); color: var(--paper); }
+  .cookie__btn--primary:hover { background: var(--paper); border-color: var(--paper); color: var(--ink); }
+  .cookie__btn:focus-visible { outline: 2px solid var(--accent-on-ink); outline-offset: 3px; }
+
+  @media (min-width: 52rem) {
+    .cookie { grid-template-columns: auto 1fr auto; align-items: center; }
+    .cookie__actions { grid-column: auto; flex-wrap: nowrap; }
+  }
+  @media (max-width: 30rem) {
+    .cookie { left: 0; right: 0; bottom: 0; border-radius: 14px 14px 0 0; padding: var(--space-5); }
+    .cookie__actions { justify-content: stretch; }
+    .cookie__btn { flex: 1; }
+  }
+  @media (prefers-reduced-motion: reduce) {
+    .cookie { transition: none; }
+  }
+</style>
