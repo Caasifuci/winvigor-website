@@ -158,7 +158,18 @@ const hasVisual = Astro.slots.has('visual');
     .phero--center.phero--visual .phero__copy { grid-column: 1 / span 8; }
     .phero--center.phero--visual .phero__visual { grid-column: 9 / -1; width: 100%; max-width: 26rem; margin-top: 0; }
     /* Each statement stays on one line beside the artwork. */
-    .phero--center.phero--visual .phero__title--banner { font-size: clamp(1.375rem, 0.5rem + 1.3vw, 1.875rem); white-space: nowrap; }
+    /* Desktop: a large, thin statement (about twice the tablet size), tighter tracking. */
+    .phero--center.phero--visual .phero__title--banner {
+      gap: 0.32em;
+      font-size: clamp(2.75rem, 0.8rem + 3.05vw, 4rem);
+      font-weight: 200;
+      line-height: 1.08;
+      letter-spacing: 0.02em;
+      margin-right: -0.02em;
+    }
+    .phero--home.phero--center.phero--visual { padding-block: clamp(2.5rem, 1rem + 3vw, 4.5rem) clamp(3rem, 2rem + 3vw, 5rem); }
+    .phero--center.phero--visual :global(.phero__grid) { align-items: start; }
+    .phero--center.phero--visual .phero__visual { margin-top: var(--space-6); }
     .phero--center.phero--visual .phero__lede { font-size: var(--step-0); max-width: 34rem; }
   }
   @media (max-width: 40rem) {
