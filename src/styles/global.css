@@ -11,7 +11,7 @@
   --ink-line: #245d6c;     /* hairlines on teal */
   --graphite: #1a2430;     /* body copy (15.7:1 on white) */
   --slate: #4e5b6a;        /* secondary copy (6.9:1 on white) */
-  --mist: #a7c1c8;         /* muted copy on teal (6.3:1) */
+  --mist: #bcd3d9;         /* muted copy on teal; lighter so ExtraLight text stays legible */
   --rule: #dce1e7;         /* hairlines */
   --fog: #f4f6f8;          /* neutral surface */
   --paper: #ffffff;
@@ -25,7 +25,7 @@
   --display: var(--font-display), system-ui, sans-serif;
   /* Body shares the heading family (Montserrat), set Light for a lean look. */
   --sans: var(--font-display), system-ui, sans-serif;
-  --body-weight: 300;
+  --body-weight: 200; /* Montserrat ExtraLight, matching cognifiti.com (Thin/Thin-Light) */
   /* Headings: Montserrat Light with open tracking for a lean, minimal look.
      Small headings (step 1 and below) sit one weight up so they stay legible. */
   --display-weight: 300;
