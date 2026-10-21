@@ -63,9 +63,9 @@ const { metrics, sample = false, inverse = false, columns = 3 } = Astro.props;
     margin-bottom: var(--space-3);
     font-family: var(--display);
     font-size: var(--step-5);
-    font-weight: 600;
+    font-weight: var(--display-weight);
     line-height: 1;
-    letter-spacing: -0.03em;
+    letter-spacing: var(--display-tracking);
     font-variant-numeric: lining-nums tabular-nums;
     color: var(--ink);
   }

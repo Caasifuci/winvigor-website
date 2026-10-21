@@ -26,19 +26,29 @@ interface Props {
   tone?: 'dark' | 'light';
   features?: Feature[];
   scale?: 'home' | 'page';
+  /** "center" stacks everything on the centre line (home banner). */
+  align?: 'start' | 'center';
+  /** Render the title as an uppercase banner, one line per entry. */
+  banner?: string[];
 }
 
-const { title, lede, eyebrow, primary, secondary, tone = 'light', features = [], scale = 'page' } = Astro.props;
+const { title, lede, eyebrow, primary, secondary, tone = 'light', features = [], scale = 'page', align = 'start', banner } = Astro.props;
 const dark = tone === 'dark';
 const hasVisual = Astro.slots.has('visual');
 ---
 
-<section class:list={['phero', `phero--${tone}`, `phero--${scale}`, { 'phero--visual': hasVisual }]}>
+<section class:list={['phero', `phero--${tone}`, `phero--${scale}`, `phero--${align}`, { 'phero--visual': hasVisual }]}>
   {dark && <Ambient constellation seed={scale === 'home' ? 3 : title.length} />}
   <Container grid class="phero__grid">
     <div class="phero__copy">
       {eyebrow && <p class="phero__eyebrow">{eyebrow}</p>}
-      <h1 class="phero__title">{title}</h1>
+      {banner ? (
+        <h1 class="phero__title phero__title--banner">
+          {banner.map((line) => <span class="phero__banner-line">{line}</span>)}
+        </h1>
+      ) : (
+        <h1 class="phero__title">{title}</h1>
+      )}
       {lede && <p class="phero__lede">{lede}</p>}
       {(primary || secondary) && (
         <div class="phero__actions" data-reveal="fade" style="--d: 480ms">
@@ -99,9 +109,9 @@ const hasVisual = Astro.slots.has('visual');
   .phero__title {
     font-family: var(--display);
     font-size: var(--step-4);
-    font-weight: 600;
+    font-weight: var(--display-weight);
     line-height: 1.06;
-    letter-spacing: -0.02em;
+    letter-spacing: var(--display-tracking);
     color: var(--ink);
     text-wrap: balance;
   }
@@ -123,6 +133,29 @@ const hasVisual = Astro.slots.has('visual');
     text-wrap: pretty;
   }
   .phero--dark .phero__lede { color: var(--on-ink); }
+
+  /* Centred banner: one statement per line, light uppercase, wide tracking. */
+  .phero--center :global(.phero__grid) { justify-items: center; }
+  .phero--center .phero__copy { grid-column: 1 / -1; display: grid; justify-items: center; text-align: center; }
+  .phero--center .phero__lede { margin-inline: auto; }
+  .phero--center .phero__actions { justify-content: center; }
+  .phero .phero__title--banner {
+    display: grid;
+    gap: 0.5em;
+    font-size: clamp(1.375rem, 0.9rem + 1.8vw, 2.375rem);
+    font-weight: 300;
+    line-height: 1.2;
+    letter-spacing: var(--display-tracking-wide);
+    text-transform: uppercase;
+    /* tracking adds space after the last letter too; pull it back so lines stay centred */
+    margin-right: calc(-1 * var(--display-tracking-wide));
+  }
+  .phero__banner-line { display: block; }
+  @media (max-width: 40rem) {
+    .phero .phero__title--banner { letter-spacing: 0.08em; margin-right: -0.08em; }
+    .phero--center .phero__lede { font-size: var(--step-0); }
+  }
+  .phero--home.phero--center { padding-block: clamp(4.5rem, 3rem + 7vw, 9rem) clamp(3.5rem, 2.5rem + 4vw, 6rem); }
 
   .phero__actions { display: flex; flex-wrap: wrap; gap: var(--space-4); margin-top: var(--space-7); }
 

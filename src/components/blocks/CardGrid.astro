@@ -102,9 +102,9 @@ const { items, columns = 3, plain = false, reveal = false, label } = Astro.props
   .card__figure-value {
     font-family: var(--display);
     font-size: var(--step-4);
-    font-weight: 600;
+    font-weight: var(--display-weight);
     line-height: 1;
-    letter-spacing: -0.02em;
+    letter-spacing: var(--display-tracking);
   }
   .card__figure-label { font-size: var(--step--1); font-weight: 500; color: var(--on-ink); max-width: 14rem; }
 
@@ -126,9 +126,9 @@ const { items, columns = 3, plain = false, reveal = false, label } = Astro.props
     letter-spacing: 0.02em;
   }
   .card__title {
-    font-family: var(--display);
+    font-family: var(--display); letter-spacing: var(--display-tracking);
     font-size: var(--step-1);
-    font-weight: 600;
+    font-weight: var(--display-weight-small);
     line-height: 1.25;
     color: var(--ink);
     text-wrap: balance;

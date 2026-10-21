@@ -55,9 +55,9 @@ const talentNetwork = `mailto:${site.contact.email}?subject=${encodeURIComponent
   .help > :global(:not(.ambient)) { position: relative; z-index: 1; }
   .help__title {
     margin-bottom: clamp(1.75rem, 1rem + 2vw, 2.75rem);
-    font-family: var(--display);
+    font-family: var(--display); letter-spacing: var(--display-tracking);
     font-size: var(--step-3);
-    font-weight: 600;
+    font-weight: var(--display-weight);
     line-height: 1.12;
     color: var(--paper);
   }
@@ -82,7 +82,7 @@ const talentNetwork = `mailto:${site.contact.email}?subject=${encodeURIComponent
     background: rgb(143 179 255 / 0.16);
     color: var(--accent-on-ink);
   }
-  .path__title { font-family: var(--display); font-size: var(--step-2); font-weight: 600; line-height: 1.2; color: var(--paper); }
+  .path__title { font-family: var(--display); letter-spacing: var(--display-tracking); font-size: var(--step-2); font-weight: var(--display-weight); line-height: 1.2; color: var(--paper); }
   .path__body { color: var(--mist); max-width: 30rem; }
   .path__actions { display: flex; flex-wrap: wrap; align-items: center; gap: var(--space-4) var(--space-5); margin-top: var(--space-3); }
 

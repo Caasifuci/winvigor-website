@@ -24,6 +24,12 @@
   /* Type families: populated by Astro's <Font /> */
   --display: var(--font-display), system-ui, sans-serif;
   --sans: var(--font-sans), system-ui, sans-serif;
+  /* Headings: Montserrat Light with open tracking for a lean, minimal look.
+     Small headings (step 1 and below) sit one weight up so they stay legible. */
+  --display-weight: 300;
+  --display-weight-small: 400;
+  --display-tracking: 0.02em;
+  --display-tracking-wide: 0.14em; /* uppercase banner lines and eyebrows */
 
   /* Type scale (base 17px; display steps fluid) */
   --step--1: 0.875rem;
@@ -162,16 +168,16 @@ a { color: inherit; text-decoration-thickness: 1px; text-underline-offset: 0.2em
 .prose h2 {
   margin-top: 2.4em;
   font-family: var(--display);
-  font-weight: 600;
+  font-weight: var(--display-weight);
   font-size: var(--step-3);
   line-height: 1.15;
-  letter-spacing: -0.01em;
+  letter-spacing: var(--display-tracking);
   color: var(--ink);
 }
 .prose h3 {
   margin-top: 2em;
-  font-family: var(--display);
-  font-weight: 600;
+  font-family: var(--display); letter-spacing: var(--display-tracking);
+  font-weight: var(--display-weight);
   font-size: var(--step-2);
   line-height: 1.25;
   color: var(--ink);
@@ -187,7 +193,7 @@ a { color: inherit; text-decoration-thickness: 1px; text-underline-offset: 0.2em
   margin-block: 2em;
   padding-left: var(--space-5);
   border-left: 2px solid var(--ink);
-  font-family: var(--display);
+  font-family: var(--display); letter-spacing: var(--display-tracking); font-weight: var(--display-weight);
   font-size: var(--step-2);
   line-height: 1.35;
   color: var(--ink);

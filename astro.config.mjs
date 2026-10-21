@@ -22,13 +22,13 @@ export default defineConfig({
   // metric-matched fallbacks to avoid layout shift.
   fonts: [
     {
-      name: 'Plus Jakarta Sans',
+      name: 'Montserrat',
       cssVariable: '--font-display',
       provider: fontProviders.local(),
       fallbacks: ['system-ui', 'sans-serif'],
       options: {
         variants: [
-          { src: ['./src/assets/fonts/plus-jakarta-sans-latin-wght-normal.woff2'], weight: '200 800', style: 'normal' },
+          { src: ['./src/assets/fonts/montserrat-latin-wght-normal.woff2'], weight: '100 900', style: 'normal' },
         ],
       },
     },

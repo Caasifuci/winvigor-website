@@ -65,7 +65,7 @@ Navigation: WHO WE ARE · WHAT WE DO · INSIGHTS · CAREERS · CONTACT. The logo
 | `--accent-strong` | `#1656D6` | Hover, accent text on light surfaces |
 | `--accent-on-ink` | `#7FA8FF` | Accent text and links on navy |
 
-- **Plus Jakarta Sans** (variable) for headings H1–H3 and figures; **Inter** for body copy and UI labels. Both self-hosted through Astro's Fonts API with metric-matched fallbacks (no third-party requests, no layout shift).
+- **Montserrat (Light 300, open tracking)** (variable) for headings H1–H3 and figures; **Inter** for body copy and UI labels. Both self-hosted through Astro's Fonts API with metric-matched fallbacks (no third-party requests, no layout shift).
 - Fluid type scale `--step--1` … `--step-5`; all text goes through `<Typography variant>`. Uppercase is reserved for the navigation and footer headings.
 - 12-column grid via `<Container grid>`; `Editorial` places heading in columns 1–5 and content in 7–12.
 - **Motion** (`src/scripts/motion.ts`, `components/motion/Ambient.astro`): hero headings and strategic pillars slide up line by line from overflow masks (`data-reveal="lines"`, ease-out-expo `cubic-bezier(0.16, 1, 0.3, 1)`); teal bands carry a 20s slow-drift gradient, a creeping hairline grid and a low-opacity SVG constellation that drifts by pixels and leans toward the cursor. Paused off screen, static under `prefers-reduced-motion`, about 1 KB gzipped.

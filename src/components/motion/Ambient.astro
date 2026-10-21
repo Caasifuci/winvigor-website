@@ -144,7 +144,7 @@ const accentIndex = constellation ? Math.floor(points.length * 0.62) : -1;
   }
 
   /* 2. Fine grid creeping one cell per minute. */
-  .ambient__grid { position: absolute; inset: 0; width: 100%; height: 100%; opacity: 0.5; }
+  .ambient__grid { position: absolute; inset: 0; width: 100%; height: 100%; opacity: 0.35; }
   .ambient__grid path { stroke: var(--ink-line); stroke-width: 1; }
   .ambient__grid-rect { animation: amb-grid 60s linear infinite; }
   @keyframes amb-grid {
@@ -154,8 +154,8 @@ const accentIndex = constellation ? Math.floor(points.length * 0.62) : -1;
 
   /* 3. Constellation. */
   .ambient__stars { position: absolute; inset: 0; width: 100%; height: 100%; }
-  .ambient__stars line { stroke: var(--mist); stroke-width: 0.8; opacity: 0.16; }
-  .ambient__stars circle { fill: var(--on-ink); opacity: 0.35; }
+  .ambient__stars line { stroke: var(--mist); stroke-width: 0.8; opacity: 0.1; }
+  .ambient__stars circle { fill: var(--on-ink); opacity: 0.28; }
   .ambient__stars circle.is-accent { fill: var(--accent-on-ink); opacity: 0.9; }
   .ambient__shift { will-change: transform; }
 

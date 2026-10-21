@@ -75,9 +75,9 @@ const { steps, label, inverse = false } = Astro.props;
   .step:last-child::before { background: var(--ink); }
 
   .step__num {
-    font-family: var(--display);
+    font-family: var(--display); letter-spacing: var(--display-tracking);
     font-size: var(--step-4);
-    font-weight: 600;
+    font-weight: var(--display-weight);
     line-height: 1;
     color: var(--slate);
     font-variant-numeric: lining-nums;

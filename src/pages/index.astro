@@ -14,7 +14,6 @@ import DeliveryLog from '@/components/blocks/DeliveryLog.astro';
 import TalentBoard from '@/components/blocks/TalentBoard.astro';
 import HelpCta from '@/components/blocks/HelpCta.astro';
 import ClientLogos from '@/components/blocks/ClientLogos.astro';
-import SystemsArt from '@/components/visuals/SystemsArt.astro';
 import Typography from '@/components/ui/Typography.astro';
 import { services } from '@/data/site';
 import { caseStudyCards, getLog, getTalent, availability, insightCards } from '@/lib/content';
@@ -45,13 +44,14 @@ const outcomes = [
   <PageHero
     tone="dark"
     scale="home"
-    title="Technology strategy and engineering talent for complex enterprise programmes."
-    lede="Winvigor Solutions is a technology consulting and talent resourcing firm in Zaventem, Belgium. We assess, staff and deliver IT change for EU institutions and enterprises."
+    align="center"
+    title="Next-gen consulting. Cutting-edge solutions. Driving enterprise goals to success"
+    banner={['Next‑gen consulting.', 'Cutting‑edge solutions.', 'Driving enterprise goals to success']}
+    lede="Technology consulting and talent resourcing for EU institutions and enterprises, from Zaventem, Belgium."
     primary={{ label: 'Find available engineers', href: '/talent' }}
     secondary={{ label: 'What we do', href: '/what-we-do' }}
   >
-    <SystemsArt slot="visual" />
-    <ClientLogos slot="footer" />
+    <ClientLogos slot="footer" align="center" />
   </PageHero>
 
   {talent.length > 0 && (
