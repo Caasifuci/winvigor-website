@@ -13,7 +13,8 @@
   --slate: #4e5b6a;        /* secondary copy (6.9:1 on white) */
   --mist: #bcd3d9;         /* muted copy on teal; lighter so ExtraLight text stays legible */
   --rule: #dce1e7;         /* hairlines */
-  --fog: #f4f6f8;          /* neutral surface */
+  --page: #f6f8f9;         /* page background: soft cool grey, less glare than white */
+  --fog: #eef2f4;          /* alternate sections */
   --paper: #ffffff;
   --accent: #1e6bff;       /* electric blue: actions (4.6:1 with white) */
   --accent-strong: #1656d6;/* hover, accent text on fog (6.3:1) */
@@ -23,9 +24,9 @@
 
   /* Type families: populated by Astro's <Font /> */
   --display: var(--font-display), system-ui, sans-serif;
-  /* Body: Work Sans Light, clean and easy to read on white. */
+  /* Body: Inter Regular, built for screens: tall x-height, open shapes, low fatigue. */
   --sans: var(--font-sans), system-ui, sans-serif;
-  --body-weight: 300; /* Work Sans Light */
+  --body-weight: 400;
   /* Headings: Montserrat Light with open tracking for a lean, minimal look.
      Small headings (step 1 and below) sit one weight up so they stay legible. */
   --display-weight: 300;
@@ -89,12 +90,13 @@ html {
 
 body {
   margin: 0;
-  background: var(--paper);
+  background: var(--page);
   color: var(--graphite);
   font-family: var(--sans);
-  font-size: 1rem;
+  font-size: var(--step-0);
   font-weight: var(--body-weight);
-  line-height: 1.75;
+  line-height: 1.7;
+  font-feature-settings: 'cv11', 'ss01';
   -webkit-font-smoothing: antialiased;
   text-rendering: optimizeLegibility;
 }

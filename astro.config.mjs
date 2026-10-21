@@ -33,13 +33,13 @@ export default defineConfig({
       },
     },
     {
-      name: 'Work Sans',
+      name: 'Inter',
       cssVariable: '--font-sans',
       provider: fontProviders.local(),
       fallbacks: ['system-ui', 'sans-serif'],
       options: {
         variants: [
-          { src: ['./src/assets/fonts/work-sans-latin-wght-normal.woff2'], weight: '100 900', style: 'normal' },
+          { src: ['./src/assets/fonts/inter-latin-opsz-normal.woff2'], weight: '100 900', style: 'normal' },
         ],
       },
     },
