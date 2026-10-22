@@ -19,7 +19,8 @@ export type Feature = { icon: IconName; title: string; body?: string; href?: str
 
 interface Props {
   title: string;
-  lede?: string;
+  /** One paragraph, or an array to show each entry on its own line. */
+  lede?: string | string[];
   eyebrow?: string;
   primary?: Cta;
   secondary?: Cta;
@@ -49,7 +50,11 @@ const hasVisual = Astro.slots.has('visual');
       ) : (
         <h1 class="phero__title">{title}</h1>
       )}
-      {lede && <p class="phero__lede">{lede}</p>}
+      {lede && (
+        <p class="phero__lede">
+          {Array.isArray(lede) ? lede.map((line) => <span class="phero__lede-line">{line}</span>) : lede}
+        </p>
+      )}
       {(primary || secondary) && (
         <div class="phero__actions" data-reveal="fade" style="--d: 480ms">
           {primary && <Button href={primary.href} variant="primary" size="lg" inverse={dark} arrow>{primary.label}</Button>}
@@ -133,6 +138,7 @@ const hasVisual = Astro.slots.has('visual');
     text-wrap: pretty;
   }
   .phero--dark .phero__lede { color: var(--on-ink); }
+  .phero__lede-line { display: block; }
 
   /* Centred banner: one statement per line, light uppercase, wide tracking. */
   .phero--center :global(.phero__grid) { justify-items: center; }
