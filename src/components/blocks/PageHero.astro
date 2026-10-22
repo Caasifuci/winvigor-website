@@ -138,7 +138,16 @@ const hasVisual = Astro.slots.has('visual');
     text-wrap: pretty;
   }
   .phero--dark .phero__lede { color: var(--on-ink); }
+  /* Two-line tagline: more air between letters and lines, a lighter weight,
+     and the second line picked out in the light accent (as on the banner). */
   .phero__lede-line { display: block; }
+  .phero__lede:has(.phero__lede-line) {
+    font-weight: 300;
+    letter-spacing: 0.035em;
+    line-height: 1.75;
+    word-spacing: 0.06em;
+  }
+  .phero--dark .phero__lede-line + .phero__lede-line { color: var(--accent-on-ink); }
 
   /* Centred banner: one statement per line, light uppercase, wide tracking. */
   .phero--center :global(.phero__grid) { justify-items: center; }
@@ -176,11 +185,13 @@ const hasVisual = Astro.slots.has('visual');
     .phero--home.phero--center.phero--visual { padding-block: clamp(2.5rem, 1rem + 3vw, 4.5rem) clamp(3rem, 2rem + 3vw, 5rem); }
     .phero--center.phero--visual :global(.phero__grid) { align-items: start; }
     .phero--center.phero--visual .phero__visual { margin-top: var(--space-6); }
-    .phero--center.phero--visual .phero__lede { font-size: var(--step-0); max-width: 34rem; }
+    .phero--center.phero--visual .phero__lede { font-size: var(--step-0); max-width: 36rem; }
+    .phero--center.phero--visual .phero__lede:has(.phero__lede-line) { font-size: 1.1875rem; }
   }
   @media (max-width: 40rem) {
     .phero .phero__title--banner { letter-spacing: 0.08em; margin-right: -0.08em; }
     .phero--center .phero__lede { font-size: var(--step-0); }
+    .phero__lede:has(.phero__lede-line) { letter-spacing: 0.015em; word-spacing: 0; }
   }
   .phero--home.phero--center { padding-block: clamp(4.5rem, 3rem + 7vw, 9rem) clamp(3.5rem, 2.5rem + 4vw, 6rem); }
 
