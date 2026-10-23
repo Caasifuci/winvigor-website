@@ -1,8 +1,1 @@
-<svg xmlns="http://www.w3.org/2000/svg" viewBox="13 3 216 216" role="img" aria-label="Winvigor"><title>Winvigor</title>
-
-<defs><linearGradient id="wvA" x1="0" y1="20" x2="0" y2="54" gradientUnits="userSpaceOnUse"><stop offset="0" stop-color="#0082C4"></stop><stop offset="1" stop-color="#005A9C"></stop></linearGradient><linearGradient id="wvB" x1="85" y1="0" x2="163" y2="0" gradientUnits="userSpaceOnUse"><stop offset="0" stop-color="#14C8FF"></stop><stop offset="1" stop-color="#0A96D6"></stop></linearGradient></defs>
-<path class="k" d="M18 20H69L99 97L89 114L54 42L50 42L86 140L78 161Z"></path>
-<path class="k" d="M136 30L128 53L131 61L170 158L224 20H207L169 107Z"></path>
-<path fill="url(#wvA)" d="M85 20H125L116 54H94Z"></path>
-<path fill="url(#wvB)" d="M122 70L81 172L91 195L120 121H125L154 195L163 168Z"></path>
-</svg>
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="17 19 330 330"><title>Winvigor</title><style>.k{fill:#000}.t{fill:#00AFAE}@media (prefers-color-scheme:dark){.k{fill:#fff}}</style><path class="k" fill-rule="evenodd" d="M26.5 77H167L218.7 195.5H235.5L199.8 267H253.7L290.6 195.5H330.3L282 290.5H116Z M56.9 100.5H85.3L108.7 159.5H80.5Z M103.9 100.5H177.2L203.4 160.5H127.9Z M156.7 221.5H200.9L178.7 267H134.5Z"/><path class="t" d="M177.2 100.5H338.7L290.6 195.5H235.5L253 160.5H203.4Z"/></svg>
