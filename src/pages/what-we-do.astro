@@ -11,12 +11,12 @@ import CardGrid from '@/components/blocks/CardGrid.astro';
 import SplitRows from '@/components/blocks/SplitRows.astro';
 import HelpCta from '@/components/blocks/HelpCta.astro';
 import { services } from '@/data/site';
-import { caseStudyCards, getCaseStudies, getTalent, availability } from '@/lib/content';
+import { caseStudyCards, getCaseStudies, getTalent, profileStatus } from '@/lib/content';
 
 const caseStudies = await getCaseStudies();
 const cases = await caseStudyCards();
 const talent = await getTalent();
-const availableNow = talent.filter((t) => availability(t.data.availableFrom).now).length;
+const availableNow = talent.filter((t) => profileStatus(t.data).now).length;
 
 const relatedFor = (title: string) =>
   caseStudies.find((c) => c.data.services.some((s) => s.toLowerCase() === title.toLowerCase()));
@@ -58,8 +58,8 @@ const rows = services.map((s, i) => {
       title="Need specialists now? The talent board shows who can start."
       body="Anonymised profiles of engineers, analysts and delivery leads, for contract or permanent placement."
       action={{ label: 'See available engineers', href: '/talent' }}
-      figure={String(availableNow)}
-      figureLabel="engineers available now"
+      figure={availableNow > 0 ? String(availableNow) : undefined}
+      figureLabel={availableNow > 0 ? 'engineers available now' : undefined}
       seed={9}
     />
   )}

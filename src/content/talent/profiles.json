@@ -10,7 +10,8 @@
     "location": "Remote (EU), on site as needed",
     "engagement": "Contract or permanent",
     "summary": "Backend engineering on transactional and case-management platforms, including migrations of established systems.",
-    "sample": false
+    "sample": false,
+    "closed": true
   },
   {
     "id": "WV-1057",
@@ -23,7 +24,8 @@
     "location": "Remote (EU), on site as needed",
     "engagement": "Contract or permanent",
     "summary": "Designs and operates cloud landing zones and delivery pipelines for regulated workloads.",
-    "sample": false
+    "sample": false,
+    "closed": true
   },
   {
     "id": "WV-1063",
@@ -36,7 +38,8 @@
     "location": "Remote (EU), on site as needed",
     "engagement": "Contract or permanent",
     "summary": "Builds data pipelines and analytics platforms, from ingestion through governed reporting.",
-    "sample": false
+    "sample": false,
+    "closed": true
   },
   {
     "id": "WV-1071",
@@ -49,7 +52,8 @@
     "location": "Remote (EU), on site as needed",
     "engagement": "Contract or permanent",
     "summary": "Introduces automated regression testing into release processes that rely on manual checks.",
-    "sample": false
+    "sample": false,
+    "closed": true
   },
   {
     "id": "WV-1078",
@@ -62,7 +66,8 @@
     "location": "Remote (EU), on site as needed",
     "engagement": "Contract or permanent",
     "summary": "Translates policy and operational needs into requirements for public-sector information systems.",
-    "sample": false
+    "sample": false,
+    "closed": true
   },
   {
     "id": "WV-1084",
@@ -75,7 +80,8 @@
     "location": "Remote (EU), on site as needed",
     "engagement": "Contract or permanent",
     "summary": "Builds accessible web interfaces for citizen-facing and internal applications.",
-    "sample": false
+    "sample": false,
+    "closed": true
   },
   {
     "id": "WV-1090",
@@ -88,7 +94,8 @@
     "location": "Remote (EU), on site as needed",
     "engagement": "Contract or permanent",
     "summary": "Runs multi-supplier programmes with phased releases and formal governance.",
-    "sample": false
+    "sample": false,
+    "closed": true
   },
   {
     "id": "WV-1096",
@@ -101,6 +108,7 @@
     "location": "Remote (EU), on site as needed",
     "engagement": "Contract or permanent",
     "summary": "Modernises line-of-business systems onto current .NET and cloud-hosted services.",
-    "sample": false
+    "sample": false,
+    "closed": true
   }
 ]

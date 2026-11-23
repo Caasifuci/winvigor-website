@@ -88,6 +88,8 @@ const talent = defineCollection({
     engagement: z.enum(['Contract', 'Permanent', 'Contract or permanent']),
     summary: z.string().max(200),
     sample: z.boolean().default(false),
+    /** Shown on the board as "Closed": no longer available, cannot be requested. */
+    closed: z.boolean().default(false),
     listed: z.boolean().default(true),
   }),
 });

@@ -16,11 +16,11 @@ export async function getCaseStudies() {
 const fmt = new Intl.DateTimeFormat('en-GB', { day: 'numeric', month: 'long', year: 'numeric' });
 export const formatDate = (d: Date) => fmt.format(d);
 
-/** Listed talent profiles, sample-aware. Available-now first, then by date. */
+/** Listed talent profiles, sample-aware. Open before closed; available-now first, then by date. */
 export async function getTalent() {
   const all = await getCollection('talent', ({ data }) => data.listed && (site.showSampleContent || !data.sample));
   const when = (d?: Date) => (d ? d.valueOf() : 0);
-  return all.sort((a, b) => when(a.data.availableFrom) - when(b.data.availableFrom) || a.data.id.localeCompare(b.data.id));
+  return all.sort((a, b) => Number(a.data.closed) - Number(b.data.closed) || when(a.data.availableFrom) - when(b.data.availableFrom) || a.data.id.localeCompare(b.data.id));
 }
 
 /** Open roles at Winvigor, sample-aware. */
@@ -37,6 +37,12 @@ const monthFmt = new Intl.DateTimeFormat('en-GB', { day: 'numeric', month: 'shor
 export function availability(from?: Date, now = new Date()) {
   if (!from || from <= now) return { now: true, label: 'Available now' };
   return { now: false, label: `From ${monthFmt.format(from)}` };
+}
+
+/** A profile's board status: "Closed" overrides the availability date. */
+export function profileStatus(d: { availableFrom?: Date; closed?: boolean }) {
+  if (d.closed) return { now: false, closed: true, label: 'Closed' };
+  return { ...availability(d.availableFrom), closed: false };
 }
 
 /** Delivery log entries, sample-aware, newest first. */

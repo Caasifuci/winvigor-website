@@ -17,10 +17,10 @@ import ClientLogos from '@/components/blocks/ClientLogos.astro';
 import SystemsArt from '@/components/visuals/SystemsArt.astro';
 import Typography from '@/components/ui/Typography.astro';
 import { services } from '@/data/site';
-import { caseStudyCards, getLog, getTalent, availability, insightCards } from '@/lib/content';
+import { caseStudyCards, getLog, getTalent, profileStatus, insightCards } from '@/lib/content';
 
 const talent = await getTalent();
-const availableNow = talent.filter((t) => availability(t.data.availableFrom).now).length;
+const availableNow = talent.filter((t) => profileStatus(t.data).now).length;
 // Only real entries are shown; sample entries stay hidden until replaced.
 const logEntries = (await getLog()).filter((e) => !e.data.sample).map((e) => e.data);
 const work = (await caseStudyCards()).slice(0, 3);
@@ -61,8 +61,8 @@ const outcomes = [
       title="Senior engineers, analysts and delivery leads, ready to join your team."
       body="Profiles are anonymised. Request one to receive the full CV and arrange interviews."
       action={{ label: 'See the talent board', href: '/talent' }}
-      figure={String(availableNow)}
-      figureLabel="engineers available now"
+      figure={availableNow > 0 ? String(availableNow) : undefined}
+      figureLabel={availableNow > 0 ? 'engineers available now' : undefined}
     />
   )}
 
@@ -87,7 +87,7 @@ const outcomes = [
   </Section>
 
   {talent.length > 0 && (
-    <Section id="talent" title="Available engineers" surface="fog" intro={`${availableNow} of ${talent.length} listed engineers can start now. Profiles are anonymised; request one to receive the full CV.`} viewAll={{ label: 'See the full talent board', href: '/talent' }}>
+    <Section id="talent" title="Available engineers" surface="fog" intro={availableNow > 0 ? `${availableNow} of ${talent.length} listed engineers can start now. Profiles are anonymised; request one to receive the full CV.` : 'The profiles below are currently closed. Send us a brief and we will search our wider network for the right engineer.'} viewAll={{ label: 'See the full talent board', href: '/talent' }}>
       <TalentBoard profiles={talent.slice(0, 3)} />
     </Section>
   )}

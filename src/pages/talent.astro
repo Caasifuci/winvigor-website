@@ -8,11 +8,11 @@ import RosterArt from '@/components/visuals/RosterArt.astro';
 import Container from '@/components/ui/Container.astro';
 import Button from '@/components/ui/Button.astro';
 import Typography from '@/components/ui/Typography.astro';
-import { getTalent, availability } from '@/lib/content';
+import { getTalent, profileStatus } from '@/lib/content';
 import { resourcingProcess } from '@/data/process';
 
 const talent = await getTalent();
-const availableNow = talent.filter((t) => availability(t.data.availableFrom).now).length;
+const availableNow = talent.filter((t) => profileStatus(t.data).now).length;
 ---
 
 <BaseLayout
@@ -21,7 +21,7 @@ const availableNow = talent.filter((t) => availability(t.data.availableFrom).now
 >
   <HeroSplit
     title="Available engineers"
-    lede={`${talent.length} profiles listed, ${availableNow} available now. Filter by discipline, then request a profile to receive the full CV and arrange interviews.`}
+    lede={availableNow > 0 ? `${talent.length} profiles listed, ${availableNow} available now. Filter by discipline, then request a profile to receive the full CV and arrange interviews.` : 'All listed profiles are currently closed. Send us a brief and we will search our wider network for the right engineer.'}
     primary={{ label: 'Send a hiring brief', href: '/contact?profile=brief#enquiry' }}
     secondary={{ label: 'How placement works', href: '#process' }}
   >

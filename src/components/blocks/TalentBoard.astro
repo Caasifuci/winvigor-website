@@ -10,7 +10,7 @@ import type { CollectionEntry } from 'astro:content';
 import Typography from '@/components/ui/Typography.astro';
 import Button from '@/components/ui/Button.astro';
 import { disciplines } from '@/data/taxonomy';
-import { availability } from '@/lib/content';
+import { profileStatus } from '@/lib/content';
 
 interface Props {
   profiles: CollectionEntry<'talent'>[];
@@ -48,13 +48,13 @@ const present = disciplines.filter((d) => profiles.some((p) => p.data.discipline
   <ul role="list" class="profiles">
     {profiles.map((p) => {
       const d = p.data;
-      const avail = availability(d.availableFrom);
+      const avail = profileStatus(d);
       return (
-        <li class="profile" data-discipline={d.discipline} data-now={avail.now ? '1' : '0'}>
+        <li class:list={['profile', { 'is-closed': avail.closed }]} data-discipline={d.discipline} data-now={avail.now ? '1' : '0'}>
           <article aria-labelledby={`${d.id}-role`}>
             <header class="profile__head">
               <Typography variant="meta" class="profile__ref">{d.id}</Typography>
-              <p class:list={['profile__avail', { 'is-now': avail.now }]}>{avail.label}</p>
+              <p class:list={['profile__avail', { 'is-now': avail.now, 'is-closed': avail.closed }]}>{avail.label}</p>
             </header>
             <Typography as="h3" variant="h3" id={`${d.id}-role`} class="profile__role">{d.role}</Typography>
             <p class="profile__level">{d.seniority}, {d.years}+ years</p>
@@ -67,9 +67,13 @@ const present = disciplines.filter((d) => profiles.some((p) => p.data.discipline
               <div><dt>Languages</dt><dd>{d.languages.join(', ')}</dd></div>
               <div><dt>Engagement</dt><dd>{d.engagement}</dd></div>
             </dl>
-            <Button href={`/contact?profile=${d.id}#enquiry`} variant="secondary" class="profile__cta">
-              Request profile<span class="visually-hidden"> {d.id}</span>
-            </Button>
+            {avail.closed ? (
+              <p class="profile__closed">This profile is closed. <a href="/contact?profile=brief#enquiry">Send us a brief</a> for similar engineers.</p>
+            ) : (
+              <Button href={`/contact?profile=${d.id}#enquiry`} variant="secondary" class="profile__cta">
+                Request profile<span class="visually-hidden"> {d.id}</span>
+              </Button>
+            )}
           </article>
         </li>
       );
@@ -111,6 +115,9 @@ const present = disciplines.filter((d) => profiles.some((p) => p.data.discipline
 
 <style>
   .board__tag { margin-bottom: var(--space-6); }
+  .profile__avail.is-closed { color: var(--slate); background: var(--fog); border-color: var(--rule); }
+  .profile__closed { margin-top: auto; padding-top: var(--space-4); font-size: 0.9375rem; color: var(--slate); }
+  .profile__closed a { color: var(--accent-strong); font-weight: 500; }
 
   /* Filters */
   .filters {
