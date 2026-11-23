@@ -6,7 +6,7 @@
 import Container from '@/components/ui/Container.astro';
 import Button from '@/components/ui/Button.astro';
 import Icon from '@/components/ui/Icon.astro';
-import { site } from '@/data/site';
+import { site, clientAccess } from '@/data/site';
 import Ambient from '@/components/motion/Ambient.astro';
 
 interface Props {
@@ -28,7 +28,7 @@ const talentNetwork = `mailto:${site.contact.email}?subject=${encodeURIComponent
         <p class="path__body">Tell us about the programme, the role or the problem. A consultant will come back to you.</p>
         <div class="path__actions">
           <Button href="/contact" variant="primary" inverse>Contact us</Button>
-          <Button href="/talent" variant="quiet" inverse>Available engineers</Button>
+          <Button href={clientAccess.signIn} variant="quiet" inverse>Client sign-in</Button>
         </div>
       </div>
       <div class="path">

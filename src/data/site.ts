@@ -61,8 +61,17 @@ export const nav = [
   { label: 'Contact', href: '/contact' },
 ] as const;
 
-/** Header call to action: the talent board is a primary route for hiring managers. */
-export const headerCta = { label: 'Available engineers', href: '/talent' } as const;
+/**
+ * The talent board (/talent) is for approved B2B clients only: Cloudflare
+ * Access asks for a one-time email code before it opens. Candidates use Careers.
+ */
+export const clientAccess = {
+  signIn: '/talent',
+  request: '/contact?profile=access#enquiry',
+} as const;
+
+/** Header call to action: client sign-in to the talent board. */
+export const headerCta = { label: 'Client sign-in', href: clientAccess.signIn } as const;
 
 /** Real clients, supplied by Winvigor. Add `logo` (an imported SVG) once brand-approved artwork is available. */
 export const clients: { name: string; logo?: ImageMetadata }[] = [

@@ -11,16 +11,13 @@ import Section from '@/components/blocks/Section.astro';
 import CardGrid from '@/components/blocks/CardGrid.astro';
 import MetricGrid from '@/components/blocks/MetricGrid.astro';
 import DeliveryLog from '@/components/blocks/DeliveryLog.astro';
-import TalentBoard from '@/components/blocks/TalentBoard.astro';
 import HelpCta from '@/components/blocks/HelpCta.astro';
 import ClientLogos from '@/components/blocks/ClientLogos.astro';
 import SystemsArt from '@/components/visuals/SystemsArt.astro';
 import Typography from '@/components/ui/Typography.astro';
-import { services } from '@/data/site';
-import { caseStudyCards, getLog, getTalent, profileStatus, insightCards } from '@/lib/content';
+import { services, clientAccess } from '@/data/site';
+import { caseStudyCards, getLog, insightCards } from '@/lib/content';
 
-const talent = await getTalent();
-const availableNow = talent.filter((t) => profileStatus(t.data).now).length;
 // Only real entries are shown; sample entries stay hidden until replaced.
 const logEntries = (await getLog()).filter((e) => !e.data.sample).map((e) => e.data);
 const work = (await caseStudyCards()).slice(0, 3);
@@ -49,22 +46,19 @@ const outcomes = [
     title="Cutting-edge solutions. Driving enterprise success."
     banner={['Cutting‑edge solutions', 'Driving enterprise success.']}
     lede={['Next-gen strategy, high-velocity delivery.', 'Anchored in Belgium, the heart of Europe.']}
-    primary={{ label: 'Find available engineers', href: '/talent' }}
+    primary={{ label: 'Send a hiring brief', href: '/contact?profile=brief#enquiry' }}
     secondary={{ label: 'What we do', href: '/what-we-do' }}
   >
     <SystemsArt slot="visual" />
     <ClientLogos slot="footer" align="center" />
   </PageHero>
 
-  {talent.length > 0 && (
-    <FeatureBanner
-      title="Senior engineers, analysts and delivery leads, ready to join your team."
-      body="Profiles are anonymised. Request one to receive the full CV and arrange interviews."
-      action={{ label: 'See the talent board', href: '/talent' }}
-      figure={availableNow > 0 ? String(availableNow) : undefined}
-      figureLabel={availableNow > 0 ? 'engineers available now' : undefined}
-    />
-  )}
+  <FeatureBanner
+    title="Pre-vetted engineers, analysts and delivery leads for client teams."
+    body="Approved clients sign in to browse anonymised profiles and request full CVs. New to Winvigor? Request access and we will set you up."
+    action={{ label: 'Client sign-in', href: clientAccess.signIn }}
+    secondary={{ label: 'Request client access', href: clientAccess.request }}
+  />
 
   <Section id="services" title="What we do" intro="Strategy, engineering and specialist talent under a single engagement, so advice and delivery stay accountable to the same outcome." viewAll={{ label: 'How each service works', href: '/what-we-do' }}>
     <CardGrid items={serviceCards} columns={4} label="Services" reveal />
@@ -86,11 +80,6 @@ const outcomes = [
     )}
   </Section>
 
-  {talent.length > 0 && (
-    <Section id="talent" title="Available engineers" surface="fog" intro={availableNow > 0 ? `${availableNow} of ${talent.length} listed engineers can start now. Profiles are anonymised; request one to receive the full CV.` : 'The profiles below are currently closed. Send us a brief and we will search our wider network for the right engineer.'} viewAll={{ label: 'See the full talent board', href: '/talent' }}>
-      <TalentBoard profiles={talent.slice(0, 3)} />
-    </Section>
-  )}
 
   {insights.length > 0 && (
     <Section id="insights" title="Latest insights" viewAll={{ label: 'View all', href: '/insights' }}>

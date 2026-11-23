@@ -195,3 +195,19 @@ Delete the custom domain on the Worker (5.2) and the placeholder `@` record (5.3
 | Claude can't connect | Node.js 22+ installed? Application password correct (spaces are fine)? Permalinks set to Post name? |
 | Enquiry emails not arriving | ChemiCloud mail sending: add an SMTP plugin (e.g. FluentSMTP) using the services@ mailbox. Enquiries are still stored under WordPress → Enquiries. |
 | Old URL 404s | Add it to `public/_redirects`. |
+
+## Client-only talent board (Cloudflare Access)
+
+The talent board at `/talent` is for approved B2B clients. The site no longer links to it publicly (only "Client sign-in"), it is `noindex` and out of the sitemap, and Cloudflare Access asks visitors for a one-time code sent to an approved email before it opens.
+
+Set up once at dash.cloudflare.com:
+
+1. Left menu → **Zero Trust** (first visit: pick a team name and the **Free** plan, up to 50 users).
+2. **Access → Applications → Add an application → Self-hosted**.
+3. Application name `Winvigor talent board`; session duration `24 hours`.
+4. **Public hostname**: domain `winvigor.com`, subdomain `www`, path `talent`. Add a second hostname with path `talent/*`.
+5. **Policy**: name `Approved clients`, action **Allow**, rule **Include → Emails** (one per approved contact) and/or **Emails ending in** (e.g. `@clientcompany.com`). Add your own address too.
+6. **Login methods**: **One-time PIN**. Save.
+7. Test in a private window: `https://www.winvigor.com/talent` should show the Cloudflare sign-in page; an approved email receives a code and then sees the board.
+
+To approve a client later: Zero Trust → Access → Applications → Winvigor talent board → Policies → Approved clients → add the email or domain. Access requests arrive through the contact form ("Client access request").

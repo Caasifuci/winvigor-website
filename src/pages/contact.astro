@@ -26,7 +26,7 @@ const insights = (await insightCards()).slice(0, 3);
     primary={{ label: 'Send an enquiry', href: '#enquiry' }}
     features={[
       { icon: 'strategy', title: 'Strategic IT consulting', body: 'Roadmaps your organisation can fund, staff and deliver.', href: '/what-we-do#strategic-it-consulting' },
-      { icon: 'people', title: 'Specialist engineers', body: 'Senior talent placed into your teams, contract or permanent.', href: '/talent' },
+      { icon: 'people', title: 'Specialist engineers', body: 'Senior talent placed into your teams, contract or permanent.', href: '/what-we-do#resource-augmentation' },
       { icon: 'code', title: 'Software delivery', body: 'Maintainable systems built around how you work.', href: '/what-we-do#custom-software-development' },
     ]}
   />
@@ -153,6 +153,8 @@ const insights = (await insightCards()).slice(0, 3);
     if (/^WV-\d{4}$/.test(ref)) {
       hidden!.value = ref;
       message.value = `I would like to receive the full profile for ${ref}.\n\nRole and team: \nStart date: \nDuration: `;
+    } else if (ref === 'access') {
+      message.value = 'Client access request (talent board)\n\nCompany: \nYour role: \nWork emails that need access: ';
     } else if (ref === 'brief') {
       message.value = 'Hiring brief\n\nRole: \nKey skills: \nStart date: \nDuration: \nLocation or remote: \nSecurity clearance required (if any): ';
     }

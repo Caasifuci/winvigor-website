@@ -12,13 +12,15 @@ interface Props {
   title: string;
   body?: string;
   action: { label: string; href: string };
+  /** Optional second, quieter link beside the action. */
+  secondary?: { label: string; href: string };
   /** Large figure shown beside the copy, e.g. "8". */
   figure?: string;
   figureLabel?: string;
   seed?: number;
 }
 
-const { title, body, action, figure, figureLabel, seed = 7 } = Astro.props;
+const { title, body, action, secondary, figure, figureLabel, seed = 7 } = Astro.props;
 ---
 
 <div class="banner-wrap">
@@ -27,7 +29,10 @@ const { title, body, action, figure, figureLabel, seed = 7 } = Astro.props;
       <div class="banner__copy">
         <h2 class="banner__title">{title}</h2>
         {body && <p class="banner__body">{body}</p>}
-        <Button href={action.href} variant="primary" inverse>{action.label}</Button>
+        <div class="banner__actions">
+          <Button href={action.href} variant="primary" inverse>{action.label}</Button>
+          {secondary && <Button href={secondary.href} variant="quiet" inverse>{secondary.label}</Button>}
+        </div>
       </div>
       <div class="banner__art" aria-hidden={figure ? undefined : 'true'}>
         <CardArt seed={seed} low={Boolean(figure)} />
@@ -61,7 +66,7 @@ const { title, body, action, figure, figureLabel, seed = 7 } = Astro.props;
     text-wrap: balance;
   }
   .banner__body { color: var(--mist); max-width: 34rem; }
-  .banner__copy :global(.btn) { margin-top: var(--space-3); }
+  .banner__actions { display: flex; flex-wrap: wrap; align-items: center; gap: var(--space-4) var(--space-6); margin-top: var(--space-3); }
 
   .banner__art { position: relative; min-height: 12rem; }
   .banner__art :global(svg) { position: absolute; inset: 0; }

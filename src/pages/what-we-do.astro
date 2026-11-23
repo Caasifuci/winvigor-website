@@ -10,13 +10,11 @@ import Section from '@/components/blocks/Section.astro';
 import CardGrid from '@/components/blocks/CardGrid.astro';
 import SplitRows from '@/components/blocks/SplitRows.astro';
 import HelpCta from '@/components/blocks/HelpCta.astro';
-import { services } from '@/data/site';
-import { caseStudyCards, getCaseStudies, getTalent, profileStatus } from '@/lib/content';
+import { services, clientAccess } from '@/data/site';
+import { caseStudyCards, getCaseStudies } from '@/lib/content';
 
 const caseStudies = await getCaseStudies();
 const cases = await caseStudyCards();
-const talent = await getTalent();
-const availableNow = talent.filter((t) => profileStatus(t.data).now).length;
 
 const relatedFor = (title: string) =>
   caseStudies.find((c) => c.data.services.some((s) => s.toLowerCase() === title.toLowerCase()));
@@ -53,16 +51,12 @@ const rows = services.map((s, i) => {
     primary={{ label: 'Discuss your programme', href: '/contact' }}
   />
 
-  {talent.length > 0 && (
-    <FeatureBanner
-      title="Need specialists now? The talent board shows who can start."
-      body="Anonymised profiles of engineers, analysts and delivery leads, for contract or permanent placement."
-      action={{ label: 'See available engineers', href: '/talent' }}
-      figure={availableNow > 0 ? String(availableNow) : undefined}
-      figureLabel={availableNow > 0 ? 'engineers available now' : undefined}
-      seed={9}
-    />
-  )}
+  <FeatureBanner
+    title="Pre-vetted engineers, analysts and delivery leads for client teams."
+    body="Approved clients sign in to browse anonymised profiles and request full CVs. New to Winvigor? Request access and we will set you up."
+    action={{ label: 'Client sign-in', href: clientAccess.signIn }}
+    secondary={{ label: 'Request client access', href: clientAccess.request }}
+  />
 
   <Section id="services" title="Our services" intro="Choose one service or combine them; the same team stays accountable for the result.">
     <CardGrid items={serviceCards} columns={4} label="Services" reveal />
